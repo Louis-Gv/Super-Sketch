@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
-
+coucou
 pygame.init()
 #Ouverture de la fenêtre Pygame
 fenetre = pygame.display.set_mode((1920, 1080), FULLSCREEN)
