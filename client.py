@@ -1,15 +1,19 @@
-# coding: utf-8
-
 import socket
 
-hote = "localhost"
-port = 15555
+host = 'localhost'
+port = 5000
 
-socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-socket.connect((hote, port))
-print("Connection on {}".format(port))
+monSocket = socket.socket()
+monSocket.connect((host, port))
 
-socket.send("Hey my name is Olivier!".encode())
+message = input(" -> ")
 
-print("Close")
-socket.close()
+while message != 'q':
+    monSocket.send(message.encode())
+    data = monSocket.recv(1024).decode()
+
+    print('Received from server: ' + data)
+
+    message = input(" -> ")
+
+monSocket.close()
