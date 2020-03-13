@@ -1,4 +1,4 @@
-# Super-Sketch
+![Super Sketch](logoconv.gif)
 
 Prochainement dans les bacs :kissing_heart:
 
