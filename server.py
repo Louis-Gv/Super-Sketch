@@ -9,12 +9,12 @@ def diffuIpHote():  # Diffusion d'un msg sur tout le reseau local pour pouvoir r
     s.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
 
     while True:
+        print('diffusion')
         s.sendto("SuperS".encode(), ('<broadcast>', 50000))
-        time.sleep(0.7)
-        print('ip broadcastée')
+        time.sleep(1)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pour empécher de lancer si import  / obligatoire pour multiprocessing
     # On va initialiser le serveur d'ecoute
     host = ""
     port = 5000
