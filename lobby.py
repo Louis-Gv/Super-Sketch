@@ -1,7 +1,8 @@
 import pygame
 from pygame.locals import *
 from random import *
-
+import ctypes
+from ctypes import windll
 # Etat du menu
 continuer = True
 host = False
@@ -13,7 +14,9 @@ hauteur = 1080
 bgColor = (118, 188, 194)
 
 pygame.init()
-fenetre = pygame.display.set_mode((largeur, hauteur), FULLSCREEN)
+ctypes.windll.user32.SetProcessDPIAware()
+true_res = (windll.user32.GetSystemMetrics(0),windll.user32.GetSystemMetrics(1))
+fenetre = pygame.display.set_mode(true_res,pygame.FULLSCREEN)
 pygame.display.set_caption("Super-sketch")
 fenetre.fill(bgColor)
 
