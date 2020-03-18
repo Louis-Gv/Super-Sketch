@@ -3,6 +3,7 @@ import pygame
 from pygame.locals import *
 import ctypes
 from ctypes import windll
+import time
 
 #Déclaration de la fonction de sélection de la couleur
 def selection (pbt, cbt):
@@ -17,7 +18,7 @@ def selection (pbt, cbt):
         couleur=cbt
     return
 
-def selectioncercle (pbt, taillepinceau):
+def selectioncercle1 (pbt):
     global rayon    #Définition de variable globale du programme
     global idFrame
     idFrame = (idFrame + 1) % 95    #Animation de l'image 
@@ -27,9 +28,10 @@ def selectioncercle (pbt, taillepinceau):
         fenetre.blit(pal2, pbt)
     if pygame.mouse.get_pressed() == (1,0,0):  #Changement de couleur lors d'un clic
         rayon=rayon+2
+    time.sleep ( 1 )
     return
 
-def selectioncercle (pbt, taillepinceau):
+def selectioncercle2 (pbt):
     global rayon    #Définition de variable globale du programme
     global idFrame
     idFrame = (idFrame + 1) % 95    #Animation de l'image 
@@ -39,6 +41,7 @@ def selectioncercle (pbt, taillepinceau):
         fenetre.blit(pal2, pbt)
     if pygame.mouse.get_pressed() == (1,0,0):  #Changement de couleur lors d'un clic
         rayon=rayon-2
+    time.sleep ( 1 )
     return
 
 #Ouverture de la fenêtre Pygame en plein écran
@@ -71,6 +74,7 @@ bleuc=(38, 188, 254)
 pbleuc=(1720,400)
 violet=(238,130,238)
 marron=(88,41,0)
+
 press= False
 couleur=noir
 rayon=10
@@ -100,7 +104,7 @@ while continuer:
         if btbf.collidepoint(px, py):
                 selection(btbf,bleuf)                                
         if btr.collidepoint(px, py):
-                        selection(btr,rouge)
+                    selection(btr,rouge)
         if btv.collidepoint(px, py):
                 selection(btv,vert)
         if btbl.collidepoint(px, py):
@@ -113,6 +117,11 @@ while continuer:
                 selection(btvi,violet)
         if btbc.collidepoint(px, py):
                 selection(btbc,bleuc)
+        if btcg.collidepoint(px, py):
+                selectioncercle1(btcg)
+        if btcp.collidepoint(px, py):
+                selectioncercle2(btcp)
+            
 
 
         #Détection clique gauche pour effectuer le dessin                
