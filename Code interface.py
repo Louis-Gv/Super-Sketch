@@ -19,7 +19,7 @@ fond = pygame.image.load("img/fond.png").convert()
 fenetre.blit(fond, (0,0))
 pal1 = pygame.image.load("img/pal1.png").convert_alpha()
 pal2 = pygame.image.load("img/pal2.png").convert_alpha()
-xLogo = int(largeur/2 - pal2.get_rect().size[0]/2)
+
 rouge=(255,0,0)
 vert=(0,255,0)
 bleuf=(0,0,255)
@@ -52,11 +52,11 @@ while continuer:
                 pygame.init()
                 px, py = pygame.mouse.get_pos()
                 if btbf.collidepoint(px, py):
-                        idFrame = (idFrame + 1) % 40  # logo qui bouge tout les 1/4s ou 20images car 80fps
-                        if idFrame < 20:
-                                fenetre.blit(pal1, (xLogo, 50))
+                        idFrame = (idFrame + 1) % 95  # logo qui bouge tout les 1/4s ou 20images car 80fps
+                        if idFrame < 30:
+                                fenetre.blit(pal1, (1820, 400))
                         else:
-                                fenetre.blit(pal2, (xLogo, 50))
+                                fenetre.blit(pal2, (1820, 400))
                         
                 if pygame.mouse.get_pressed() == (1,0,0):
                         pygame.draw.rect(fenetre, (128,128,128), (px,py,10,10))
