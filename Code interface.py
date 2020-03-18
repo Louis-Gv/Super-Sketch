@@ -73,7 +73,7 @@ violet=(238,130,238)
 marron=(88,41,0)
 press= False
 couleur=noir
-
+rayon=10
 #Boucle infinie pour maintenir ou fermer la fenêtre
 continuer = 1
 while continuer:
@@ -91,7 +91,8 @@ while continuer:
         btvi=pygame.draw.rect(fenetre, violet,(1720,300,100,100))
         btbf=pygame.draw.rect(fenetre, bleuf,(1820,400,100,100))
         btbc=pygame.draw.rect(fenetre, bleuc,(1720,400,100,100))
-                
+        btcg=pygame.draw.circle(fenetre, noir, (1870,550), 50)   #bouton circulaire gros rayon     
+        btcp=pygame.draw.circle(fenetre, noir, (1770,550), 25)   #bouton circulaire petit rayon          
         #Détection de la position de la souris        
         px, py = pygame.mouse.get_pos()
 
@@ -116,7 +117,7 @@ while continuer:
 
         #Détection clique gauche pour effectuer le dessin                
         if pygame.mouse.get_pressed() == (1,0,0):
-                pygame.draw.rect(fenetre, couleur, (px,py,10,10))
+                pygame.draw.circle(fenetre, couleur, (px,py), rayon)
  
         if event.type == pygame.MOUSEBUTTONUP:                        
                 press == False
@@ -125,8 +126,7 @@ while continuer:
         pygame.display.update()
         clock.tick(1000)
 
-        btcg=pygame.draw.circle(fenetre, noir, (1870,550), 50)   #bouton circulaire gros rayon     
-        btcp=pygame.draw.circle(fenetre, noir, (1770,550), 25)   #bouton circulaire petit rayon         
+              
         
         
 
