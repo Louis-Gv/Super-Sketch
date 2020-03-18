@@ -1,11 +1,28 @@
+
 import pygame
 from pygame.locals import *
 import ctypes
 from ctypes import windll
 pygame.init()
+
+
+def selection (pbt, cbt):
+    global couleur
+    global idFrame
+    idFrame = (idFrame + 1) % 95
+    if idFrame < 30:
+        fenetre.blit(pal1, pbt)
+    else:
+        fenetre.blit(pal2, pbt)
+    if pygame.mouse.get_pressed() == (1,0,0):
+        couleur=cbt
+    return
+
+
+
 #Ouverture de la fenêtre Pygame en plein écran
 
-idFrame = 0
+idFrame=0
 largeur=1080
 longueur=1920
 ctypes.windll.user32.SetProcessDPIAware()
@@ -32,7 +49,6 @@ noir=(0,0,0)
 pnoir=(1720,200)
 bleuc=(38, 188, 254)
 pbleuc=(1720,400)
-
 violet=(238,130,238)
 marron=(88,41,0)
 press= False
@@ -59,15 +75,9 @@ while continuer:
                 pygame.init()
                 px, py = pygame.mouse.get_pos()
                 if btbf.collidepoint(px, py):
-                        idFrame = (idFrame + 1) % 95  # logo qui bouge tout les 1/4s ou 20images car 80fps
-                        if idFrame < 30:
-                                fenetre.blit(pal1, (1820, 400))
-                        else:
-                                fenetre.blit(pal2, (1820, 400))
-                        if pygame.mouse.get_pressed() == (1,0,0):
-                                couleur=bleuf
+                        selection(btbf,bleuf)
                                 
-               # if btr.collidepoint(px, py):
+                #if btr.collidepoint(px, py):
                 #if btv.collidepoint(px, py):
                 #if btbl.collidepoint(px, py):
                 #if btn.collidepoint(px, py):
