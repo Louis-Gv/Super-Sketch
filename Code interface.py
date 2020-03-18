@@ -87,8 +87,8 @@ while continuer:
         btvi=pygame.draw.rect(fenetre, violet,(1720,300,100,100))
         btbf=pygame.draw.rect(fenetre, bleuf,(1820,400,100,100))
         btbc=pygame.draw.rect(fenetre, bleuc,(1720,400,100,100))
-        btcg=pygame.draw.circle(fenetre, noir, (1870,550), 50)   #bouton circulaire gros rayon     
-        btcp=pygame.draw.circle(fenetre, noir, (1770,550), 25)   #bouton circulaire petit rayon          
+        btcg=pygame.draw.circle(fenetre, noir, (1870,550), 35)   #bouton circulaire gros rayon     
+        btcp=pygame.draw.circle(fenetre, noir, (1770,550), 15)   #bouton circulaire petit rayon          
         #Détection de la position de la souris        
         px, py = pygame.mouse.get_pos()
 
