@@ -17,6 +17,29 @@ def selection (pbt, cbt):
         couleur=cbt
     return
 
+def selectioncercle (pbt, taillepinceau):
+    global rayon    #Définition de variable globale du programme
+    global idFrame
+    idFrame = (idFrame + 1) % 95    #Animation de l'image 
+    if idFrame < 30:
+        fenetre.blit(pal1, pbt)
+    else:
+        fenetre.blit(pal2, pbt)
+    if pygame.mouse.get_pressed() == (1,0,0):  #Changement de couleur lors d'un clic
+        rayon=rayon+2
+    return
+
+def selectioncercle (pbt, taillepinceau):
+    global rayon    #Définition de variable globale du programme
+    global idFrame
+    idFrame = (idFrame + 1) % 95    #Animation de l'image 
+    if idFrame < 30:
+        fenetre.blit(pal1, pbt)
+    else:
+        fenetre.blit(pal2, pbt)
+    if pygame.mouse.get_pressed() == (1,0,0):  #Changement de couleur lors d'un clic
+        rayon=rayon-2
+    return
 
 #Ouverture de la fenêtre Pygame en plein écran
 pygame.init()
