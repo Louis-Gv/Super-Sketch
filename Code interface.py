@@ -18,22 +18,20 @@ def selection (pbt, cbt):
         couleur=cbt
     return
 
-def selectioncercle1 (pbt):
-    global rayon    #Définition de variable globale du programme
-    fenetre.blit(pal3,(1820,500))
-    
+def selectioncercle1 ():
+    global rayon    #Définition de variable globale du programme    
     if pygame.mouse.get_pressed() == (1,0,0):  #Changement de rayon lors d'un clic
-        rayon=rayon+25
-    time.sleep ( 1 )
+        rayon=rayon+5
+    time.sleep ( 0.1 )
     return
 
-def selectioncercle2 (pbt):
+def selectioncercle2 ():
     global rayon    #Définition de variable globale du programme
-    fenetre.blit(pal3,(1720,500))
+    
 
     if pygame.mouse.get_pressed() == (1,0,0):  #Changement de rayon lors d'un clic
-        rayon=rayon-25
-    time.sleep ( 1 )
+        rayon=rayon-5
+    time.sleep ( 0.1 )
     return
 
 #Ouverture de la fenêtre Pygame en plein écran
@@ -49,8 +47,9 @@ fond = pygame.image.load("img/fond.png").convert()
 fenetre.blit(fond, (0,0))
 
 #Initialisation des variables de couleur et des animations
-pal1 = pygame.image.load("img/pal1.png").convert_alpha()
+pal1= pygame.pal1 = pygame.image.load("img/pal1.png").convert_alpha()
 pal2 = pygame.image.load("img/pal2.png").convert_alpha()
+fon = pygame.image.load("img/pal4.png").convert_alpha()
 idFrame=0
 rouge=(255,0,0)
 prouge=1820,100
@@ -79,6 +78,9 @@ while continuer:
                                 continuer =0
 
         #Placement des boutons sur l'écran
+
+        fenetre.blit(fon,(1820,500))
+        fenetre.blit(fon,(1720,500))
         btr=pygame.draw.rect(fenetre, rouge,(1820,100,100,100))
         btv=pygame.draw.rect(fenetre, vert,(1720,100,100,100))
         btbl=pygame.draw.rect(fenetre, blanc,(1820,200,100,100))
@@ -110,9 +112,9 @@ while continuer:
         if btbc.collidepoint(px, py):
                 selection(btbc,bleuc)
         if btcg.collidepoint(px, py):
-                selectioncercle1(btcg)
+                selectioncercle1()
         if btcp.collidepoint(px, py):
-                selectioncercle2(btcp)
+                selectioncercle2()
             
 
 
