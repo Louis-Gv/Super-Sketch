@@ -50,6 +50,7 @@ pbleuc=(1720,400)
 violet=(238,130,238)
 marron=(88,41,0)
 press= False
+couleur=noir
 
 #Boucle infinie pour maintenir ou fermer la fenêtre
 continuer = 1
@@ -101,7 +102,9 @@ while continuer:
         
         pygame.display.update()
         clock.tick(1000)
-                
+
+        btcg=pygame.draw.circle(fenetre, noir, (1870,550), 50)   #bouton circulaire gros rayon     
+        btcp=pygame.draw.circle(fenetre, noir, (1770,550), 25)   #bouton circulaire petit rayon         
         
         
 
