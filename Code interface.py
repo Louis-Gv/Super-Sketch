@@ -122,8 +122,7 @@ while continuer:
         if pygame.mouse.get_pressed() == (1,0,0):
                 pygame.draw.circle(fenetre, couleur, (px,py), rayon)
  
-        if event.type == pygame.MOUSEBUTTONUP:                        
-                press == False
+
 
         
         pygame.display.update()
