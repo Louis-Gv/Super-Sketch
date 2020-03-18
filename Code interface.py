@@ -22,17 +22,17 @@ def selectioncercle1 (pbt):
     global rayon    #Définition de variable globale du programme
     fenetre.blit(pal3,(1820,500))
     
-    if pygame.mouse.get_pressed() == (1,0,0):  #Changement de couleur lors d'un clic
+    if pygame.mouse.get_pressed() == (1,0,0):  #Changement de rayon lors d'un clic
         rayon=rayon+25
     time.sleep ( 1 )
     return
 
 def selectioncercle2 (pbt):
     global rayon    #Définition de variable globale du programme
-    fenetre.blit(pal3,(1820,500))
+    fenetre.blit(pal3,(1720,500))
 
-    if pygame.mouse.get_pressed() == (1,0,0):  #Changement de couleur lors d'un clic
-        rayon=rayon-2
+    if pygame.mouse.get_pressed() == (1,0,0):  #Changement de rayon lors d'un clic
+        rayon=rayon-25
     time.sleep ( 1 )
     return
 
