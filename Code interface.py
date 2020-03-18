@@ -18,7 +18,6 @@ def selection (pbt, cbt):
     return
 
 
-
 #Ouverture de la fenêtre Pygame en plein écran
 pygame.init()
 largeur=1080
