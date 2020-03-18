@@ -3,25 +3,18 @@ from pygame.locals import *
 
 pygame.init()
 #Ouverture de la fenêtre Pygame en plein écran
-fenetre = pygame.display.set_mode((1920, 1080), FULLSCREEN)
+fenetre = pygame.display.set_mode((1366, 768), FULLSCREEN)
 pygame.display.set_caption("Super-sketch")
 clock = pygame.time.Clock()
 
 pygame.init()
 fond = pygame.image.load("img/fond.png").convert()
 fenetre.blit(fond, (0,0))       
-fond2 = pygame.image.load("img/fond2.png").convert()
-size = width, height = (100,100)
-canvas = pygame.Surface(size)
 
 
-
-#Chargement et collage du bouton bleu clair
-btpal = pygame.image.load("img/palette.png").convert_alpha()
-size2 = (100, 500)
-palette = pygame.Surface(size2)
- 
-
+rouge=(255,0,0)
+vert=(0,255,0)
+bleuf=(0,0,255)
 
 
 
@@ -31,8 +24,15 @@ press = False
 continuer = 1
 while continuer:
         try:
-                fenetre.blit(canvas,(400,400))
-                fenetre.blit(palette,(1675,200))
+                
+                pygame.draw.rect(fenetre, rouge,(1316,100,50,50))
+                pygame.draw.rect(fenetre, vert,(1266,100,50,50))
+                pygame.draw.rect(fenetre, rouge,(1316,150,50,50))
+                pygame.draw.rect(fenetre, vert,(1266,150,50,50))
+                pygame.draw.rect(fenetre, rouge,(1316,200,50,50))
+                pygame.draw.rect(fenetre, vert,(1266,200,50,50))
+                pygame.draw.rect(fenetre, rouge,(1316,250,50,50))
+                pygame.draw.rect(fenetre, vert,(1266,250,50,50))
                 pygame.init()
                 for event in pygame.event.get():                       
                         if event.type == QUIT:                                                             
