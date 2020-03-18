@@ -75,15 +75,21 @@ while continuer:
                 pygame.init()
                 px, py = pygame.mouse.get_pos()
                 if btbf.collidepoint(px, py):
-                        selection(btbf,bleuf)
-                                
-                #if btr.collidepoint(px, py):
-                #if btv.collidepoint(px, py):
-                #if btbl.collidepoint(px, py):
-                #if btn.collidepoint(px, py):
-                #if btm.collidepoint(px, py):
-                #if btvi.collidepoint(px, py):
-                #if btbc.collidepoint(px, py):
+                        selection(btbf,bleuf)                                
+                if btr.collidepoint(px, py):
+                        selection(btr,rouge)
+                if btv.collidepoint(px, py):
+                        selection(btv,vert)
+                if btbl.collidepoint(px, py):
+                        selection(btbl,blanc)
+                if btn.collidepoint(px, py):
+                        selection(btn,noir)
+                if btm.collidepoint(px, py):
+                        selection(btm,marron)
+                if btvi.collidepoint(px, py):
+                        selection(btvi,violet)
+                if btbc.collidepoint(px, py):
+                        selection(btbc,bleuc)
 
 
                         
