@@ -40,7 +40,7 @@ press= False
 #Boucle infinie pour maintenir ou fermer la fenêtre
 continuer = 1
 while continuer:
-        try:
+        
                 
                 btr=pygame.draw.rect(fenetre, rouge,(1820,100,100,100))
                 btv=pygame.draw.rect(fenetre, vert,(1720,100,100,100))
@@ -64,9 +64,21 @@ while continuer:
                                 fenetre.blit(pal1, (1820, 400))
                         else:
                                 fenetre.blit(pal2, (1820, 400))
+                        if pygame.mouse.get_pressed() == (1,0,0):
+                                couleur=bleuf
+                                
+               # if btr.collidepoint(px, py):
+                #if btv.collidepoint(px, py):
+                #if btbl.collidepoint(px, py):
+                #if btn.collidepoint(px, py):
+                #if btm.collidepoint(px, py):
+                #if btvi.collidepoint(px, py):
+                #if btbc.collidepoint(px, py):
+
+
                         
                 if pygame.mouse.get_pressed() == (1,0,0):
-                        pygame.draw.rect(fenetre, (128,128,128), (px,py,10,10))
+                        pygame.draw.rect(fenetre, couleur, (px,py,10,10))
  
                 if event.type == pygame.MOUSEBUTTONUP:                        
                         press == False
@@ -74,9 +86,7 @@ while continuer:
                 clock.tick(1000)
                 
         
-        except Exception as e:
-            print(e)
-            pygame.quit()
+        
 
 
 pygame.quit()
