@@ -20,25 +20,17 @@ def selection (pbt, cbt):
 
 def selectioncercle1 (pbt):
     global rayon    #Définition de variable globale du programme
-    global idFrame
-    idFrame = (idFrame + 1) % 95    #Animation de l'image 
-    if idFrame < 30:
-        fenetre.blit(pal1, pbt)
-    else:
-        fenetre.blit(pal2, pbt)
+    fenetre.blit(pal3,(1820,500))
+    
     if pygame.mouse.get_pressed() == (1,0,0):  #Changement de couleur lors d'un clic
-        rayon=rayon+2
+        rayon=rayon+25
     time.sleep ( 1 )
     return
 
 def selectioncercle2 (pbt):
     global rayon    #Définition de variable globale du programme
-    global idFrame
-    idFrame = (idFrame + 1) % 95    #Animation de l'image 
-    if idFrame < 30:
-        fenetre.blit(pal1, pbt)
-    else:
-        fenetre.blit(pal2, pbt)
+    fenetre.blit(pal3,(1820,500))
+
     if pygame.mouse.get_pressed() == (1,0,0):  #Changement de couleur lors d'un clic
         rayon=rayon-2
     time.sleep ( 1 )
