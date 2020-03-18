@@ -21,11 +21,18 @@ pal1 = pygame.image.load("img/pal1.png").convert_alpha()
 pal2 = pygame.image.load("img/pal2.png").convert_alpha()
 
 rouge=(255,0,0)
+prouge=1820,100
 vert=(0,255,0)
+pvert=(1720,100)
 bleuf=(0,0,255)
+pbleuf=(1820,400)
 blanc=(255,255,255)
+pblanc=(1820,200)
 noir=(0,0,0)
+pnoir=(1720,200)
 bleuc=(38, 188, 254)
+pbleuc=(1720,400)
+
 violet=(238,130,238)
 marron=(88,41,0)
 press= False
