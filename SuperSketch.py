@@ -3,9 +3,10 @@ from pygame.locals import *
 from random import *
 import ctypes
 from ctypes import windll
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Value
 import time
 import serveur
+import client
 
 if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour multiprocessing
     # Etat du menu
@@ -109,8 +110,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     pseudo = ''
 
     procServeur = Process()  # on initialise le process pour pouvoir le fermer
+    procClient = Process()
     dessin = Queue()
-
+    init = 0
+    nbClient = Value('i', 0)
 
 
     # Déclaration de la fonction de sélection de la couleur
@@ -227,11 +230,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     if host or join:  # Si une touche est pressée
                         if event.key == pygame.K_RETURN:  # si entrer
                             if host:
-                                procServeur = Process(target=serveur.serveur, args=(dessin,))  # lancement du serveur dans un processus parallèle
+                                procServeur = Process(target=serveur.serveur, args=(nbClient,))  # lancement du serveur dans un processus parallèle
                                 procServeur.start()
                             print(pseudo)
                             acceuil = False  # fin de l'acceuil
-                            fenetre.fill((255, 255, 255))  # fond blanc
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
                             pseudo = pseudo[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
                         elif len(pseudo) < 16:  # 16 caractères max
@@ -240,6 +242,27 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             clock.tick(80)  # limite 80fps
             pygame.display.flip()  # Rafraichissement écran acceuil avec toutes nos modifs
         else:
+            if init == 0:
+                if host:
+                    procClient = Process(target=client.client, args=(0, dessin))
+                    procClient.start()
+                    while nbClient.value < 2:
+                        fenetre.fill((255, 255, 255))  # fond blanc
+                        texteConn = police.render(str(nbClient.value)+' connectés', True, (0, 0, 0))
+                        fenetre.blit(texteConn, (0, 0))
+
+                        for event in pygame.event.get():
+                            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                                nbClient.value = 100
+                                fini = True
+
+                        pygame.display.flip()
+                        clock.tick(5)
+                    fenetre.fill((255, 255, 255))
+                else:
+                    procClient = Process(target=client.client, args=(1, dessin))
+                    procClient.start()
+                init = 1
             # Lancement du dessin:
             for event in pygame.event.get():
                 if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
@@ -293,9 +316,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 ancienpx = px
                 ancienpy = py
             pygame.display.flip()
-            clock.tick(500)
+            clock.tick(700)
 
     pygame.quit()
+    if procClient.is_alive():
+        procClient.terminate()
+        procClient.join()
     if procServeur.is_alive():
         procServeur.terminate()  # ferme le serveur
         procServeur.join()
