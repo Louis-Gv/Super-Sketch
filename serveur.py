@@ -14,7 +14,7 @@ def diffuIpHote():  # Diffusion d'un msg sur tout le reseau local pour pouvoir r
         time.sleep(1)
 
 
-if __name__ == '__main__':  # pour empécher de lancer si import  / obligatoire pour multiprocessing
+def serveur(dessin):
     # On va initialiser le serveur d'ecoute
     host = ""
     port = 5000
@@ -34,12 +34,16 @@ if __name__ == '__main__':  # pour empécher de lancer si import  / obligatoire 
 
     print("Connection de: " + str(addr))
     while True:
-        data = conn.recv(1024).decode()  # recoit et decode les 1024 carac (bloqué)
-        if not data:
+        pos = dessin.get()
+        conn.send(pos)
+        if pos == b'\xff\xff\xff\xff':  # fin
             break
-        print("msg recu : " + data)
-
-        print("on envoie : " + data.upper())
-        conn.send(data.upper().encode())
-
+        # data = conn.recv(1024).decode()  # recoit et decode les 1024 carac (bloqué)
+        # if not data:  # Si client ferme la conn
+        #     break
+        # print("msg recu : " + data)
+        #
+        # print("on envoie : " + data.upper())
+        # conn.send(data.upper().encode())
     conn.close()
+    print("conn fermée")
