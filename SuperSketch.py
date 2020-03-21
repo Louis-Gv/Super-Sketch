@@ -106,8 +106,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     paddingbtnJoinOmbre.fill((0, 0, 0))
     pospaddingbtnJoin = paddingbtnJoin.get_rect(center=(int(largeur / 2), 680))
 
-    textPseudo = police.render('Entrez votre pseudo : ', True,
-                               (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
+    textPseudo = police.render('Entrez votre pseudo : ', True, (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
     pseudo = ''
 
     procServeur = Process()  # on initialise le process pour pouvoir le fermer
@@ -120,9 +119,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     lockServ = Lock()
     nbClient = Value('i', 0)
     etat = 0
+    play = pygame.image.load("img/lobby/play.png")
+    posplay = play.get_rect(topright=(largeur - 15, 15))
+    txtAttente = police.render('On le attend le départ Les Filles', True, (0, 0, 0))
+
     px = 5000
     py = 5000
-
 
     # Déclaration de la fonction de sélection de la couleur
     def selection(pbt, cbt):
@@ -227,8 +229,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     barre = '|'
                 else:
                     barre = ''
-                textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True,
-                                           (0, 0, 0))  # txt,antialiasing,coul
+                textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textPseudo, (400, 530))
 
             for event in pygame.event.get():
@@ -253,19 +254,19 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
             clock.tick(80)  # limite 80fps
             pygame.display.flip()  # Rafraichissement écran acceuil avec toutes nos modifs
-        else:
+        else:  # pas dans l'acceuil
             if init:
-                if host:
+                if host:  # a remplacer
                     procClient = Process(target=client.client, args=(0, dessin, pseudo))
                     procClient.start()
                     while not start and not fini:
                         pos = pygame.mouse.get_pos()
 
                         fenetre.fill((255, 255, 255))  # fond blanc
-                        texteConn = police.render(str(nbClient.value) + ' connectés', True, (0, 0, 0))
+                        texteConn = police.render(str(nbClient.value) + 'personnes connectés', True, (0, 0, 0))
                         fenetre.blit(texteConn, (0, 0))
 
-                        fenetre.blit(croix, poscroix)
+                        fenetre.blit(play, posplay)
 
                         for event in pygame.event.get():
                             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
@@ -280,10 +281,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                     dessin.put(b'\x11')
                                     etat = b'D'
                                     start = True
-                        for i in range(nbClient.value):
+                                else:
+                                    print('manque un client')
+                        for i in range(nbClient.value):  # Affichage des pseudos connectés
                             print(clients[:])
-                            txtJoueurs = police.render(clients[i * 17 + 1: (i + 1) * 17].strip(b'\0').decode() + ' connecté', True, (0, 0, 0))
-                            fenetre.blit(txtJoueurs, (50 * (i + 1), 50 * (i + 1)))
+                            txtJoueurs = police.render(clients[i * 17 + 1: (i + 1) * 17].strip(b'\0').decode() + ' est connecté', True, (0, 0, 0))
+                            fenetre.blit(txtJoueurs, (50 * (i + 1), 50))
                         pygame.display.flip()
                         clock.tick(10)
                     fenetre.fill((255, 255, 255))
@@ -291,10 +294,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     procClient = Process(target=client.client, args=(1, dessin, pseudo))
                     procClient.start()
                     fenetre.fill((255, 255, 255))
-                    txtAttente = police.render('On le attend le départ Les Filles', True, (0, 0, 0))  # A remmetre en haut mais plus tard
                     fenetre.blit(txtAttente, (500, 500))
                     pygame.display.flip()
-                    while dessin.empty():
+                    while dessin.empty():  # attente de l'état
                         fenetre.fill((255, 255, 255))
                         fenetre.blit(txtAttente, (500, 500))
                         for event in pygame.event.get():  # Pour pas que ca freeze durant le get
@@ -302,8 +304,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 fini = True
                         pygame.display.flip()
                         clock.tick(30)
-                    etat = dessin.get()
-                    while dessin.empty():
+                    etat = dessin.get()  # on recupère l'état
+                    while dessin.empty():  # attente du départ
                         fenetre.fill((255, 255, 255))
                         fenetre.blit(txtAttente, (500, 500))
                         for event in pygame.event.get():  # Pour pas que ca freeze durant le get
@@ -311,9 +313,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 fini = True
                         pygame.display.flip()
                         clock.tick(30)
-                    dessin.get()
+                    dessin.get()  # On get le msg de start
                 init = False
-            elif etat == b'D':
+            if etat == b'D':  # Si c'est nous qu'on dessine
+                # ------------------------------------------------------------------------------
                 # Lancement du dessin:
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
@@ -371,13 +374,13 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     ancienpy = py
                 pygame.display.flip()
                 clock.tick(100)
-
-            elif etat == b'L':
-                if not dessin.empty():
-                    data = dessin.get()  # Blocant
+                # ----------------------------------------------------------------------------------------
+            elif etat == b'L':  # Si on regarde le dessin
+                if not dessin.empty():  # On get les nouveaux points
+                    data = dessin.get()  # Blocant -- on décode les infos de pos du client
                     px = int.from_bytes(data[0:2], 'big', signed=False)
                     py = int.from_bytes(data[2:4], 'big', signed=False)
-                    if data == b'\xff\xff\xff\xff':
+                    if data == b'\xff\xff\xff\xff':  # Si on recoit le msg de fermeture
                         print("fermeture")
                         fini = True
 
@@ -387,15 +390,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                         fini = True
 
-                # Faire dessin a partir de px/py
+                # -->Faire dessin a partir de px/py
 
-                txtPos = police.render('px: ' + str(px) + "  py : " + str(py), True, (0, 0, 0))  # A remmetre en haut mais plus tard
+                txtPos = police.render('px: ' + str(px) + "  py : " + str(py), True, (0, 0, 0))
                 fenetre.blit(txtPos, (500, 500))
                 pygame.display.flip()
                 clock.tick(400)
-            else:
-                print(etat)
-
     pygame.quit()
     if procClient.is_alive():
         procClient.terminate()
