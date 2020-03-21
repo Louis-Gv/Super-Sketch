@@ -44,8 +44,6 @@ def client(estDistant, dessin, pseudo):
             dessin.put(data)
             if data == b'\xff\xff\xff\xff':  # fin
                 break
-    elif data == b'\xff':
-        print("fermeture")
     else:
         print(data)
     monSocket.close()

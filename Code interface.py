@@ -4,6 +4,8 @@ import ctypes
 from ctypes import windll
 import time
 
+# --> J'ai mit votre code dans SuperSketch.py
+# PS: Déso pour le mal de crane
 
 # Déclaration de la fonction de sélection de la couleur
 def selection(pbt, cbt):

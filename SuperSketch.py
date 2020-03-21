@@ -269,7 +269,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                         for event in pygame.event.get():
                             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                                nbClient.value = -2
+                                dessin.put(b'\x11')
+                                dessin.put(b'\xff\xff\xff\xff')
                                 fini = True
                             if event.type == MOUSEBUTTONDOWN and poscroix.collidepoint(pos):
                                 if nbClient.value >= 2:
@@ -284,7 +285,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             txtJoueurs = police.render(clients[i * 17 + 1: (i + 1) * 17].strip(b'\0').decode() + ' connecté', True, (0, 0, 0))
                             fenetre.blit(txtJoueurs, (50 * (i + 1), 50 * (i + 1)))
                         pygame.display.flip()
-                        clock.tick(1)
+                        clock.tick(10)
                     fenetre.fill((255, 255, 255))
                 else:
                     procClient = Process(target=client.client, args=(1, dessin, pseudo))
@@ -297,7 +298,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         fenetre.fill((255, 255, 255))
                         fenetre.blit(txtAttente, (500, 500))
                         for event in pygame.event.get():  # Pour pas que ca freeze durant le get
-                            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                            if event.type == QUIT:
                                 fini = True
                         pygame.display.flip()
                         clock.tick(30)
@@ -315,7 +316,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             elif etat == b'D':
                 # Lancement du dessin:
                 for event in pygame.event.get():
-                    if event.type == QUIT:
+                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                         if host:
                             dessin.put(b'\xff\xff\xff\xff')  # 00000000 = fin de la conn
                         fini = True
@@ -360,7 +361,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                 # Détection clique gauche pour effectuer le dessin
 
-                # --> Va falloir faire des segments ou ajouter des cercles entre chaques points car 100fps max pour serv
+                # --> Va falloir faire des segments entre chaques points car 100fps max pour serv
 
                 if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):
                     pygame.draw.circle(fenetre, couleur, (px, py), rayon)
@@ -370,6 +371,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     ancienpy = py
                 pygame.display.flip()
                 clock.tick(100)
+
             elif etat == b'L':
                 if not dessin.empty():
                     data = dessin.get()  # Blocant

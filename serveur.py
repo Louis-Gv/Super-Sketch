@@ -15,9 +15,6 @@ def diffuIpHote():  # Diffusion d'un msg sur tout le reseau local pour pouvoir r
 
 
 def traitement(conn, pipe, nbClient, clients, lockServ, mode):
-    if nbClient.value == -2:  # si ca quitte
-        conn.send(b'\xff')
-        conn.close()
     if mode == 1:  # si dessine
         conn.send(b'\x01')
         pseudo = conn.recv(16)
@@ -31,16 +28,21 @@ def traitement(conn, pipe, nbClient, clients, lockServ, mode):
         nbClient.value += 1
         lockServ.release()
         while True:
-            data = conn.recv(4)
-            for i in range(nbClient.value-1):
-                pipe[i].send(data)
-            if not data:
-                break
+            try:
+                data = conn.recv(4)
+            except ConnectionError:
+                pass
+            else:
+                for i in range(nbClient.value-1):
+                    pipe[i].send(data)
+                if not data:
+                    break
     if mode == 2:  # si ca lit
         conn.send(b'\x02')
         pseudo = conn.recv(16)
         lockServ.acquire()
         clients[nbClient.value * 17] = b'L'
+        idClient=nbClient.value
         y = 0
         for i in range(nbClient.value * 17 + 1, (nbClient.value+1) * 17):
             if y < len(pseudo):
@@ -57,7 +59,11 @@ def traitement(conn, pipe, nbClient, clients, lockServ, mode):
                         emmeteur = i
                         print('emmeteur')
                         break
-            conn.send(element)
+            try:
+                conn.send(element)
+            except ConnectionError:
+                print(str(idClient)+" est parti")
+                break
             if not element:
                 break
     conn.close()
@@ -71,8 +77,6 @@ def serveur(nbClient,clients,lockServ):
     serveurSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     serveurSocket.bind((host, port))
     serveurSocket.listen(5)
-
-
 
     conn1vers2, conn2vers1 = Pipe()
     conn1vers3, conn3vers1 = Pipe()
