@@ -14,31 +14,55 @@ def diffuIpHote():  # Diffusion d'un msg sur tout le reseau local pour pouvoir r
         time.sleep(1)
 
 
-def traitement(conn, pipe, nbClient, mode):
-    nbClient.value += 1
-    if nbClient.value == 100:  # si ca quitte
+def traitement(conn, pipe, nbClient, clients, lockServ, mode):
+    if nbClient.value == -2:  # si ca quitte
         conn.send(b'\xff')
         conn.close()
     if mode == 1:  # si dessine
         conn.send(b'\x01')
-        while nbClient.value < 2:
-            time.sleep(0.05)
+        pseudo = conn.recv(16)
+        lockServ.acquire()
+        clients[nbClient.value*17] = b'D'
+        y = 0
+        for i in range(nbClient.value*17+1, (nbClient.value+1)*17):
+            if y < len(pseudo):
+                clients[i] = pseudo[y]
+            y += 1
+        nbClient.value += 1
+        lockServ.release()
         while True:
             data = conn.recv(4)
-            pipe.send(data)
+            for i in range(nbClient.value-1):
+                pipe[i].send(data)
             if not data:
                 break
     if mode == 2:  # si ca lit
-        print('bruh')
         conn.send(b'\x02')
+        pseudo = conn.recv(16)
+        lockServ.acquire()
+        clients[nbClient.value * 17] = b'L'
+        y = 0
+        for i in range(nbClient.value * 17 + 1, (nbClient.value+1) * 17):
+            if y < len(pseudo):
+                clients[i] = pseudo[y]
+            y += 1
+        nbClient.value += 1
+        lockServ.release()
+        emmeteur = 0
         while True:
-            element = pipe.recv()
+            element = pipe[emmeteur].recv()
+            if element == b'\x11':
+                for i in range(4):
+                    if clients[i*17] == b'D':
+                        emmeteur = i
+                        print('emmeteur')
+                        break
             conn.send(element)
             if not element:
                 break
     conn.close()
 
-def serveur(nbClient):
+def serveur(nbClient,clients,lockServ):
     # On va initialiser le serveur d'ecoute
     host = ""
     port = 5000
@@ -48,26 +72,40 @@ def serveur(nbClient):
     serveurSocket.bind((host, port))
     serveurSocket.listen(5)
 
-    procDiffu = Process(target=diffuIpHote)
-    procDiffu.start()  # Lancement du processus de la diffusion de l'ip
 
 
-    emmeteur1, recepteur1 = Pipe()
-
+    conn1vers2, conn2vers1 = Pipe()
+    conn1vers3, conn3vers1 = Pipe()
+    conn1vers4, conn4vers1 = Pipe()
+    conn2vers3, conn3vers2 = Pipe()
+    conn2vers4, conn4vers2 = Pipe()
+    conn3vers4, conn4vers3 = Pipe()
 
     conn, addr = serveurSocket.accept()
-    print("Got connection 1")
-    process = Process(target=traitement, args=(conn, emmeteur1, nbClient, 1))
+    process = Process(target=traitement, args=(conn, (conn1vers2, conn1vers3, conn1vers4), nbClient, clients, lockServ, 1))
     process.daemon = True
     process.start()
-    print("Started")
 
     conn2, addr2 = serveurSocket.accept()
     print("Got connection 2")
-    process2 = Process(target=traitement, args=(conn2, recepteur1, nbClient, 2))
+    # TODO + if not started
+    process2 = Process(target=traitement, args=(conn2, (conn2vers1, conn2vers3, conn2vers4), nbClient, clients, lockServ, 2))
     process2.daemon = True
     process2.start()
-    print("Started")
+
+    conn3, addr3 = serveurSocket.accept()
+    # TODO + if not started
+    print("Got connection 3")
+    process2 = Process(target=traitement, args=(conn3, (conn3vers1, conn3vers2, conn3vers4), nbClient, clients, lockServ, 2))
+    process2.daemon = True
+    process2.start()
+
+    conn4, addr4 = serveurSocket.accept()
+    # TODO + if not started
+    print("Got connection 4")
+    process2 = Process(target=traitement, args=(conn4, (conn4vers1, conn4vers2, conn4vers3), nbClient, clients, lockServ, 2))
+    process2.daemon = True
+    process2.start()
 
     while True:
         time.sleep(5)

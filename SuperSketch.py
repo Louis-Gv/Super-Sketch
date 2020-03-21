@@ -3,10 +3,12 @@ from pygame.locals import *
 from random import *
 import ctypes
 from ctypes import windll
-from multiprocessing import Process, Queue, Value
+from multiprocessing import Process, Queue, Value, Array, Lock
 import time
 import serveur
 import client
+
+# FAUT FERMER AVEC ECHAP
 
 if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour multiprocessing
     # Etat du menu
@@ -36,7 +38,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     # chargement du logo au centre de l'écran
     logo1 = pygame.image.load("img/lobby/logo1.png")
     logo2 = pygame.image.load("img/lobby/logo2.png")
-    poslogo = logo1.get_rect(center=(int(largeur/2), 100))
+    poslogo = logo1.get_rect(center=(int(largeur / 2), 100))
     fenetre.blit(logo1, poslogo)
 
     nuage = pygame.image.load("img/lobby/nuage.png")
@@ -53,12 +55,11 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     fenetre.blit(soleil, (1645, 22))
 
     croix = pygame.image.load("img/lobby/croix.png")
-    poscroix = croix.get_rect(topright=(largeur-15, 15))
+    poscroix = croix.get_rect(topright=(largeur - 15, 15))
     fenetre.blit(croix, poscroix)
 
     padding = 10  # espace autour du texte des btn
     police = pygame.font.SysFont("roboto-bold", 65)
-
 
     # Pour positionner mes bouttons j'ai recupéré les rectangles de mes objets Surface(des objets qu'on peut blit contenant
     # les pixels a afficher)
@@ -89,7 +90,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
     pospaddingbtnHost = paddingbtnHost.get_rect(center=(int(largeur / 2), 510))
 
-
     # Idem pour le btn rejoindre :
     btnJoin = police.render('Rejoindre Une Partie', True, (0, 0, 0))
     # Trouve le rectangle de la surface
@@ -106,14 +106,22 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     paddingbtnJoinOmbre.fill((0, 0, 0))
     pospaddingbtnJoin = paddingbtnJoin.get_rect(center=(int(largeur / 2), 680))
 
-    textPseudo = police.render('Entrez votre pseudo : ', True, (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
+    textPseudo = police.render('Entrez votre pseudo : ', True,
+                               (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
     pseudo = ''
 
     procServeur = Process()  # on initialise le process pour pouvoir le fermer
+    procDiffu = Process()
     procClient = Process()
     dessin = Queue()
-    init = 0
+    init = True
+    start = False
+    clients = Array('c', 68)
+    lockServ = Lock()
     nbClient = Value('i', 0)
+    etat = 0
+    px = 5000
+    py = 5000
 
 
     # Déclaration de la fonction de sélection de la couleur
@@ -145,6 +153,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             rayon = rayon - 5
         time.sleep(0.1)
         return
+
 
     fond = pygame.image.load("img/fond.png").convert()
     fenetre.blit(fond, (0, 0))
@@ -218,7 +227,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     barre = '|'
                 else:
                     barre = ''
-                textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
+                textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True,
+                                           (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textPseudo, (400, 530))
 
             for event in pygame.event.get():
@@ -230,9 +240,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     if host or join:  # Si une touche est pressée
                         if event.key == pygame.K_RETURN:  # si entrer
                             if host:
-                                procServeur = Process(target=serveur.serveur, args=(nbClient,))  # lancement du serveur dans un processus parallèle
+                                procDiffu = Process(target=serveur.diffuIpHote)
+                                procDiffu.daemon = True
+                                procDiffu.start()  # Lancement du processus de la diffusion de l'ip
+                                procServeur = Process(target=serveur.serveur, args=(
+                                nbClient, clients, lockServ))  # lancement du serveur dans un processus parallèle
                                 procServeur.start()
-                            print(pseudo)
                             acceuil = False  # fin de l'acceuil
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
                             pseudo = pseudo[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
@@ -242,81 +255,129 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             clock.tick(80)  # limite 80fps
             pygame.display.flip()  # Rafraichissement écran acceuil avec toutes nos modifs
         else:
-            if init == 0:
+            if init:
                 if host:
-                    procClient = Process(target=client.client, args=(0, dessin))
+                    procClient = Process(target=client.client, args=(0, dessin, pseudo))
                     procClient.start()
-                    while nbClient.value < 2:
+                    while not start and not fini:
+                        pos = pygame.mouse.get_pos()
+
                         fenetre.fill((255, 255, 255))  # fond blanc
-                        texteConn = police.render(str(nbClient.value)+' connectés', True, (0, 0, 0))
+                        texteConn = police.render(str(nbClient.value) + ' connectés', True, (0, 0, 0))
                         fenetre.blit(texteConn, (0, 0))
+
+                        fenetre.blit(croix, poscroix)
 
                         for event in pygame.event.get():
                             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                                nbClient.value = 100
+                                nbClient.value = -2
                                 fini = True
-
+                            if event.type == MOUSEBUTTONDOWN and poscroix.collidepoint(pos):
+                                if nbClient.value >= 2:
+                                    if procDiffu.is_alive():
+                                        procDiffu.terminate()
+                                        procDiffu.join()
+                                    dessin.put(b'\x11')
+                                    etat = b'D'
+                                    start = True
+                        for i in range(nbClient.value):
+                            print(clients[:])
+                            txtJoueurs = police.render(clients[i * 17 + 1: (i + 1) * 17].strip(b'\0').decode() + ' connecté', True, (0, 0, 0))
+                            fenetre.blit(txtJoueurs, (50 * (i + 1), 50 * (i + 1)))
                         pygame.display.flip()
-                        clock.tick(5)
+                        clock.tick(1)
                     fenetre.fill((255, 255, 255))
                 else:
-                    procClient = Process(target=client.client, args=(1, dessin))
+                    procClient = Process(target=client.client, args=(1, dessin, pseudo))
                     procClient.start()
-                init = 1
-            # Lancement du dessin:
-            for event in pygame.event.get():
-                if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                    if host:
-                        dessin.put(b'\xff\xff\xff\xff')  # 00000000 = fin de la conn
-                    fini = True
+                    fenetre.fill((255, 255, 255))
+                    txtAttente = police.render('On le attend le départ Les Filles', True, (0, 0, 0))  # A remmetre en haut mais plus tard
+                    fenetre.blit(txtAttente, (500, 500))
+                    pygame.display.flip()
+                    etat = dessin.get()
+                    temp = dessin.get()
+                    print(temp)
+                init = False
+            elif etat == b'D':
+                # Lancement du dessin:
+                for event in pygame.event.get():
+                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                        if host:
+                            dessin.put(b'\xff\xff\xff\xff')  # 00000000 = fin de la conn
+                        fini = True
 
-            # Placement des boutons sur l'écran
-            fenetre.blit(fon, (1820, 500))
-            fenetre.blit(fon, (1720, 500))
-            btr = pygame.draw.rect(fenetre, rouge, (1820, 100, 100, 100))
-            btv = pygame.draw.rect(fenetre, vert, (1720, 100, 100, 100))
-            btbl = pygame.draw.rect(fenetre, blanc, (1820, 200, 100, 100))
-            btn = pygame.draw.rect(fenetre, noir, (1720, 200, 100, 100))
-            btm = pygame.draw.rect(fenetre, marron, (1820, 300, 100, 100))
-            btvi = pygame.draw.rect(fenetre, violet, (1720, 300, 100, 100))
-            btbf = pygame.draw.rect(fenetre, bleuf, (1820, 400, 100, 100))
-            btbc = pygame.draw.rect(fenetre, bleuc, (1720, 400, 100, 100))
-            btcg = pygame.draw.circle(fenetre, noir, (1870, 550), 35)  # bouton circulaire gros rayon
-            btcp = pygame.draw.circle(fenetre, noir, (1770, 550), 15)  # bouton circulaire petit rayon
-            # Détection de la position de la souris
-            px, py = pygame.mouse.get_pos()
+                # Placement des boutons sur l'écran
+                fenetre.blit(fon, (1820, 500))
+                fenetre.blit(fon, (1720, 500))
+                btr = pygame.draw.rect(fenetre, rouge, (1820, 100, 100, 100))
+                btv = pygame.draw.rect(fenetre, vert, (1720, 100, 100, 100))
+                btbl = pygame.draw.rect(fenetre, blanc, (1820, 200, 100, 100))
+                btn = pygame.draw.rect(fenetre, noir, (1720, 200, 100, 100))
+                btm = pygame.draw.rect(fenetre, marron, (1820, 300, 100, 100))
+                btvi = pygame.draw.rect(fenetre, violet, (1720, 300, 100, 100))
+                btbf = pygame.draw.rect(fenetre, bleuf, (1820, 400, 100, 100))
+                btbc = pygame.draw.rect(fenetre, bleuc, (1720, 400, 100, 100))
+                btcg = pygame.draw.circle(fenetre, noir, (1870, 550), 35)  # bouton circulaire gros rayon
+                btcp = pygame.draw.circle(fenetre, noir, (1770, 550), 15)  # bouton circulaire petit rayon
+                # Détection de la position de la souris
+                px, py = pygame.mouse.get_pos()
 
-            # Détection du moment quand la souris passe sur les boutons
-            if btbf.collidepoint(px, py):
-                selection(btbf, bleuf)
-            if btr.collidepoint(px, py):
-                selection(btr, rouge)
-            if btv.collidepoint(px, py):
-                selection(btv, vert)
-            if btbl.collidepoint(px, py):
-                selection(btbl, blanc)
-            if btn.collidepoint(px, py):
-                selection(btn, noir)
-            if btm.collidepoint(px, py):
-                selection(btm, marron)
-            if btvi.collidepoint(px, py):
-                selection(btvi, violet)
-            if btbc.collidepoint(px, py):
-                selection(btbc, bleuc)
-            if btcg.collidepoint(px, py):
-                selectioncercle1()
-            if btcp.collidepoint(px, py):
-                selectioncercle2()
+                # Détection du moment quand la souris passe sur les boutons
+                if btbf.collidepoint(px, py):
+                    selection(btbf, bleuf)
+                if btr.collidepoint(px, py):
+                    selection(btr, rouge)
+                if btv.collidepoint(px, py):
+                    selection(btv, vert)
+                if btbl.collidepoint(px, py):
+                    selection(btbl, blanc)
+                if btn.collidepoint(px, py):
+                    selection(btn, noir)
+                if btm.collidepoint(px, py):
+                    selection(btm, marron)
+                if btvi.collidepoint(px, py):
+                    selection(btvi, violet)
+                if btbc.collidepoint(px, py):
+                    selection(btbc, bleuc)
+                if btcg.collidepoint(px, py):
+                    selectioncercle1()
+                if btcp.collidepoint(px, py):
+                    selectioncercle2()
 
-            # Détection clique gauche pour effectuer le dessin
-            if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):
-                pygame.draw.circle(fenetre, couleur, (px, py), rayon)
-                if host:  # peut être se co dessus
-                    dessin.put(px.to_bytes(2, byteorder='big', signed=False) + py.to_bytes(2, byteorder='big', signed=False))
-                ancienpx = px
-                ancienpy = py
-            pygame.display.flip()
-            clock.tick(700)
+                # Détection clique gauche pour effectuer le dessin
+                if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):
+                    pygame.draw.circle(fenetre, couleur, (px, py), rayon)
+                    if host:  # peut être se co dessus
+                        dessin.put(px.to_bytes(2, byteorder='big', signed=False) + py.to_bytes(2, byteorder='big',signed=False))
+                    ancienpx = px
+                    ancienpy = py
+                pygame.display.flip()
+                clock.tick(700)
+            elif etat == b'L':
+                if not dessin.empty():
+                    data = dessin.get()  # Blocant
+                    px = int.from_bytes(data[0:2], 'big', signed=False)
+                    py = int.from_bytes(data[2:4], 'big', signed=False)
+                    if data == b'\xff\xff\xff\xff':
+                        print("fermeture")
+                        fini = True
+                else:
+                    px = 10000
+                    py = 10000
+
+                fenetre.fill((255, 255, 255))
+
+                for event in pygame.event.get():
+                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                        fini = True
+                # Faire dessin a partir de px/py
+
+                txtPos = police.render('px: ' + str(px) + "  py : " + str(py), True, (0, 0, 0))  # A remmetre en haut mais plus tard
+                fenetre.blit(txtPos, (500, 500))
+
+                pygame.display.flip()
+            else:
+                print(etat)
 
     pygame.quit()
     if procClient.is_alive():
