@@ -352,7 +352,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     ancienpx = px
                     ancienpy = py
                 pygame.display.flip()
-                clock.tick(700)
+                clock.tick(330)
             elif etat == b'L':
                 if not dessin.empty():
                     data = dessin.get()  # Blocant
@@ -361,21 +361,19 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     if data == b'\xff\xff\xff\xff':
                         print("fermeture")
                         fini = True
-                else:
-                    px = 10000
-                    py = 10000
 
                 fenetre.fill((255, 255, 255))
 
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                         fini = True
+
                 # Faire dessin a partir de px/py
 
                 txtPos = police.render('px: ' + str(px) + "  py : " + str(py), True, (0, 0, 0))  # A remmetre en haut mais plus tard
                 fenetre.blit(txtPos, (500, 500))
-
                 pygame.display.flip()
+                clock.tick(400)
             else:
                 print(etat)
 
