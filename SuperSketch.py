@@ -243,8 +243,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 procDiffu = Process(target=serveur.diffuIpHote)
                                 procDiffu.daemon = True
                                 procDiffu.start()  # Lancement du processus de la diffusion de l'ip
-                                procServeur = Process(target=serveur.serveur, args=(
-                                nbClient, clients, lockServ))  # lancement du serveur dans un processus parallèle
+                                procServeur = Process(target=serveur.serveur, args=(nbClient, clients, lockServ))  # lancement du serveur dans un processus parallèle
                                 procServeur.start()
                             acceuil = False  # fin de l'acceuil
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
@@ -294,14 +293,29 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     txtAttente = police.render('On le attend le départ Les Filles', True, (0, 0, 0))  # A remmetre en haut mais plus tard
                     fenetre.blit(txtAttente, (500, 500))
                     pygame.display.flip()
+                    while dessin.empty():
+                        fenetre.fill((255, 255, 255))
+                        fenetre.blit(txtAttente, (500, 500))
+                        for event in pygame.event.get():  # Pour pas que ca freeze durant le get
+                            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                                fini = True
+                        pygame.display.flip()
+                        clock.tick(30)
                     etat = dessin.get()
-                    temp = dessin.get()
-                    print(temp)
+                    while dessin.empty():
+                        fenetre.fill((255, 255, 255))
+                        fenetre.blit(txtAttente, (500, 500))
+                        for event in pygame.event.get():  # Pour pas que ca freeze durant le get
+                            if event.type == QUIT:
+                                fini = True
+                        pygame.display.flip()
+                        clock.tick(30)
+                    dessin.get()
                 init = False
             elif etat == b'D':
                 # Lancement du dessin:
                 for event in pygame.event.get():
-                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                    if event.type == QUIT:
                         if host:
                             dessin.put(b'\xff\xff\xff\xff')  # 00000000 = fin de la conn
                         fini = True
@@ -345,14 +359,17 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     selectioncercle2()
 
                 # Détection clique gauche pour effectuer le dessin
+
+                # --> Va falloir faire des segments ou ajouter des cercles entre chaques points car 100fps max pour serv
+
                 if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):
                     pygame.draw.circle(fenetre, couleur, (px, py), rayon)
-                    if host:  # peut être se co dessus
-                        dessin.put(px.to_bytes(2, byteorder='big', signed=False) + py.to_bytes(2, byteorder='big',signed=False))
+                    if host:  # On envoie les données au process
+                        dessin.put(px.to_bytes(2, byteorder='big', signed=False) + py.to_bytes(2, byteorder='big', signed=False))
                     ancienpx = px
                     ancienpy = py
                 pygame.display.flip()
-                clock.tick(330)
+                clock.tick(100)
             elif etat == b'L':
                 if not dessin.empty():
                     data = dessin.get()  # Blocant
