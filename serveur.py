@@ -1,6 +1,6 @@
 import time
 from socket import *
-from multiprocessing import Process, Value, Pipe
+import threading
 
 
 def diffuIpHote():  # Diffusion d'un msg sur tout le reseau local pour pouvoir récupérer l'ip
@@ -14,102 +14,47 @@ def diffuIpHote():  # Diffusion d'un msg sur tout le reseau local pour pouvoir r
         time.sleep(1)
 
 
-def traitement(conn, pipe, nbClient, clients, lockServ, mode):
-    if mode == 1:  # si dessine
-        conn.send(b'\x01')
-        pseudo = conn.recv(16)
-        lockServ.acquire()
-        clients[nbClient.value*17] = b'D'
-        y = 0
-        for i in range(nbClient.value*17+1, (nbClient.value+1)*17):
-            if y < len(pseudo):
-                clients[i] = pseudo[y]
-            y += 1
-        nbClient.value += 1
-        lockServ.release()
-        while True:
-            try:
-                data = conn.recv(4)
-            except ConnectionError:
-                pass
-            else:
-                for i in range(nbClient.value-1):
-                    pipe[i].send(data)
-                if not data:
-                    break
-    if mode == 2:  # si ca lit
-        conn.send(b'\x02')
-        pseudo = conn.recv(16)
-        lockServ.acquire()
-        clients[nbClient.value * 17] = b'L'
-        idClient=nbClient.value
-        y = 0
-        for i in range(nbClient.value * 17 + 1, (nbClient.value+1) * 17):
-            if y < len(pseudo):
-                clients[i] = pseudo[y]
-            y += 1
-        nbClient.value += 1
-        lockServ.release()
-        emmeteur = 0
-        while True:
-            element = pipe[emmeteur].recv()
-            if element == b'\x11':
-                for i in range(4):
-                    if clients[i*17] == b'D':
-                        emmeteur = i
-                        print('emmeteur')
-                        break
-            try:
-                conn.send(element)
-            except ConnectionError:
-                print(str(idClient)+" est parti")
+def serveur():  # C'est juste un truc qui va diffuser tt les msg à tt le monde. En plus ca marche fort
+    def gestionDuClient(conn, idConnThread):  # Dialogue avec le client :
+        while 1:
+            msgClient = conn.recv(200)
+            if msgClient == b'':
                 break
-            if not element:
+            # Faire suivre le message à tous les autres clients :
+            for cle in conn_client:
+                if cle != idConnThread:  # ne pas le renvoyer à l'émetteur
+                    conn_client[cle].send(msgClient)
+            if msgClient.decode()[0] == 'F':
                 break
-    conn.close()
+        # On ferme la connexion et le thread
+        conn.close()  # couper la connexion côté serveur
+        del conn_client[idConnThread]  # supprimer son entrée dans le dictionnaire
 
-def serveur(nbClient,clients,lockServ):
     # On va initialiser le serveur d'ecoute
     host = ""
     port = 5000
 
     serveurSocket = socket()
     serveurSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-    serveurSocket.bind((host, port))
-    serveurSocket.listen(5)
+    try:
+        serveurSocket.bind((host, port))
+    except error:
+        print("Serveur> La liaison du socket à l'adresse choisie a échoué.")
+    else:
+        print("Serveur> prêt, en attente de requêtes ...")
+        serveurSocket.listen(5)
 
-    conn1vers2, conn2vers1 = Pipe()
-    conn1vers3, conn3vers1 = Pipe()
-    conn1vers4, conn4vers1 = Pipe()
-    conn2vers3, conn3vers2 = Pipe()
-    conn2vers4, conn4vers2 = Pipe()
-    conn3vers4, conn4vers3 = Pipe()
-
-    conn, addr = serveurSocket.accept()
-    process = Process(target=traitement, args=(conn, (conn1vers2, conn1vers3, conn1vers4), nbClient, clients, lockServ, 1))
-    process.daemon = True
-    process.start()
-
-    conn2, addr2 = serveurSocket.accept()
-    print("Got connection 2")
-    # TODO + if not started
-    process2 = Process(target=traitement, args=(conn2, (conn2vers1, conn2vers3, conn2vers4), nbClient, clients, lockServ, 2))
-    process2.daemon = True
-    process2.start()
-
-    conn3, addr3 = serveurSocket.accept()
-    # TODO + if not started
-    print("Got connection 3")
-    process2 = Process(target=traitement, args=(conn3, (conn3vers1, conn3vers2, conn3vers4), nbClient, clients, lockServ, 2))
-    process2.daemon = True
-    process2.start()
-
-    conn4, addr4 = serveurSocket.accept()
-    # TODO + if not started
-    print("Got connection 4")
-    process2 = Process(target=traitement, args=(conn4, (conn4vers1, conn4vers2, conn4vers3), nbClient, clients, lockServ, 2))
-    process2.daemon = True
-    process2.start()
-
-    while True:
-        time.sleep(5)
+        # Attente et prise en charge des connexions demandées par les clients :
+        conn_client = {}  # dictionnaire des connexions clients
+        idConn = 1
+        while 1:
+            connexion, adresse = serveurSocket.accept()
+            # Créer un nouvel objet thread pour gérer la connexion :
+            threadClient = threading.Thread(target=gestionDuClient, args=(connexion, idConn))
+            threadClient.start()
+            # Mémoriser la connexion dans le dictionnaire :
+            conn_client[idConn] = connexion
+            print("Serveur> Client " + str(idConn) + " connecté,  adresse IP : " + adresse[0] + ", port : " + str(adresse[1]))
+            # msg de bienvenue
+            # connexion.send("Vous êtes connecté. Envoyez vos messages.".encode())
+            idConn += 1

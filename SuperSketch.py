@@ -2,13 +2,13 @@ import pygame
 from pygame.locals import *
 from random import *
 import ctypes
-from ctypes import windll
-from multiprocessing import Process, Queue, Value, Array, Lock
+from multiprocessing import Process, Pipe
 import time
+# Nos Fichiers
 import serveur
 import client
 
-# FAUT FERMER AVEC ECHAP
+# FAUT FERMER AVEC ECHAP ET PROPREMENT
 
 if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour multiprocessing
     # Etat du menu
@@ -24,8 +24,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
     # caractéristiques de l'écran
     ctypes.windll.user32.SetProcessDPIAware()
-    largeur = windll.user32.GetSystemMetrics(0)
-    hauteur = windll.user32.GetSystemMetrics(1)
+    largeur = ctypes.windll.user32.GetSystemMetrics(0)
+    hauteur = ctypes.windll.user32.GetSystemMetrics(1)
     fenetre = pygame.display.set_mode((largeur, hauteur), pygame.FULLSCREEN)
 
     pygame.display.set_caption("Super-sketch")
@@ -112,12 +112,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     procServeur = Process()  # on initialise le process pour pouvoir le fermer
     procDiffu = Process()
     procClient = Process()
-    dessin = Queue()
+    tunnelParent, tunnelEnfant = Pipe()
     init = True
     start = False
-    clients = Array('c', 68)
-    lockServ = Lock()
-    nbClient = Value('i', 0)
+    joueurs = {}
+    monID = 0
+    roles = {}
     etat = 0
     play = pygame.image.load("img/lobby/play.png")
     posplay = play.get_rect(topright=(largeur - 15, 15))
@@ -244,7 +244,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 procDiffu = Process(target=serveur.diffuIpHote)
                                 procDiffu.daemon = True
                                 procDiffu.start()  # Lancement du processus de la diffusion de l'ip
-                                procServeur = Process(target=serveur.serveur, args=(nbClient, clients, lockServ))  # lancement du serveur dans un processus parallèle
+                                procServeur = Process(target=serveur.serveur)  # lancement du serveur dans un processus parallèle
                                 procServeur.start()
                             acceuil = False  # fin de l'acceuil
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
@@ -257,71 +257,105 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
         else:  # pas dans l'acceuil
             if init:
                 if host:  # a remplacer
-                    procClient = Process(target=client.client, args=(0, dessin, pseudo))
+                    procClient = Process(target=client.client, args=(0, tunnelEnfant, pseudo))
                     procClient.start()
+                    idJoueur = 0
                     while not start and not fini:
+                        if tunnelParent.poll():
+                            data = tunnelParent.recv().decode().split(",")
+                            if data[0] == 'P':
+                                joueurs[idJoueur] = data[1]
+                                if data[1] == pseudo:  # on recupère notre ID
+                                    monID = idJoueur
+                                idJoueur += 1
+                            elif data[0] == 'F':
+                                print("Déconnexion d'un joueur a fait planté")
+                                fini = True
                         pos = pygame.mouse.get_pos()
 
                         fenetre.fill((255, 255, 255))  # fond blanc
-                        texteConn = police.render(str(nbClient.value) + 'personnes connectés', True, (0, 0, 0))
+                        texteConn = police.render(str(len(joueurs)) + ' personnes connectés', True, (0, 0, 0))
                         fenetre.blit(texteConn, (0, 0))
 
                         fenetre.blit(play, posplay)
 
                         for event in pygame.event.get():
-                            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                                dessin.put(b'\x11')
-                                dessin.put(b'\xff\xff\xff\xff')
-                                fini = True
                             if event.type == MOUSEBUTTONDOWN and poscroix.collidepoint(pos):
-                                if nbClient.value >= 2:
+                                if len(joueurs) >= 2:
                                     if procDiffu.is_alive():
                                         procDiffu.terminate()
                                         procDiffu.join()
-                                    dessin.put(b'\x11')
-                                    etat = b'D'
+                                    tableauJoueur = "T"
+                                    idD = choice(list(joueurs.keys()))
+                                    if idD == monID:
+                                        etat = 'D'
+                                    else:
+                                        etat = 'L'
+                                    for idTableauJoueur in joueurs:  # Affichage des pseudos connectés
+                                        tableauJoueur = tableauJoueur + "," + str(idTableauJoueur) + ";" + joueurs[idTableauJoueur] + ";"
+                                        if idTableauJoueur == idD:
+                                            roles[idTableauJoueur] = 'D'
+                                            tableauJoueur += 'D'
+                                        else:
+                                            roles[idTableauJoueur] = 'L'
+                                            tableauJoueur += 'L'
+                                    tunnelParent.send(tableauJoueur.encode())
                                     start = True
                                 else:
                                     print('manque un client')
-                        for i in range(nbClient.value):  # Affichage des pseudos connectés
-                            print(clients[:])
-                            txtJoueurs = police.render(clients[i * 17 + 1: (i + 1) * 17].strip(b'\0').decode() + ' est connecté', True, (0, 0, 0))
-                            fenetre.blit(txtJoueurs, (50 * (i + 1), 50))
+                            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                                tunnelParent.send('F'.encode())
+                                fini = True
+                        yMsg = 60
+                        for idJoueurFor in joueurs:  # Affichage des pseudos connectés
+                            txtJoueurs = police.render(joueurs[idJoueurFor] + ' est connecté', True, (0, 0, 0))
+                            fenetre.blit(txtJoueurs, (60, yMsg))
+                            yMsg += 60
                         pygame.display.flip()
                         clock.tick(10)
                     fenetre.fill((255, 255, 255))
                 else:
-                    procClient = Process(target=client.client, args=(1, dessin, pseudo))
+                    procClient = Process(target=client.client, args=(1, tunnelEnfant, pseudo))
                     procClient.start()
-                    fenetre.fill((255, 255, 255))
-                    fenetre.blit(txtAttente, (500, 500))
-                    pygame.display.flip()
-                    while dessin.empty():  # attente de l'état
+                    data = '0'
+                    while not fini:  # attente de l'état
                         fenetre.fill((255, 255, 255))
+                        if tunnelParent.poll():
+                            data = tunnelParent.recv().decode().split(",")
+                            if data[0] == 'T':
+                                data = data[1:]  # On enlève 'T'
+                                for joueur in data:
+                                    infos = joueur.split(";")
+                                    joueurs[int(infos[0])] = infos[1]
+                                    roles[int(infos[0])] = infos[2]
+                                    if infos[1] == pseudo:
+                                        monID = infos[0]
+                                        etat = infos[2]
+                                print(joueurs, roles, etat)
+                                break
+                            elif data[0] == 'F':
+                                print("Déconnexion d'un joueur a fait planté")
+                                fini = True
                         fenetre.blit(txtAttente, (500, 500))
                         for event in pygame.event.get():  # Pour pas que ca freeze durant le get
-                            if event.type == QUIT:
+                            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                                tunnelParent.send('F'.encode())
                                 fini = True
                         pygame.display.flip()
-                        clock.tick(30)
-                    etat = dessin.get()  # on recupère l'état
-                    while dessin.empty():  # attente du départ
-                        fenetre.fill((255, 255, 255))
-                        fenetre.blit(txtAttente, (500, 500))
-                        for event in pygame.event.get():  # Pour pas que ca freeze durant le get
-                            if event.type == QUIT:
-                                fini = True
-                        pygame.display.flip()
-                        clock.tick(30)
-                    dessin.get()  # On get le msg de start
                 init = False
-            if etat == b'D':  # Si c'est nous qu'on dessine
+            if etat == 'D':  # Si c'est nous qu'on dessine
                 # ------------------------------------------------------------------------------
+                if tunnelParent.poll():  # On get les nouveaux points
+                    data = tunnelParent.recv().decode().split(",")
+                    if data[0] == 'F':
+                        print(joueurs[int(data[1])] + " est parti")
+                        del joueurs[int(data[1])]
+                        del roles[int(data[1])]
+
                 # Lancement du dessin:
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                        if host:
-                            dessin.put(b'\xff\xff\xff\xff')  # 00000000 = fin de la conn
+                        tunnelParent.send(("F," + str(monID)).encode())
                         fini = True
 
                 # Placement des boutons sur l'écran
@@ -368,26 +402,28 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                 if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):
                     pygame.draw.circle(fenetre, couleur, (px, py), rayon)
-                    if host:  # On envoie les données au process
-                        dessin.put(px.to_bytes(2, byteorder='big', signed=False) + py.to_bytes(2, byteorder='big', signed=False))
+                    tunnelParent.send(('D,' + str(px) + "," + str(py)).encode())
                     ancienpx = px
                     ancienpy = py
                 pygame.display.flip()
                 clock.tick(100)
                 # ----------------------------------------------------------------------------------------
-            elif etat == b'L':  # Si on regarde le dessin
-                if not dessin.empty():  # On get les nouveaux points
-                    data = dessin.get()  # Blocant -- on décode les infos de pos du client
-                    px = int.from_bytes(data[0:2], 'big', signed=False)
-                    py = int.from_bytes(data[2:4], 'big', signed=False)
-                    if data == b'\xff\xff\xff\xff':  # Si on recoit le msg de fermeture
-                        print("fermeture")
-                        fini = True
+            elif etat == 'L':  # Si on regarde le dessin
+                if tunnelParent.poll():  # On get les nouveaux points
+                    data = tunnelParent.recv().decode().split(",")
+                    if data[0] == 'D':
+                        px = int(data[1])
+                        py = int(data[2])
+                    elif data[0] == 'F':
+                        print(joueurs[int(data[1])] + " est parti")
+                        del joueurs[int(data[1])]
+                        del roles[int(data[1])]
 
                 fenetre.fill((255, 255, 255))
 
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                        tunnelParent.send(("F," + str(monID)).encode())
                         fini = True
 
                 # -->Faire dessin a partir de px/py
@@ -397,9 +433,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 pygame.display.flip()
                 clock.tick(400)
     pygame.quit()
-    if procClient.is_alive():
-        procClient.terminate()
-        procClient.join()
+    procClient.join()
     if procServeur.is_alive():
         procServeur.terminate()  # ferme le serveur
         procServeur.join()
