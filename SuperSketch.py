@@ -403,12 +403,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 # --> Va falloir faire des segments entre chaques points car 100fps max pour serv
 
                 if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):
-                    pygame.draw.circle(fenetre, couleur, (px, py), rayon)
+                    pygame.draw.line(fenetre, couleur, (ancienpx, ancienpy), (px, py), rayon)
                     tunnelParent.send(('D,' + str(px) + "," + str(py)+","+str(couleur[0])+";"+str(couleur[1])+";"+str(couleur[2])+","+str(rayon)).encode())
                     ancienpx = px
                     ancienpy = py
                 pygame.display.flip()
-                clock.tick(100)
+                clock.tick(1000)
                 # ----------------------------------------------------------------------------------------
             elif etat == 'L':  # Si on regarde le dessin
                 if tunnelParent.poll():  # On get les nouveaux points
@@ -437,10 +437,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 # -->Faire dessin a partir de px/py
 
                 
-                pygame.draw.circle(fenetre, couleur, (px, py), rayon)
+                pygame.draw.line(fenetre, couleur, (ancienpx, ancienpy), (px, py), rayon)
                 
                 pygame.display.flip()
-                clock.tick(400)
+                clock.tick(1000)
     pygame.quit()
     procClient.join()
     if procServeur.is_alive():
