@@ -14,8 +14,9 @@ def diffuIpHote():  # Diffusion d'un msg sur tout le reseau local pour pouvoir r
         time.sleep(1)
 
 
-def serveur():  # C'est juste un truc qui va diffuser tt les msg à tt le monde. En plus ca marche fort
-    def gestionDuClient(conn, idConnThread):  # Dialogue avec le client :
+def serveur():  # Process qui va rediffuser les messages à tout les autres clients
+    def gestionDuClient(conn, idConnThread):  # Thread de dialogue avec un client :
+        # Ce thread a accès à la mémoire du process
         while 1:
             msgClient = conn.recv(200)
             if msgClient == b'':
@@ -55,6 +56,4 @@ def serveur():  # C'est juste un truc qui va diffuser tt les msg à tt le monde.
             # Mémoriser la connexion dans le dictionnaire :
             conn_client[idConn] = connexion
             print("Serveur> Client " + str(idConn) + " connecté,  adresse IP : " + adresse[0] + ", port : " + str(adresse[1]))
-            # msg de bienvenue
-            # connexion.send("Vous êtes connecté. Envoyez vos messages.".encode())
             idConn += 1
