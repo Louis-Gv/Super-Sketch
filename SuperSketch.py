@@ -411,7 +411,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):
                     pygame.draw.circle(fenetre, couleur, (px, py), rayon)
                     tunnelParent.send(('D,' + str(px) + "," + str(py)+","+str(couleur[0])+";"+str(couleur[1])+";"+str(couleur[2])+","+str(rayon) + ",").encode())
-                    # "D,875,745,45;75;0,10"
+                    # "D,875,745,45;75;0,10,"
                     ancienpx = px
                     ancienpy = py
                 pygame.display.flip()
@@ -426,11 +426,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         couleur = data[3].split(";")
                         couleur = tuple(map(int, couleur))
                         rayon = int(data[4])
-                        print(data)
 
                     elif data[0] == 'F':
                         print(joueurs[int(data[1])] + " est parti")
-                        del joueurs[int(data[1])]
+                        del joueurs[int(data[1])]  # On supprime le joueur
                         del roles[int(data[1])]
 
                 for event in pygame.event.get():
@@ -438,16 +437,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         tunnelParent.send(("F," + str(monID)).encode())
                         fini = True
 
-<<<<<<< HEAD
-
-                # -->Faire dessin a partir de px/py
-
-                pygame.draw.circle(fenetre, couleur, (px, py), rayon)              
-=======
                 pygame.draw.circle(fenetre, couleur, (px, py), rayon)                
->>>>>>> b8c93635f705025650fea91cd08394c5dfd6d9b1
                 pygame.display.flip()
-                clock.tick(300)
+                clock.tick(400)
     pygame.quit()
     procClient.join()
     if procServeur.is_alive():
