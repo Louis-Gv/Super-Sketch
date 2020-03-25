@@ -136,7 +136,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
         else:
             fenetre.blit(pal2, pbt)
         if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de couleur lors d'un clic gauche
-            couleur = cbt
+            couleur = cbt           
         return
 
 
@@ -343,7 +343,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 fini = True
                         pygame.display.flip()
                 init = False
-            if etat == 'D':  # Si c'est nous qu'on dessine
+            if etat == 'D':  # Si c'est nous qui dessine
                 # ------------------------------------------------------------------------------
                 if tunnelParent.poll():  # On get les nouveaux points
                     data = tunnelParent.recv().decode().split(",")
@@ -419,7 +419,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         del joueurs[int(data[1])]
                         del roles[int(data[1])]
 
-                fenetre.fill((255, 255, 255))
+                
 
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
@@ -428,8 +428,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                 # -->Faire dessin a partir de px/py
 
-                txtPos = police.render('px: ' + str(px) + "  py : " + str(py), True, (0, 0, 0))
-                fenetre.blit(txtPos, (500, 500))
+                
+                pygame.draw.circle(fenetre, couleur, (px, py), rayon)
+                
                 pygame.display.flip()
                 clock.tick(400)
     pygame.quit()
