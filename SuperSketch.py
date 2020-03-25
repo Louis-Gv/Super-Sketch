@@ -135,7 +135,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             fenetre.blit(pal1, pbt)
         else:
             fenetre.blit(pal2, pbt)
-        if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de couleur lors d'un clic
+        if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de couleur lors d'un clic gauche
             couleur = cbt
         return
 
