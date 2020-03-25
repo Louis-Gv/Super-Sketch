@@ -125,7 +125,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
     play = pygame.image.load("img/lobby/play.png")
     posplay = play.get_rect(topright=(largeur - 15, 15))
-    txtAttente = police.render('On le attend le départ', True, (0, 0, 0))
+    txtAttente = police.render("En attente de l'hote", True, (0, 0, 0))
 
     px = 5000
     py = 5000
@@ -437,12 +437,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         tunnelParent.send(("F," + str(monID)).encode())
                         fini = True
 
-<<<<<<< HEAD
-                # -->Faire dessin a partir de px/py
-=======
-                pygame.draw.circle(fenetre, couleur, (px, py), rayon)
->>>>>>> 81292c29d1eea644f4dac4a7e57497392312f0e8
-                
                 pygame.draw.circle(fenetre, couleur, (px, py), rayon)                
                 pygame.display.flip()
                 clock.tick(500)
