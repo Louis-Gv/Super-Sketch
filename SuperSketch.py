@@ -153,6 +153,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
         if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de rayon lors d'un clic
             rayon = rayon - 5
+            if rayon < 5:
+                rayon=rayon+10
         time.sleep(0.1)
         return
 
