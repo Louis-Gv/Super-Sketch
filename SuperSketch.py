@@ -410,7 +410,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                 if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):
                     pygame.draw.circle(fenetre, couleur, (px, py), rayon)
-                    tunnelParent.send(('D,' + str(px) + "," + str(py)+","+str(couleur[0])+";"+str(couleur[1])+";"+str(couleur[2])+","+str(rayon)).encode())
+                    tunnelParent.send(('D,' + str(px) + "," + str(py)+","+str(couleur[0])+";"+str(couleur[1])+";"+str(couleur[2])+","+str(rayon) + ",").encode())
                     # "D,875,745,45;75;0,10"
                     ancienpx = px
                     ancienpy = py
