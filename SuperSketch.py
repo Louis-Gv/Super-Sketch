@@ -408,7 +408,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     ancienpx = px
                     ancienpy = py
                 pygame.display.flip()
-                clock.tick(1000)
+                clock.tick(400)
                 # ----------------------------------------------------------------------------------------
             elif etat == 'L':  # Si on regarde le dessin
                 if tunnelParent.poll():  # On get les nouveaux points
@@ -435,12 +435,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         fini = True
 
                 # -->Faire dessin a partir de px/py
-
                 
-                pygame.draw.circle(fenetre, couleur, (px, py), rayon)
-                
+                pygame.draw.circle(fenetre, couleur, (px, py), rayon)                
                 pygame.display.flip()
-                clock.tick(1000)
+                clock.tick(500)
     pygame.quit()
     procClient.join()
     if procServeur.is_alive():
