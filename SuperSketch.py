@@ -402,7 +402,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                 if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):
                     pygame.draw.circle(fenetre, couleur, (px, py), rayon)
-                    tunnelParent.send(('D,' + str(px) + "," + str(py)).encode())
+                    tunnelParent.send(('D,' + str(px) + "," + str(py)+","+str(couleur[0])+";"+str(couleur[1])+";"+str(couleur[2])+","+str(rayon)).encode())
                     ancienpx = px
                     ancienpy = py
                 pygame.display.flip()
@@ -414,12 +414,18 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     if data[0] == 'D':
                         px = int(data[1])
                         py = int(data[2])
+                        # couleur = tuple(map(int, data[3].spilt(";")))
+                        rayon = int(data[4])
+                        couleur = data[3].split(";")
+                        couleur = tuple(map(int, couleur))
+                        print(couleur)
+                        print(rayon)
+
                     elif data[0] == 'F':
                         print(joueurs[int(data[1])] + " est parti")
                         del joueurs[int(data[1])]
                         del roles[int(data[1])]
 
-                
 
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
