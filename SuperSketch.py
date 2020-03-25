@@ -35,6 +35,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     clock = pygame.time.Clock()
     idFrame = 0
 
+    # INITIALISATION :
+    # - Partie accueil
+
     # chargement du logo au centre de l'écran
     logo1 = pygame.image.load("img/lobby/logo1.png")
     logo2 = pygame.image.load("img/lobby/logo2.png")
@@ -109,23 +112,25 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     textPseudo = police.render('Entrez votre pseudo : ', True, (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
     pseudo = ''
 
-    procServeur = Process()  # on initialise le process pour pouvoir le fermer
+    procServeur = Process()  # on initialise les process pour pouvoir les fermer
     procDiffu = Process()
     procClient = Process()
-    tunnelParent, tunnelEnfant = Pipe()
+    tunnelParent, tunnelEnfant = Pipe()  # Tunnel de données entre le Process principal et le Process client
     init = True
     start = False
     joueurs = {}
     monID = 0
     roles = {}
     etat = 0
+
     play = pygame.image.load("img/lobby/play.png")
     posplay = play.get_rect(topright=(largeur - 15, 15))
-    txtAttente = police.render('On le attend le départ Les Filles', True, (0, 0, 0))
+    txtAttente = police.render('On le attend le départ', True, (0, 0, 0))
 
     px = 5000
     py = 5000
 
+    # - Partie dessin
     # Déclaration de la fonction de sélection de la couleur
     def selection(pbt, cbt):
         global couleur  # Définition de variable globale du programme
@@ -177,8 +182,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
     couleur = noir
     rayon = 10
-    ancienpx = 2000  # hors écran
-    ancienpy = 2000
+    ancienpx = 2500  # hors écran
+    ancienpy = 2500
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
@@ -246,8 +251,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 procDiffu = Process(target=serveur.diffuIpHote)
                                 procDiffu.daemon = True
                                 procDiffu.start()  # Lancement du processus de la diffusion de l'ip
-                                procServeur = Process(target=serveur.serveur)  # lancement du serveur dans un processus parallèle
-                                procServeur.start()
+                                procServeur = Process(target=serveur.serveur)
+                                procServeur.start()  # lancement du serveur dans un processus parallèle
                             acceuil = False  # fin de l'acceuil
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
                             pseudo = pseudo[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
@@ -258,14 +263,14 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             pygame.display.flip()  # Rafraichissement écran acceuil avec toutes nos modifs
         else:  # pas dans l'acceuil
             if init:
-                if host:  # a remplacer
+                if host:
                     procClient = Process(target=client.client, args=(0, tunnelEnfant, pseudo))
-                    procClient.start()
+                    procClient.start()  # Lancement du client
                     idJoueur = 0
                     while not start and not fini:
-                        if tunnelParent.poll():
+                        if tunnelParent.poll():  # Si tunnel pas vide
                             data = tunnelParent.recv().decode().split(",")
-                            if data[0] == 'P':
+                            if data[0] == 'P':  # Si on recoit un pseudo
                                 joueurs[idJoueur] = data[1]
                                 if data[1] == pseudo:  # on recupère notre ID
                                     monID = idJoueur
@@ -293,7 +298,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                         etat = 'D'
                                     else:
                                         etat = 'L'
-                                    for idTableauJoueur in joueurs:  # Affichage des pseudos connectés
+                                    for idTableauJoueur in joueurs:  # Envoi de tout les pseudos + Roles
                                         tableauJoueur = tableauJoueur + "," + str(idTableauJoueur) + ";" + joueurs[idTableauJoueur] + ";"
                                         if idTableauJoueur == idD:
                                             roles[idTableauJoueur] = 'D'
@@ -301,6 +306,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                         else:
                                             roles[idTableauJoueur] = 'L'
                                             tableauJoueur += 'L'
+                                    # "T,0;Michel;L,1;Marcel;D,2;Jean;L" == T,id;pseudo;role
                                     tunnelParent.send(tableauJoueur.encode())
                                     start = True
                                 else:
@@ -324,10 +330,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         fenetre.fill((255, 255, 255))
                         if tunnelParent.poll():
                             data = tunnelParent.recv().decode().split(",")
-                            if data[0] == 'T':
+                            if data[0] == 'T':  # On va décoder les infos des joueurs
                                 data = data[1:]  # On enlève 'T'
                                 for joueur in data:
-                                    infos = joueur.split(";")
+                                    infos = joueur.split(";")  # 0;Marcel;L
                                     joueurs[int(infos[0])] = infos[1]
                                     roles[int(infos[0])] = infos[2]
                                     if infos[1] == pseudo:
@@ -405,6 +411,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):
                     pygame.draw.circle(fenetre, couleur, (px, py), rayon)
                     tunnelParent.send(('D,' + str(px) + "," + str(py)+","+str(couleur[0])+";"+str(couleur[1])+";"+str(couleur[2])+","+str(rayon)).encode())
+                    # "D,875,745,45;75;0,10"
                     ancienpx = px
                     ancienpy = py
                 pygame.display.flip()
@@ -413,28 +420,28 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             elif etat == 'L':  # Si on regarde le dessin
                 if tunnelParent.poll():  # On get les nouveaux points
                     data = tunnelParent.recv().decode().split(",")
-                    if data[0] == 'D':
+                    if data[0] == 'D':  # Si c'est un dessin, on décode les infos
                         px = int(data[1])
                         py = int(data[2])
-                        # couleur = tuple(map(int, data[3].spilt(";")))
-                        rayon = int(data[4])
                         couleur = data[3].split(";")
                         couleur = tuple(map(int, couleur))
-                        print(couleur)
-                        print(rayon)
+                        rayon = int(data[4])
 
                     elif data[0] == 'F':
                         print(joueurs[int(data[1])] + " est parti")
                         del joueurs[int(data[1])]
                         del roles[int(data[1])]
 
-
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                         tunnelParent.send(("F," + str(monID)).encode())
                         fini = True
 
+<<<<<<< HEAD
                 # -->Faire dessin a partir de px/py
+=======
+                pygame.draw.circle(fenetre, couleur, (px, py), rayon)
+>>>>>>> 81292c29d1eea644f4dac4a7e57497392312f0e8
                 
                 pygame.draw.circle(fenetre, couleur, (px, py), rayon)                
                 pygame.display.flip()
