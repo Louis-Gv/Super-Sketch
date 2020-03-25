@@ -415,7 +415,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     ancienpx = px
                     ancienpy = py
                 pygame.display.flip()
-                clock.tick(400)
+                clock.tick(200)
                 # ----------------------------------------------------------------------------------------
             elif etat == 'L':  # Si on regarde le dessin
                 if tunnelParent.poll():  # On get les nouveaux points
@@ -426,6 +426,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         couleur = data[3].split(";")
                         couleur = tuple(map(int, couleur))
                         rayon = int(data[4])
+                        print(data)
 
                     elif data[0] == 'F':
                         print(joueurs[int(data[1])] + " est parti")
@@ -437,15 +438,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         tunnelParent.send(("F," + str(monID)).encode())
                         fini = True
 
-<<<<<<< HEAD
+
                 # -->Faire dessin a partir de px/py
-=======
-                pygame.draw.circle(fenetre, couleur, (px, py), rayon)
->>>>>>> 81292c29d1eea644f4dac4a7e57497392312f0e8
-                
-                pygame.draw.circle(fenetre, couleur, (px, py), rayon)                
+
+                pygame.draw.circle(fenetre, couleur, (px, py), rayon)              
                 pygame.display.flip()
-                clock.tick(500)
+                clock.tick(300)
     pygame.quit()
     procClient.join()
     if procServeur.is_alive():
