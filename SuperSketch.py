@@ -380,6 +380,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 # Placement des boutons sur l'écran
                 fenetre.blit(fon, (1820, 500))
                 fenetre.blit(fon, (1720, 500))
+                fonpal = pygame.draw.rect(fenetre, blanc, (1720,100, 200 ,980))
                 btr = pygame.draw.rect(fenetre, rouge, (1820, 100, 100, 100))
                 btv = pygame.draw.rect(fenetre, vert, (1720, 100, 100, 100))
                 btbl = pygame.draw.rect(fenetre, blanc, (1820, 200, 100, 100))
@@ -481,7 +482,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     elif data[0] == 't':
                         print(data)
                         listmsg.append(joueurs[int(data[1])] + " : " + data[2])
-                        
+                fonpal = pygame.draw.rect(fenetre, blanc, (1720,100, 200 ,980))    
                 tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))
                 ligne = pygame.draw.rect(fenetre, noir, (390, 0, 10, 980))
                 ligne2 = pygame.draw.rect(fenetre, noir, (0, 970, 1920, 10))

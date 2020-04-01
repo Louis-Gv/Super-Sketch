@@ -66,11 +66,14 @@ bleuc = (38, 188, 254)
 violet = (238, 130, 238)
 marron = (88, 41, 0)
 police = pygame.font.SysFont("roboto-bold", 65)
-police2 = pygame.font.SysFont("roboto-bold", 45)
+police2 = pygame.font.SysFont("roboto-bold", 35)
 MotEcrit=''
 listecoord=[(50,200),(50,250),(50,300),(50,350),(50,400),(50,450),(50,500),(50,550),(50,600),(50,650)]
 listmot=[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']
-
+time=0
+a=pygame.time.Clock()
+time=100000
+timeaff='100'
 
 press = False
 couleur = noir
@@ -93,16 +96,16 @@ while continuer:
                 
             elif len(MotEcrit) < 16:  # 16 caractères max
                 MotEcrit = MotEcrit+event.unicode
-            
 
-    idFrame = (idFrame + 1) % 95
-    pygame.draw.rect(fenetre, bleuc, (0,0, 400,1080))
-    pygame.draw.rect(fenetre, bleuc, (0,980, 1920,100))
+
+    a.tick()
+    
 
     # Placement des boutons sur l'écran
 
     fenetre.blit(fon, (1820, 500))
     fenetre.blit(fon, (1720, 500))
+    fonpal = pygame.draw.rect(fenetre, blanc, (1720,100, 200 ,980))
     btr = pygame.draw.rect(fenetre, rouge, (1820, 100, 100, 100))
     btv = pygame.draw.rect(fenetre, vert, (1720, 100, 100, 100))
     btbl = pygame.draw.rect(fenetre, blanc, (1820, 200, 100, 100))
@@ -129,6 +132,7 @@ while continuer:
     souligne = pygame.draw.rect(fenetre, noir,(10, 50, 340, 5))
     ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
     entete = pygame.draw.rect(fenetre, gris, (400,0,1920,100))
+
     
     # Détection de la position de la souris
     px, py = pygame.mouse.get_pos()
@@ -170,7 +174,10 @@ while continuer:
     fenetre.blit(textMotEcrit, (50, 1000))
     textJoueur = police.render('joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
     fenetre.blit(textJoueur, (10, 0))
-  
+    temps = police2.render('temps restant : ', True, (0, 0, 0))
+    temps2 = police2.render(timeaff + ' s', True, (0, 0, 0))
+    fenetre.blit(temps, (1720, 600))
+    fenetre.blit(temps2, (1720,630))
     idFrame = (idFrame + 0.1) % 40
     if idFrame < 20:
         poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
@@ -178,8 +185,13 @@ while continuer:
     else:
         poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
         fenetre.blit(logo2, poslogo)
+
         
+        time=time-2*a.get_time()
+        times=time/1000
+        timeaff=str(int(times))
+
     pygame.display.update()
     clock.tick(300)
-
+    
 pygame.quit()
