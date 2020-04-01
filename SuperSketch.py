@@ -109,7 +109,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     paddingbtnJoinOmbre.fill((0, 0, 0))
     pospaddingbtnJoin = paddingbtnJoin.get_rect(center=(int(largeur / 2), 680))
 
-    textPseudo = police.render('Entrez votre pseudo : ', True, (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
+    textPseudo = police.render('Entrez votre pseudo : ', True,
+                               (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
     pseudo = ''
 
     procServeur = Process()  # on initialise les process pour pouvoir les fermer
@@ -130,6 +131,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     px = 5000
     py = 5000
 
+
     # - Partie dessin
     # Déclaration de la fonction de sélection de la couleur
     def selection(pbt, cbt):
@@ -141,7 +143,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
         else:
             fenetre.blit(pal2, pbt)
         if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de couleur lors d'un clic gauche
-            couleur = cbt           
+            couleur = cbt
         return
 
 
@@ -159,7 +161,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
         if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de rayon lors d'un clic
             rayon = rayon - 5
             if rayon < 5:
-                rayon=rayon+10
+                rayon = rayon + 10
         time.sleep(0.1)
         return
 
@@ -180,10 +182,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     violet = (238, 130, 238)
     marron = (88, 41, 0)
     police2 = pygame.font.SysFont("roboto-bold", 45)
-    MotEcrit=''
-    listecoord=[(50,200),(50,250),(50,300),(50,350),(50,400),(50,450),(50,500),(50,550),(50,600),(50,650)]
-    listmot=[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']
- 
+    motEcrit = ''
+    listecoord = [(50, 200), (50, 250), (50, 300), (50, 350), (50, 400), (50, 450), (50, 500), (50, 550), (50, 600),
+                  (50, 650)]
+    listmsg = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
 
     couleur = noir
     rayon = 10
@@ -241,7 +243,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     barre = '|'
                 else:
                     barre = ''
-                textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
+                textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True,
+                                           (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textPseudo, (400, 530))
 
             for event in pygame.event.get():
@@ -304,7 +307,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                     else:
                                         etat = 'L'
                                     for idTableauJoueur in joueurs:  # Envoi de tout les pseudos + Roles
-                                        tableauJoueur = tableauJoueur + "," + str(idTableauJoueur) + ";" + joueurs[idTableauJoueur] + ";"
+                                        tableauJoueur = tableauJoueur + "," + str(idTableauJoueur) + ";" + joueurs[
+                                            idTableauJoueur] + ";"
                                         if idTableauJoueur == idD:
                                             roles[idTableauJoueur] = 'D'
                                             tableauJoueur += 'D'
@@ -364,13 +368,15 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         print(joueurs[int(data[1])] + " est parti")
                         del joueurs[int(data[1])]
                         del roles[int(data[1])]
+                    elif data[0] == 't':
+                        listmsg.append(joueurs[int(data[1])] + " : " + data[2])
 
                 # Lancement du dessin:
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                         tunnelParent.send(("F," + str(monID)).encode())
                         fini = True
-                     
+
                 # Placement des boutons sur l'écran
                 fenetre.blit(fon, (1820, 500))
                 fenetre.blit(fon, (1720, 500))
@@ -409,22 +415,22 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 if btcp.collidepoint(px, py):
                     selectioncercle2()
 
+                pygame.draw.rect(fenetre, bleuc, (0, 0, 400, 1080))
+                pygame.draw.rect(fenetre, bleuc, (0, 980, 1920, 100))
+
                 # Détection clique gauche pour effectuer le dessin
-                i=0
-                for i in range (10):
-                    listmot=listmot[-10:]
-                    textchat = police2.render(listmot[i], True, (0,0,0))
-                    fenetre.blit(textchat,(listecoord[i]))
-
-
-                pygame.draw.rect(fenetre, bleuc, (0,0, 400,1080))
-                pygame.draw.rect(fenetre, bleuc, (0,980, 1920,100))
+                i = 0
+                for i in range(10):
+                    listmsg = listmsg[-10:]
+                    textchat = police2.render(listmsg[i], True, (0, 0, 0))
+                    fenetre.blit(textchat, (listecoord[i]))
 
                 # --> Va falloir faire des segments entre chaques points car 100fps max pour serv
 
                 if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):
                     pygame.draw.circle(fenetre, couleur, (px, py), rayon)
-                    tunnelParent.send(('D,' + str(px) + "," + str(py)+","+str(couleur[0])+";"+str(couleur[1])+";"+str(couleur[2])+","+str(rayon) + ",").encode())
+                    tunnelParent.send(('D,' + str(px) + "," + str(py) + "," + str(couleur[0]) + ";" + str(
+                        couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + ",").encode())
                     # "D,875,745,45;75;0,10,"
                     ancienpx = px
                     ancienpy = py
@@ -446,39 +452,40 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         del joueurs[int(data[1])]  # On supprime le joueur
                         del roles[int(data[1])]
 
+                    elif data[0] == 't':
+                        print(data)
+                        listmsg.append(joueurs[int(data[1])] + " : " + data[2])
+
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                         tunnelParent.send(("F," + str(monID)).encode())
                         fini = True
-                    if event.type == pygame.KEYDOWN: 
-                         if event.key == pygame.K_RETURN:
-                            if MotEcrit != '':
-                                listmot.append(MotEcrit)
-                            MotEcrit=''
-        
-                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
-                            MotEcrit = MotEcrit[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
-                
-                         elif len(MotEcrit) < 16:  # 16 caractères max
-                            MotEcrit = MotEcrit+event.unicode
-                pygame.draw.rect(fenetre, bleuc, (0,0, 400,1080))
-                pygame.draw.rect(fenetre, bleuc, (0,980, 1920,100))
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+                            if motEcrit != '':
+                                listmsg.append(joueurs[int(monID)] + " : " + motEcrit)
+                                tunnelParent.send(("t," + str(monID) + "," + motEcrit).encode())
+                            motEcrit = ''
 
+                        elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
+                            motEcrit = motEcrit[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
 
-                textMotEcrit = police.render('Ecrivez un mot : ' + MotEcrit, True, (0, 0, 0))  # txt,antialiasing,coul
+                        elif len(motEcrit) < 16:  # 16 caractères max
+                            motEcrit = motEcrit + event.unicode
+                pygame.draw.rect(fenetre, bleuc, (0, 0, 400, 1080))
+                pygame.draw.rect(fenetre, bleuc, (0, 980, 1920, 100))
+
+                textMotEcrit = police.render('Ecrivez un mot : ' + motEcrit, True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textMotEcrit, (50, 1000))
 
-                i=0
-                for i in range (10):
-                    listmot=listmot[-10:]
-                    textchat = police2.render(listmot[i], True, (0,0,0))
-                    fenetre.blit(textchat,(listecoord[i]))
-     
-                
-                
+                i = 0
+                for i in range(10):
+                    listmsg = listmsg[-10:]
+                    textchat = police2.render(listmsg[i], True, (0, 0, 0))
+                    fenetre.blit(textchat, (listecoord[i]))
+
                 pygame.draw.circle(fenetre, couleur, (px, py), rayon)
 
-                
                 pygame.display.flip()
                 clock.tick(400)
     pygame.quit()
