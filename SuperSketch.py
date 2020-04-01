@@ -3,13 +3,12 @@ from pygame.locals import *
 from random import *
 import ctypes
 from multiprocessing import Process, Pipe
-import time
+from time import *
 # Nos Fichiers
 import serveur
 import client
 
 # FAUT FERMER AVEC ECHAP ET PROPREMENT
-
 if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour multiprocessing
     # Etat du menu
     fini = False
@@ -150,7 +149,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
         global rayon  # Définition de variable globale du programme
         if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de rayon lors d'un clic
             rayon = rayon + 5
-        time.sleep(0.1)
+        pygame.time.wait(100)
         return
 
 
@@ -161,8 +160,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             rayon = rayon - 5
             if rayon < 5:
                 rayon = rayon + 10
-        time.sleep(0.1)
+        pygame.time.wait(100)
         return
+
 
 
     fond = pygame.image.load("img/fond.png").convert()
@@ -183,10 +183,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     gris= (192, 192, 192)
     police2 = pygame.font.SysFont("roboto-bold", 35)
     motEcrit = ''
-    listecoord = [(50, 200), (50, 250), (50, 300), (50, 350), (50, 400), (50, 450), (50, 500), (50, 550), (50, 600),
-                  (50, 650)]
-    listmsg = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
-
+    listmsg = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']     #Initialisation de la liste du chat vide
     couleur = noir
     rayon = 10
     ancienpx = 2500  # hors écran
@@ -358,10 +355,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                                 tunnelParent.send('F'.encode())
                                 fini = True
-                        pygame.display.flip()
+                        pygame.display.flip()                   
                 init = False
             if etat == 'D':  # Si c'est nous qui dessine
-                # ------------------------------------------------------------------------------
+                # ---------------------------------------------------------------------------------------------------------------------------------------
                 if tunnelParent.poll():  # On get les nouveaux points
                     data = tunnelParent.recv().decode().split(",")
                     if data[0] == 'F':
@@ -369,13 +366,13 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         del joueurs[int(data[1])]
                         del roles[int(data[1])]
                     elif data[0] == 't':
-                        listmsg.append(joueurs[int(data[1])] + " : " + data[2])
+                        listmsg.append(joueurs[int(data[1])] + " : " + data[2])            #On ajoute à la liste du chat le pseudo de l'envoyeur et son texte
 
                 # Lancement du dessin:
                 for event in pygame.event.get():
-                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                        tunnelParent.send(("F," + str(monID)).encode())
-                        fini = True
+                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):    #Si on appuie sur ECHAP
+                        tunnelParent.send(("F," + str(monID)).encode())                         #On envoie l'info que l'on quitte le serveur
+                        fini = True                 #On ferme la fenêtre
 
                 # Placement des boutons sur l'écran
                 fenetre.blit(fon, (1820, 500))
@@ -433,17 +430,17 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     selectioncercle2()
 
 
-                # Détection clique gauche pour effectuer le dessin
+ 
                 i = 0
-                for i in range(10):
+                for i in range(10):                      #Affichage du chat
                     listmsg = listmsg[-10:]
                     textchat = police2.render(listmsg[i], True, (0, 0, 0))
-                    fenetre.blit(textchat, (listecoord[i]))
+                    fenetre.blit(textchat, (50,480+50*i))
 
-                textJoueur = police.render('joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
+                textJoueur = police.render('Joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textJoueur, (10, 0))
   
-                idFrame = (idFrame + 0.1) % 40
+                idFrame = (idFrame + 0.1) % 40      #Animation du logo super-Sketch
                 if idFrame < 20:
                    poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
                    fenetre.blit(logo1, poslogo)
@@ -451,19 +448,19 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                    poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
                    fenetre.blit(logo2, poslogo)
 
-
-                # --> Va falloir faire des segments entre chaques points car 100fps max pour serv
-
-                if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):
+               # Détection clique gauche pour effectuer le dessin
+                if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):          #Si on clique le dessin s'affiche
                     pygame.draw.circle(fenetre, couleur, (px, py), rayon)
                     tunnelParent.send(('D,' + str(px) + "," + str(py) + "," + str(couleur[0]) + ";" + str(
-                        couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + ",").encode())
+                        couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + ",").encode())  #On envoie toutes les données au serveur
                     # "D,875,745,45;75;0,10,"
                     ancienpx = px
                     ancienpy = py
-                pygame.display.flip()
+
+                   
+                pygame.display.flip()    #Rafraichissement de la fenêtre
                 clock.tick(200)
-                # ----------------------------------------------------------------------------------------
+                # --------------------------------------------------------------------------------------------------------------------------------------------
             elif etat == 'L':  # Si on regarde le dessin
                 if tunnelParent.poll():  # On get les nouveaux points
                     data = tunnelParent.recv().decode().split(",")
@@ -482,25 +479,25 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     elif data[0] == 't':
                         print(data)
                         listmsg.append(joueurs[int(data[1])] + " : " + data[2])
-                fonpal = pygame.draw.rect(fenetre, blanc, (1720,100, 200 ,980))    
-                tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))
-                ligne = pygame.draw.rect(fenetre, noir, (390, 0, 10, 980))
-                ligne2 = pygame.draw.rect(fenetre, noir, (0, 970, 1920, 10))
-                bas = pygame.draw.rect(fenetre, gris, (0, 980, 1920, 1920))
+                fonpal = pygame.draw.rect(fenetre, blanc, (1720,100, 200 ,980))    #Fond de la palette de couleur
+                tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))           #Fond gris de le zone de chat
+                ligne = pygame.draw.rect(fenetre, noir, (390, 0, 10, 980))         #Dessin des lignes de la palette
+                ligne2 = pygame.draw.rect(fenetre, noir, (0, 970, 1920, 10))   
+                bas = pygame.draw.rect(fenetre, gris, (0, 980, 1920, 1920))        #Fond gris de le zone de texte
                 souligne = pygame.draw.rect(fenetre, noir,(10, 50, 340, 5))
                 ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
-                entete = pygame.draw.rect(fenetre, gris, (400,0,1920,100))
+                entete = pygame.draw.rect(fenetre, gris, (400,0,1920,100))         #Fond gris de le zone de l'entête
 
                 for event in pygame.event.get():
-                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                        tunnelParent.send(("F," + str(monID)).encode())
-                        fini = True
+                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):   #Si on appuie sur ECHAP
+                        tunnelParent.send(("F," + str(monID)).encode())                         # On envoie F pour signaler que le joueur est parti au serveur
+                        fini = True                             #On ferme la fenêtre
                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_RETURN:
-                            if motEcrit != '':
-                                listmsg.append(joueurs[int(monID)] + " : " + motEcrit)
-                                tunnelParent.send(("t," + str(monID) + "," + motEcrit).encode())
-                            motEcrit = ''
+                        if event.key == pygame.K_RETURN:         #Si on appuie sur entrée
+                            if motEcrit != '':                  #On vérifie que le mot n'est pas vide
+                                listmsg.append(joueurs[int(monID)] + " : " + motEcrit)    #On ajoute le mot à la liste du chat
+                                tunnelParent.send(("t," + str(monID) + "," + motEcrit).encode())     #On envoie le message avec le pseudo au serveur
+                            motEcrit = ''     #On réinitialise le mot
 
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
                             motEcrit = motEcrit[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
@@ -510,10 +507,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                 textMotEcrit = police.render('Ecrivez un mot : ' + motEcrit, True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textMotEcrit, (50, 1000))
-                textJoueur = police.render('joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
+                textJoueur = police.render('Joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textJoueur, (10, 0))
   
-                idFrame = (idFrame + 0.1) % 40
+                idFrame = (idFrame + 0.1) % 40           #Animation su logo Super-Sketch
                 if idFrame < 20:
                    poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
                    fenetre.blit(logo1, poslogo)
@@ -522,14 +519,15 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                    fenetre.blit(logo2, poslogo)
 
                 i = 0
-                for i in range(10):
-                    listmsg = listmsg[-10:]
+                for i in range(10):                   #Affichage du texte dans le chat
+                    listmsg = listmsg[-10:]           #On garde uniquement les 10 derniers termes de la listes
                     textchat = police2.render(listmsg[i], True, (0, 0, 0))
-                    fenetre.blit(textchat, (listecoord[i]))
+                    fenetre.blit(textchat, (50,480+50*i))        #On affiche la liste avec les coord saisie précédemment
 
-                pygame.draw.circle(fenetre, couleur, (px, py), rayon)
+                pygame.draw.circle(fenetre, couleur, (px, py), rayon)  #affichage du dessin avec les infos reçus par le serveur
 
-                pygame.display.flip()
+
+                pygame.display.flip()       #raffraichissment de la fenêtre
                 clock.tick(400)
     pygame.quit()
     procClient.join()

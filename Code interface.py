@@ -25,7 +25,7 @@ def selectioncercle1():
     global rayon  # Définition de variable globale du programme
     if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de rayon lors d'un clic
         rayon = rayon + 5
-    time.sleep(0.1)
+        pygame.time.wait(100)
     return
 
 
@@ -34,7 +34,7 @@ def selectioncercle2():
 
     if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de rayon lors d'un clic
         rayon = rayon - 5
-    time.sleep(0.1)
+    pygame.time.wait(100)
     return
 
 
@@ -70,10 +70,10 @@ police2 = pygame.font.SysFont("roboto-bold", 35)
 MotEcrit=''
 listecoord=[(50,200),(50,250),(50,300),(50,350),(50,400),(50,450),(50,500),(50,550),(50,600),(50,650)]
 listmot=[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']
-time=0
 a=pygame.time.Clock()
 time=100000
 timeaff='100'
+
 
 press = False
 couleur = noir
@@ -96,10 +96,6 @@ while continuer:
                 
             elif len(MotEcrit) < 16:  # 16 caractères max
                 MotEcrit = MotEcrit+event.unicode
-
-
-    a.tick()
-    
 
     # Placement des boutons sur l'écran
 
@@ -185,11 +181,11 @@ while continuer:
     else:
         poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
         fenetre.blit(logo2, poslogo)
-
-        
-        time=time-2*a.get_time()
-        times=time/1000
-        timeaff=str(int(times))
+    
+    a.tick()    
+    time=time-a.get_time()
+    times=time/1000
+    timeaff=str(int(times))
 
     pygame.display.update()
     clock.tick(300)
