@@ -11,8 +11,8 @@ import time
 def selection(pbt, cbt):
     global couleur  # Définition de variable globale du programme
     global idFrame
-    idFrame = (idFrame + 1) % 95  # Animation de l'image
-    if idFrame < 30:
+    idFrame = (idFrame + 0.1) % 40  # Animation de l'image
+    if idFrame < 20:
         fenetre.blit(pal1, pbt)
     else:
         fenetre.blit(pal2, pbt)
@@ -164,38 +164,21 @@ while continuer:
         listmot=listmot[-10:]
         textchat = police2.render(listmot[i], True, (0,0,0))
         fenetre.blit(textchat,(listecoord[i]))
-<<<<<<< HEAD
 
 
-    print(listmot)
-
-  
-      
-        
-
-    
-=======
-     
->>>>>>> 00a7df8f862c24ef3507815d49cec3a407ec0516
     textMotEcrit = police.render('Ecrivez un mot : ' + MotEcrit, True, (0, 0, 0))  # txt,antialiasing,coul
     fenetre.blit(textMotEcrit, (50, 1000))
-    textMotEcrit = police.render('joueurs en ligne : ' + MotEcrit, True, (0, 0, 0))  # txt,antialiasing,coul
-    fenetre.blit(textMotEcrit, (10, 0))
-
-<<<<<<< HEAD
-    poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
-    fenetre.blit(logo1, poslogo)
-
-
-
-
+    textJoueur = police.render('joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
+    fenetre.blit(textJoueur, (10, 0))
+  
+    idFrame = (idFrame + 0.1) % 40
+    if idFrame < 20:
+        poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
+        fenetre.blit(logo1, poslogo)
+    else:
+        poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
+        fenetre.blit(logo2, poslogo)
         
-
-
-    
-=======
->>>>>>> 00a7df8f862c24ef3507815d49cec3a407ec0516
-
     pygame.display.update()
     clock.tick(300)
 
