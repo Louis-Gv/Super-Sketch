@@ -61,6 +61,12 @@ noir = (0, 0, 0)
 bleuc = (38, 188, 254)
 violet = (238, 130, 238)
 marron = (88, 41, 0)
+police = pygame.font.SysFont("roboto-bold", 65)
+police2 = pygame.font.SysFont("roboto-bold", 45)
+MotEcrit=''
+listecoord=[(50,200),(50,250),(50,300),(50,350),(50,400),(50,450),(50,500),(50,550),(50,600),(50,650)]
+listmot=[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']
+fon2= pygame.image.load("img/fon2.png").convert_alpha()
 
 press = False
 couleur = noir
@@ -72,6 +78,21 @@ while continuer:
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
             pygame.quit()
             continuer = 0
+        if event.type == pygame.KEYDOWN: 
+            if event.key == pygame.K_RETURN:
+                listmot.append(MotEcrit)
+                MotEcrit=''
+        
+            elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
+                MotEcrit = MotEcrit[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
+                
+            elif len(MotEcrit) < 16:  # 16 caractères max
+                MotEcrit = MotEcrit+event.unicode
+            
+
+    idFrame = (idFrame + 1) % 95
+    pygame.draw.rect(fenetre, blanc, (0,0, 250,1080))
+    pygame.draw.rect(fenetre, blanc, (0,980, 1920,100))
 
     # Placement des boutons sur l'écran
 
@@ -116,7 +137,33 @@ while continuer:
     if pygame.mouse.get_pressed() == (1, 0, 0):
         pygame.draw.circle(fenetre, couleur, (px, py), rayon)
 
+    i=0
+    for i in range (10):
+        listmot=listmot[-10:]
+        textchat = police2.render(listmot[i], True, (0,0,0))
+        fenetre.blit(textchat,(listecoord[i]))
+
+    print(listmot)
+
+  
+      
+        
+
+    
+    textMotEcrit = police.render('Ecrivez un mot : ' + MotEcrit, True, (0, 0, 0))  # txt,antialiasing,coul
+    fenetre.blit(textMotEcrit, (50, 1000))
+
+
+
+
+
+
+        
+
+
+    
+
     pygame.display.update()
-    clock.tick(1000)
+    clock.tick(300)
 
 pygame.quit()
