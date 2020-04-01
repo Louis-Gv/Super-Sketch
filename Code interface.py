@@ -91,8 +91,8 @@ while continuer:
             
 
     idFrame = (idFrame + 1) % 95
-    pygame.draw.rect(fenetre, blanc, (0,0, 250,1080))
-    pygame.draw.rect(fenetre, blanc, (0,980, 1920,100))
+    pygame.draw.rect(fenetre, bleuc, (0,0, 250,1080))
+    pygame.draw.rect(fenetre, bleuc, (0,980, 1920,100))
 
     # Placement des boutons sur l'écran
 
