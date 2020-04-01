@@ -49,10 +49,14 @@ fond = pygame.image.load("img/fond.png").convert()
 fenetre.blit(fond, (0, 0))
 
 # Initialisation des variables de couleur et des animations
+largeur = ctypes.windll.user32.GetSystemMetrics(0)
+logo1 = pygame.image.load("img/lobby/logo1.png")
+logo2 = pygame.image.load("img/lobby/logo2.png")
 pal1 = pygame.pal1 = pygame.image.load("img/pal1.png").convert_alpha()
 pal2 = pygame.image.load("img/pal2.png").convert_alpha()
 fon = pygame.image.load("img/pal4.png").convert_alpha()
 idFrame = 0
+gris = (192, 192, 192)
 rouge = (255, 0, 0)
 vert = (0, 255, 0)
 bleuf = (0, 0, 255)
@@ -108,7 +112,24 @@ while continuer:
     btbf = pygame.draw.rect(fenetre, bleuf, (1820, 400, 100, 100))
     btbc = pygame.draw.rect(fenetre, bleuc, (1720, 400, 100, 100))
     btcg = pygame.draw.circle(fenetre, noir, (1870, 550), 35)  # bouton circulaire gros rayon
-    btcp = pygame.draw.circle(fenetre, noir, (1770, 550), 15)  # bouton circulaire petit rayon
+    btcp = pygame.draw.circle(fenetre, noir, (1770, 550), 15)  # bouton circulaire petit rayon 
+    tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))
+    ligne = pygame.draw.rect(fenetre, noir, (390, 0, 10, 980))
+    ligne2 = pygame.draw.rect(fenetre, noir, (0, 970, 1920, 10))
+    bas = pygame.draw.rect(fenetre, gris, (0, 980, 1920, 1920))
+    ligne3 = pygame.draw.rect(fenetre, noir, (1720, 100, 1000, 5))
+    ligne4 = pygame.draw.rect(fenetre, noir, (1720, 200, 1000, 5))
+    ligne5 = pygame.draw.rect(fenetre, noir, (1720, 300, 1000, 5))
+    ligne6 = pygame.draw.rect(fenetre, noir, (1720, 400, 1000, 5))
+    ligne7 = pygame.draw.rect(fenetre, noir, (1720, 500, 1000, 5))
+    ligne8 = pygame.draw.rect(fenetre, noir, (1720, 600, 1000, 5))
+    ligne9 = pygame.draw.rect(fenetre, noir, (1720, 100, 5, 500))
+    ligne10 = pygame.draw.rect(fenetre, noir, (1820, 100, 5, 500))
+    ligne11 = pygame.draw.rect(fenetre, noir, (1915, 100, 5, 500))
+    souligne = pygame.draw.rect(fenetre, noir,(10, 50, 340, 5))
+    ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
+    entete = pygame.draw.rect(fenetre, gris, (400,0,1920,100))
+    
     # Détection de la position de la souris
     px, py = pygame.mouse.get_pos()
 
@@ -144,6 +165,7 @@ while continuer:
         textchat = police2.render(listmot[i], True, (0,0,0))
         fenetre.blit(textchat,(listecoord[i]))
 
+
     print(listmot)
 
   
@@ -153,8 +175,11 @@ while continuer:
     
     textMotEcrit = police.render('Ecrivez un mot : ' + MotEcrit, True, (0, 0, 0))  # txt,antialiasing,coul
     fenetre.blit(textMotEcrit, (50, 1000))
+    textMotEcrit = police.render('joueurs en ligne : ' + MotEcrit, True, (0, 0, 0))  # txt,antialiasing,coul
+    fenetre.blit(textMotEcrit, (10, 0))
 
-
+    poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
+    fenetre.blit(logo1, poslogo)
 
 
 
