@@ -131,7 +131,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     px = 5000
     py = 5000
 
-
     # - Partie dessin
     # Déclaration de la fonction de sélection de la couleur
     def selection(pbt, cbt):
