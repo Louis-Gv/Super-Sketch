@@ -66,7 +66,7 @@ police2 = pygame.font.SysFont("roboto-bold", 45)
 MotEcrit=''
 listecoord=[(50,200),(50,250),(50,300),(50,350),(50,400),(50,450),(50,500),(50,550),(50,600),(50,650)]
 listmot=[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']
-fon2= pygame.image.load("img/fon2.png").convert_alpha()
+
 
 press = False
 couleur = noir
@@ -80,7 +80,8 @@ while continuer:
             continuer = 0
         if event.type == pygame.KEYDOWN: 
             if event.key == pygame.K_RETURN:
-                listmot.append(MotEcrit)
+                if MotEcrit != '':
+                    listmot.append(MotEcrit)
                 MotEcrit=''
         
             elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
