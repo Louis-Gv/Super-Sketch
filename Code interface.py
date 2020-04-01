@@ -143,26 +143,10 @@ while continuer:
         listmot=listmot[-10:]
         textchat = police2.render(listmot[i], True, (0,0,0))
         fenetre.blit(textchat,(listecoord[i]))
-
-    print(listmot)
-
-  
-      
-        
-
-    
+     
     textMotEcrit = police.render('Ecrivez un mot : ' + MotEcrit, True, (0, 0, 0))  # txt,antialiasing,coul
     fenetre.blit(textMotEcrit, (50, 1000))
 
-
-
-
-
-
-        
-
-
-    
 
     pygame.display.update()
     clock.tick(300)

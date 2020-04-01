@@ -179,6 +179,11 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     bleuc = (38, 188, 254)
     violet = (238, 130, 238)
     marron = (88, 41, 0)
+    police2 = pygame.font.SysFont("roboto-bold", 45)
+    MotEcrit=''
+    listecoord=[(50,200),(50,250),(50,300),(50,350),(50,400),(50,450),(50,500),(50,550),(50,600),(50,650)]
+    listmot=[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']
+ 
 
     couleur = noir
     rayon = 10
@@ -365,7 +370,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                         tunnelParent.send(("F," + str(monID)).encode())
                         fini = True
-
+                     
                 # Placement des boutons sur l'écran
                 fenetre.blit(fon, (1820, 500))
                 fenetre.blit(fon, (1720, 500))
@@ -405,6 +410,15 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     selectioncercle2()
 
                 # Détection clique gauche pour effectuer le dessin
+                i=0
+                for i in range (10):
+                    listmot=listmot[-10:]
+                    textchat = police2.render(listmot[i], True, (0,0,0))
+                    fenetre.blit(textchat,(listecoord[i]))
+
+
+                pygame.draw.rect(fenetre, bleuc, (0,0, 400,1080))
+                pygame.draw.rect(fenetre, bleuc, (0,980, 1920,100))
 
                 # --> Va falloir faire des segments entre chaques points car 100fps max pour serv
 
@@ -436,8 +450,35 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                         tunnelParent.send(("F," + str(monID)).encode())
                         fini = True
+                    if event.type == pygame.KEYDOWN: 
+                         if event.key == pygame.K_RETURN:
+                            if MotEcrit != '':
+                                listmot.append(MotEcrit)
+                            MotEcrit=''
+        
+                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
+                            MotEcrit = MotEcrit[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
+                
+                         elif len(MotEcrit) < 16:  # 16 caractères max
+                            MotEcrit = MotEcrit+event.unicode
+                pygame.draw.rect(fenetre, bleuc, (0,0, 400,1080))
+                pygame.draw.rect(fenetre, bleuc, (0,980, 1920,100))
 
-                pygame.draw.circle(fenetre, couleur, (px, py), rayon)                
+
+                textMotEcrit = police.render('Ecrivez un mot : ' + MotEcrit, True, (0, 0, 0))  # txt,antialiasing,coul
+                fenetre.blit(textMotEcrit, (50, 1000))
+
+                i=0
+                for i in range (10):
+                    listmot=listmot[-10:]
+                    textchat = police2.render(listmot[i], True, (0,0,0))
+                    fenetre.blit(textchat,(listecoord[i]))
+     
+                
+                
+                pygame.draw.circle(fenetre, couleur, (px, py), rayon)
+
+                
                 pygame.display.flip()
                 clock.tick(400)
     pygame.quit()
