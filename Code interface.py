@@ -164,6 +164,7 @@ while continuer:
         listmot=listmot[-10:]
         textchat = police2.render(listmot[i], True, (0,0,0))
         fenetre.blit(textchat,(listecoord[i]))
+<<<<<<< HEAD
 
 
     print(listmot)
@@ -173,11 +174,15 @@ while continuer:
         
 
     
+=======
+     
+>>>>>>> 00a7df8f862c24ef3507815d49cec3a407ec0516
     textMotEcrit = police.render('Ecrivez un mot : ' + MotEcrit, True, (0, 0, 0))  # txt,antialiasing,coul
     fenetre.blit(textMotEcrit, (50, 1000))
     textMotEcrit = police.render('joueurs en ligne : ' + MotEcrit, True, (0, 0, 0))  # txt,antialiasing,coul
     fenetre.blit(textMotEcrit, (10, 0))
 
+<<<<<<< HEAD
     poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
     fenetre.blit(logo1, poslogo)
 
@@ -188,6 +193,8 @@ while continuer:
 
 
     
+=======
+>>>>>>> 00a7df8f862c24ef3507815d49cec3a407ec0516
 
     pygame.display.update()
     clock.tick(300)
