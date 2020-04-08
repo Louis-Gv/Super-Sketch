@@ -37,6 +37,14 @@ def selectioncercle2():
     pygame.time.wait(100)
     return
 
+def effacfx():
+    pygame.draw.rect(fenetre, noir, (1720, 10, 190, 5))
+    pygame.draw.rect(fenetre, noir, (1720, 10, 5, 80))
+    pygame.draw.rect(fenetre, noir, (1910, 10, 5, 80))
+    pygame.draw.rect(fenetre, noir, (1720, 85, 190, 5))    
+    if pygame.mouse.get_pressed() == (1, 0, 0):  # Detection du clic
+        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+    
 
 # Ouverture de la fenêtre Pygame en plein écran
 pygame.init()
@@ -70,9 +78,7 @@ police2 = pygame.font.SysFont("roboto-bold", 35)
 MotEcrit=''
 listecoord=[(50,200),(50,250),(50,300),(50,350),(50,400),(50,450),(50,500),(50,550),(50,600),(50,650)]
 listmot=[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']
-a=pygame.time.Clock()
-time=100000
-timeaff='100'
+gomme1= pygame.image.load("img/gomme1.png").convert_alpha()
 
 
 press = False
@@ -103,8 +109,8 @@ while continuer:
     fenetre.blit(fon, (1720, 500))
     fonpal = pygame.draw.rect(fenetre, blanc, (1720,100, 200 ,980))
     btr = pygame.draw.rect(fenetre, rouge, (1820, 100, 100, 100))
+    btbl = pygame.draw.rect(fenetre, blanc , (1820, 200, 100 ,100))
     btv = pygame.draw.rect(fenetre, vert, (1720, 100, 100, 100))
-    btbl = pygame.draw.rect(fenetre, blanc, (1820, 200, 100, 100))
     btn = pygame.draw.rect(fenetre, noir, (1720, 200, 100, 100))
     btm = pygame.draw.rect(fenetre, marron, (1820, 300, 100, 100))
     btvi = pygame.draw.rect(fenetre, violet, (1720, 300, 100, 100))
@@ -128,6 +134,10 @@ while continuer:
     souligne = pygame.draw.rect(fenetre, noir,(10, 50, 340, 5))
     ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
     entete = pygame.draw.rect(fenetre, gris, (400,0,1920,100))
+    fenetre.blit(gomme1, (1830,220))
+    effac = pygame.draw.rect(fenetre, blanc, (1720,10,190,80))
+    txteffac = police2.render("Tout effacer", True, (0, 0, 0))
+    fenetre.blit(txteffac,(1745, 40))
 
     
     # Détection de la position de la souris
@@ -140,8 +150,6 @@ while continuer:
         selection(btr, rouge)
     if btv.collidepoint(px, py):
         selection(btv, vert)
-    if btbl.collidepoint(px, py):
-        selection(btbl, blanc)
     if btn.collidepoint(px, py):
         selection(btn, noir)
     if btm.collidepoint(px, py):
@@ -154,6 +162,10 @@ while continuer:
         selectioncercle1()
     if btcp.collidepoint(px, py):
         selectioncercle2()
+    if btbl.collidepoint(px,py):
+        selection(btbl, blanc)
+    if effac.collidepoint(px,py):
+        effacfx()
 
     # Détection clique gauche pour effectuer le dessin
     if pygame.mouse.get_pressed() == (1, 0, 0):
@@ -170,10 +182,6 @@ while continuer:
     fenetre.blit(textMotEcrit, (50, 1000))
     textJoueur = police.render('joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
     fenetre.blit(textJoueur, (10, 0))
-    temps = police2.render('temps restant : ', True, (0, 0, 0))
-    temps2 = police2.render(timeaff + ' s', True, (0, 0, 0))
-    fenetre.blit(temps, (1720, 600))
-    fenetre.blit(temps2, (1720,630))
     idFrame = (idFrame + 0.1) % 40
     if idFrame < 20:
         poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
@@ -182,10 +190,6 @@ while continuer:
         poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
         fenetre.blit(logo2, poslogo)
     
-    a.tick()    
-    time=time-a.get_time()
-    times=time/1000
-    timeaff=str(int(times))
 
     pygame.display.update()
     clock.tick(300)

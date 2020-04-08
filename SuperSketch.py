@@ -162,6 +162,21 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 rayon = rayon + 10
         pygame.time.wait(100)
         return
+    
+    def effacfx():
+        global eff
+        pygame.draw.rect(fenetre, noir, (1720, 10, 190, 5))
+        pygame.draw.rect(fenetre, noir, (1720, 10, 5, 80))
+        pygame.draw.rect(fenetre, noir, (1910, 10, 5, 80))
+        pygame.draw.rect(fenetre, noir, (1720, 85, 190, 5))    
+        if pygame.mouse.get_pressed() == (1, 0, 0):  # Detection du clic
+            pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+            eff=1
+
+    def effacfxr():  
+        if pygame.mouse.get_pressed() == (1, 0, 0):  # Detection du clic
+            pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+
 
 
 
@@ -188,6 +203,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     rayon = 10
     ancienpx = 2500  # hors écran
     ancienpy = 2500
+    gomme1= pygame.image.load("img/gomme1.png").convert_alpha()
+    eff=0
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
@@ -357,7 +374,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 fini = True
                         pygame.display.flip()                   
                 init = False
-            if etat == 'D':  # Si c'est nous qui dessine
+            if etat == 'D':  # Si on dessine
                 # ---------------------------------------------------------------------------------------------------------------------------------------
                 if tunnelParent.poll():  # On get les nouveaux points
                     data = tunnelParent.recv().decode().split(",")
@@ -367,13 +384,14 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         del roles[int(data[1])]
                     elif data[0] == 't':
                         listmsg.append(joueurs[int(data[1])] + " : " + data[2])            #On ajoute à la liste du chat le pseudo de l'envoyeur et son texte
-
+                
                 # Lancement du dessin:
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):    #Si on appuie sur ECHAP
                         tunnelParent.send(("F," + str(monID)).encode())                         #On envoie l'info que l'on quitte le serveur
                         fini = True                 #On ferme la fenêtre
-
+                if eff==1:
+                    eff==0
                 # Placement des boutons sur l'écran
                 fenetre.blit(fon, (1820, 500))
                 fenetre.blit(fon, (1720, 500))
@@ -404,6 +422,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 souligne = pygame.draw.rect(fenetre, noir,(10, 50, 340, 5))
                 ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
                 entete = pygame.draw.rect(fenetre, gris, (400,0,1920,100))
+                fenetre.blit(gomme1, (1830,220))
+                effac = pygame.draw.rect(fenetre, blanc, (1720,10,190,80))
+                txteffac = police2.render("Tout effacer", True, (0, 0, 0))
+                fenetre.blit(txteffac,(1745, 40))
                 # Détection de la position de la souris
                 px, py = pygame.mouse.get_pos()
 
@@ -428,8 +450,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     selectioncercle1()
                 if btcp.collidepoint(px, py):
                     selectioncercle2()
-
-
+                if effac.collidepoint(px,py):
+                    effacfx()
  
                 i = 0
                 for i in range(10):                      #Affichage du chat
@@ -452,8 +474,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):          #Si on clique le dessin s'affiche
                     pygame.draw.circle(fenetre, couleur, (px, py), rayon)
                     tunnelParent.send(('D,' + str(px) + "," + str(py) + "," + str(couleur[0]) + ";" + str(
-                        couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + ",").encode())  #On envoie toutes les données au serveur
-                    # "D,875,745,45;75;0,10,"
+                        couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + "," + str(eff) + ",").encode())  #On envoie toutes les données au serveur
+                    # "D,875,745,45;75;0,10,0,"
                     ancienpx = px
                     ancienpy = py
 
@@ -470,6 +492,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         couleur = data[3].split(";")
                         couleur = tuple(map(int, couleur))
                         rayon = int(data[4])
+                        eff= int(data[5])
 
                     elif data[0] == 'F':
                         print(joueurs[int(data[1])] + " est parti")
@@ -479,14 +502,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     elif data[0] == 't':
                         print(data)
                         listmsg.append(joueurs[int(data[1])] + " : " + data[2])
-                fonpal = pygame.draw.rect(fenetre, blanc, (1720,100, 200 ,980))    #Fond de la palette de couleur
-                tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))           #Fond gris de le zone de chat
-                ligne = pygame.draw.rect(fenetre, noir, (390, 0, 10, 980))         #Dessin des lignes de la palette
-                ligne2 = pygame.draw.rect(fenetre, noir, (0, 970, 1920, 10))   
-                bas = pygame.draw.rect(fenetre, gris, (0, 980, 1920, 1920))        #Fond gris de le zone de texte
-                souligne = pygame.draw.rect(fenetre, noir,(10, 50, 340, 5))
-                ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
-                entete = pygame.draw.rect(fenetre, gris, (400,0,1920,100))         #Fond gris de le zone de l'entête
+                        
+
+                print(data)
 
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):   #Si on appuie sur ECHAP
@@ -504,6 +522,23 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                         elif len(motEcrit) < 16:  # 16 caractères max
                             motEcrit = motEcrit + event.unicode                
+
+
+
+                pygame.draw.circle(fenetre, couleur, (px, py), rayon)  #affichage du dessin avec les infos reçus par le serveur
+                if eff==1:
+                    effacfxr()
+
+                    
+                fonpal = pygame.draw.rect(fenetre, blanc, (1720,100, 200 ,980))    #Fond de la palette de couleur
+                tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))           #Fond gris de le zone de chat
+                ligne = pygame.draw.rect(fenetre, noir, (390, 0, 10, 980))         #Dessin des lignes de la palette
+                ligne2 = pygame.draw.rect(fenetre, noir, (0, 970, 1920, 10))   
+                bas = pygame.draw.rect(fenetre, gris, (0, 980, 1920, 1920))        #Fond gris de le zone de texte
+                souligne = pygame.draw.rect(fenetre, noir,(10, 50, 340, 5))
+                ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
+                entete = pygame.draw.rect(fenetre, gris, (400,0,1920,100))         #Fond gris de le zone de l'entête
+                effac = pygame.draw.rect(fenetre, gris, (1720,10,190,80))
 
                 textMotEcrit = police.render('Ecrivez un mot : ' + motEcrit, True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textMotEcrit, (50, 1000))
@@ -523,10 +558,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     listmsg = listmsg[-10:]           #On garde uniquement les 10 derniers termes de la listes
                     textchat = police2.render(listmsg[i], True, (0, 0, 0))
                     fenetre.blit(textchat, (50,480+50*i))        #On affiche la liste avec les coord saisie précédemment
-
-                pygame.draw.circle(fenetre, couleur, (px, py), rayon)  #affichage du dessin avec les infos reçus par le serveur
-
-
+                
                 pygame.display.flip()       #raffraichissment de la fenêtre
                 clock.tick(400)
     pygame.quit()
