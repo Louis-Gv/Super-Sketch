@@ -168,15 +168,11 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
         pygame.draw.rect(fenetre, noir, (1720, 10, 190, 5))
         pygame.draw.rect(fenetre, noir, (1720, 10, 5, 80))
         pygame.draw.rect(fenetre, noir, (1910, 10, 5, 80))
-        pygame.draw.rect(fenetre, noir, (1720, 85, 190, 5))    
+        pygame.draw.rect(fenetre, noir, (1720, 85, 190, 5))
         if pygame.mouse.get_pressed() == (1, 0, 0):  # Detection du clic
             pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
             eff=1
-
-    def effacfxr():  
-        if pygame.mouse.get_pressed() == (1, 0, 0):  # Detection du clic
-            pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-
+            tunnelParent.send("E".encode())
 
 
 
@@ -204,7 +200,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     ancienpx = 2500  # hors écran
     ancienpy = 2500
     gomme1= pygame.image.load("img/gomme1.png").convert_alpha()
-    eff=0
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
@@ -390,8 +385,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):    #Si on appuie sur ECHAP
                         tunnelParent.send(("F," + str(monID)).encode())                         #On envoie l'info que l'on quitte le serveur
                         fini = True                 #On ferme la fenêtre
-                if eff==1:
-                    eff==0
                 # Placement des boutons sur l'écran
                 fenetre.blit(fon, (1820, 500))
                 fenetre.blit(fon, (1720, 500))
@@ -474,7 +467,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):          #Si on clique le dessin s'affiche
                     pygame.draw.circle(fenetre, couleur, (px, py), rayon)
                     tunnelParent.send(('D,' + str(px) + "," + str(py) + "," + str(couleur[0]) + ";" + str(
-                        couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + "," + str(eff) + ",").encode())  #On envoie toutes les données au serveur
+                        couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + ",").encode())  #On envoie toutes les données au serveur
                     # "D,875,745,45;75;0,10,0,"
                     ancienpx = px
                     ancienpy = py
@@ -492,7 +485,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         couleur = data[3].split(";")
                         couleur = tuple(map(int, couleur))
                         rayon = int(data[4])
-                        eff= int(data[5])
 
                     elif data[0] == 'F':
                         print(joueurs[int(data[1])] + " est parti")
@@ -502,9 +494,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     elif data[0] == 't':
                         print(data)
                         listmsg.append(joueurs[int(data[1])] + " : " + data[2])
-                        
 
-                print(data)
+                    elif data[0] == "E":
+                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+
 
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):   #Si on appuie sur ECHAP
@@ -526,8 +519,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
 
                 pygame.draw.circle(fenetre, couleur, (px, py), rayon)  #affichage du dessin avec les infos reçus par le serveur
-                if eff==1:
-                    effacfxr()
 
                     
                 fonpal = pygame.draw.rect(fenetre, blanc, (1720,100, 200 ,980))    #Fond de la palette de couleur
