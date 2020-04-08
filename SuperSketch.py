@@ -164,12 +164,14 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
         return
     
     def effacfx():
+        global eff
         pygame.draw.rect(fenetre, noir, (1720, 10, 190, 5))
         pygame.draw.rect(fenetre, noir, (1720, 10, 5, 80))
         pygame.draw.rect(fenetre, noir, (1910, 10, 5, 80))
         pygame.draw.rect(fenetre, noir, (1720, 85, 190, 5))
         if pygame.mouse.get_pressed() == (1, 0, 0):  # Detection du clic
             pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+            eff=1
             tunnelParent.send("E".encode())
 
 
@@ -198,6 +200,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     ancienpx = 2500  # hors écran
     ancienpy = 2500
     gomme1= pygame.image.load("img/gomme1.png").convert_alpha()
+    choixmot='Z'
+    cache = "R"
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
@@ -368,15 +372,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         pygame.display.flip()                   
                 init = False
             if etat == 'D':  # Si on dessine
-                if choixmot != 'C':
-                    limots = [word.strip() for word in open("dico.txt", encoding="utf-8")]
-                    mot1 = police.render(choice(limots), True, (0, 0, 0))
-                    mot2 = police.render(choice(limots), True, (0, 0, 0))
-                    mot3 = police.render(choice(limots), True, (0, 0, 0))
-                    fondg= pygame.draw.rect(fenetre, gris, (400, 105, 1320, 865))
-                    fenetre.blit(mot1, (460, 800))
-
-                    
+                px, py = pygame.mouse.get_pos()                   # Détection de la position de la souris
+                   
                 # ---------------------------------------------------------------------------------------------------------------------------------------
                 if tunnelParent.poll():  # On get les nouveaux points
                     data = tunnelParent.recv().decode().split(",")
@@ -426,9 +423,34 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 effac = pygame.draw.rect(fenetre, blanc, (1720,10,190,80))
                 txteffac = police2.render("Tout effacer", True, (0, 0, 0))
                 fenetre.blit(txteffac,(1745, 40))
-                # Détection de la position de la souris
-                px, py = pygame.mouse.get_pos()
 
+                if choixmot != 'C':
+                    if cache != "K":
+                        limots = [word.strip() for word in open("dico.txt", encoding="utf-8")]
+                        mot1 = police.render(choice(limots), True, (0, 0, 0))
+                        mot2 = police.render(choice(limots), True, (0, 0, 0))
+                        mot3 = police.render(choice(limots), True, (0, 0, 0))
+                        cache = "K"
+                       
+                    bt1 = pygame.draw.rect(fenetre, blanc, (460, 450, 380,75))
+                    bt2 = pygame.draw.rect(fenetre, blanc, (850, 450, 380,75))
+                    bt3 = pygame.draw.rect(fenetre, blanc, (1240, 450, 380,75))
+                    fenetre.blit(mot1, (460, 450))
+                    fenetre.blit(mot2, (850, 450))
+                    fenetre.blit(mot3, (1240, 450))
+                    if bt1.collidepoint(px,py):
+                        motdevin=mot1
+                        choixmot='Z'
+                        tunnelParent.send("M" + "," + str(mot1).encode())
+                    if bt2.collidepoint(px,py):
+                        motdevin=mot2
+                        choixmot='Z'
+                        tunnelParent.send("M" + "," + str(mot2).encode())
+                    if bt3.collidepoint(px,py):
+                        motdevin=mot3
+                        choixmot='Z'
+                        tunnelParent.send("M" + "," + str(mot3).encode())
+                        
                 # Détection du moment quand la souris passe sur les boutons
                 if btbf.collidepoint(px, py):
                     selection(btbf, bleuf)
@@ -503,6 +525,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                     elif data[0] == "E":
                         pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+                    elif data[0] == "M":
+                        motdevin = data[1]
+                    
 
 
                 for event in pygame.event.get():
@@ -511,6 +536,11 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         fini = True                             #On ferme la fenêtre
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN:         #Si on appuie sur entrée
+                            if motEcrit == motdevin:
+                                #
+                                #
+                                tunnelParent.send(("t," + str(monID) + "," + "a trouvé le mot").encode())
+                                #
                             if motEcrit != '':                  #On vérifie que le mot n'est pas vide
                                 listmsg.append(joueurs[int(monID)] + " : " + motEcrit)    #On ajoute le mot à la liste du chat
                                 tunnelParent.send(("t," + str(monID) + "," + motEcrit).encode())     #On envoie le message avec le pseudo au serveur
