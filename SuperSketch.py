@@ -134,8 +134,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     # Déclaration de la fonction de sélection de la couleur
     def selection(pbt, cbt):
         global couleur  # Définition de variable globale du programme
-        global idFrame # Animation de l'image
-        if idFrame < 30:
+        global idFrame2 # Animation de l'image
+        idFrame2 = (idFrame2 + 1) % 40
+        if idFrame2 < 30:
             fenetre.blit(pal1, pbt)
         else:
             fenetre.blit(pal2, pbt)
@@ -204,6 +205,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     motdevin="mot pas choisi"
     motcache="mot pas choisi"
     verif='F'
+    idFrame2=0
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
