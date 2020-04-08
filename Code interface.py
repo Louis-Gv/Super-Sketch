@@ -3,6 +3,7 @@ from pygame.locals import *
 import ctypes
 from ctypes import windll
 import time
+from random import* 
 
 # --> J'ai mit votre code dans SuperSketch.py
 # PS: Déso pour le mal de crane
@@ -80,6 +81,16 @@ listecoord=[(50,200),(50,250),(50,300),(50,350),(50,400),(50,450),(50,500),(50,5
 listmot=[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']
 gomme1= pygame.image.load("img/gomme1.png").convert_alpha()
 idFrame2=0
+image =pygame.image.load("img/ima.png").convert_alpha()
+ancienpx = 2500  # hors écran
+ancienpy = 2500
+px = 5000
+py = 5000
+choixmot = 'Z'
+cache = "R"
+motdevin="mot pas choisi"
+
+
 
 
 press = False
@@ -139,8 +150,55 @@ while continuer:
     effac = pygame.draw.rect(fenetre, blanc, (1720,10,190,80))
     txteffac = police2.render("Tout effacer", True, (0, 0, 0))
     fenetre.blit(txteffac,(1745, 40))
-
     
+    
+    if choixmot != 'C':
+        if cache != "K":
+            limots = [word.strip() for word in open("dico.txt", encoding="utf-8")]
+            mot1= choice(limots)
+            mot2= choice(limots)
+            mot3= choice(limots)
+            affmot1 = police.render(mot1, True, (0, 0, 0))
+            affmot2 = police.render(mot2, True, (0, 0, 0))
+            affmot3 = police.render(mot3, True, (0, 0, 0))
+            cache = "K"
+                       
+
+            
+            bt1 = pygame.draw.rect(fenetre, blanc, (460, 450, 380,75))
+            bt2 = pygame.draw.rect(fenetre, blanc, (850, 450, 380,75))
+            bt3 = pygame.draw.rect(fenetre, blanc, (1240, 450, 380,75))
+            fenetre.blit(affmot1, (460, 450))
+            fenetre.blit(affmot2, (850, 450))
+            fenetre.blit(affmot3, (1240, 450))
+            if bt1.collidepoint(px,py):
+                if pygame.mouse.get_pressed()[0] == 1:
+                    choixmot='C'
+                    motdevin=mot1
+                    pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+            if bt2.collidepoint(px,py):
+                if pygame.mouse.get_pressed()[0] == 1:
+                        motdevin=mot2
+                        choixmot='C'
+                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+            if bt3.collidepoint(px,py):
+                if pygame.mouse.get_pressed()[0] == 1:
+                        motdevin=mot3
+                        choixmot='C'
+                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+
+        affmotdevin= police.render(motdevin, True, (0, 0, 0))
+        fenetre.blit(affmotdevin, (1400, 1000))
+    
+
+
+
+
+
+
+
+
+
     # Détection de la position de la souris
     px, py = pygame.mouse.get_pos()
 
