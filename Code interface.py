@@ -9,10 +9,10 @@ import time
 
 # Déclaration de la fonction de sélection de la couleur
 def selection(pbt, cbt):
+    global idFrame2
     global couleur  # Définition de variable globale du programme
-    global idFrame
-    idFrame = (idFrame + 0.1) % 40  # Animation de l'image
-    if idFrame < 20:
+    idFrame2 = (idFrame2 + 1) % 40  # Animation de l'image
+    if idFrame2 < 20:
         fenetre.blit(pal1, pbt)
     else:
         fenetre.blit(pal2, pbt)
@@ -79,6 +79,7 @@ MotEcrit=''
 listecoord=[(50,200),(50,250),(50,300),(50,350),(50,400),(50,450),(50,500),(50,550),(50,600),(50,650)]
 listmot=[' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']
 gomme1= pygame.image.load("img/gomme1.png").convert_alpha()
+idFrame2=0
 
 
 press = False
