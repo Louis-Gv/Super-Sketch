@@ -370,6 +370,15 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         pygame.display.flip()                   
                 init = False
             if etat == 'D':  # Si on dessine
+                if choixmot != 'C':
+                    limots = [word.strip() for word in open("dico.txt", encoding="utf-8")]
+                    mot1 = police.render(choice(limots), True, (0, 0, 0))
+                    mot2 = police.render(choice(limots), True, (0, 0, 0))
+                    mot3 = police.render(choice(limots), True, (0, 0, 0))
+                    fondg= pygame.draw.rect(fenetre, gris, (400, 105, 1320, 865))
+                    fenetre.blit(mot1, (460, 800))
+
+                    
                 # ---------------------------------------------------------------------------------------------------------------------------------------
                 if tunnelParent.poll():  # On get les nouveaux points
                     data = tunnelParent.recv().decode().split(",")
@@ -484,8 +493,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         py = int(data[2])
                         couleur = data[3].split(";")
                         couleur = tuple(map(int, couleur))
-                        rayon = int(data[4])
-
+                        rayon = int(data[4])                  
                     elif data[0] == 'F':
                         print(joueurs[int(data[1])] + " est parti")
                         del joueurs[int(data[1])]  # On supprime le joueur
@@ -530,7 +538,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
                 entete = pygame.draw.rect(fenetre, gris, (400,0,1920,100))         #Fond gris de le zone de l'entête
                 effac = pygame.draw.rect(fenetre, gris, (1720,10,190,80))
-
                 textMotEcrit = police.render('Ecrivez un mot : ' + motEcrit, True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textMotEcrit, (50, 1000))
                 textJoueur = police.render('Joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
