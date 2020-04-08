@@ -203,6 +203,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     choixmot='Z'
     cache = "R"
     motdevin="mot pas choisi"
+    motcache="mot pas choisi"
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
@@ -540,6 +541,11 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
                     elif data[0] == "M":
                         motdevin = data[1]
+
+                motcache=[*]*len(motdevin)
+                ' '.join(motcache)
+                print(motcache)
+                affmotcache = police.render(motcache, True, (0, 0, 0))
                     
 
 
@@ -550,11 +556,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN:         #Si on appuie sur entrée
                             if motEcrit == motdevin:
-                                #
-                                #
                                 tunnelParent.send(("t," + str(monID) + "," + "a trouvé le mot").encode())
-                                #
-                            if motEcrit != '':                  #On vérifie que le mot n'est pas vide
+                                
+                            if motEcrit != '' and motEcrit!= motdevin:                  #On vérifie que le mot n'est pas vide
                                 listmsg.append(joueurs[int(monID)] + " : " + motEcrit)    #On ajoute le mot à la liste du chat
                                 tunnelParent.send(("t," + str(monID) + "," + motEcrit).encode())     #On envoie le message avec le pseudo au serveur
                             motEcrit = ''     #On réinitialise le mot
@@ -583,6 +587,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 fenetre.blit(textMotEcrit, (50, 1000))
                 textJoueur = police.render('Joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textJoueur, (10, 0))
+                fenetre.blit(affmotcache, (1400,1000))
   
                 idFrame = (idFrame + 0.1) % 40           #Animation su logo Super-Sketch
                 if idFrame < 20:

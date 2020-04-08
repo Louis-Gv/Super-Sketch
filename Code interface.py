@@ -115,6 +115,9 @@ while continuer:
             elif len(MotEcrit) < 16:  # 16 caractères max
                 MotEcrit = MotEcrit+event.unicode
 
+    # Détection de la position de la souris
+    px, py = pygame.mouse.get_pos()
+
     # Placement des boutons sur l'écran
 
     fenetre.blit(fon, (1820, 500))
@@ -165,42 +168,31 @@ while continuer:
                        
 
             
-            bt1 = pygame.draw.rect(fenetre, blanc, (460, 450, 380,75))
-            bt2 = pygame.draw.rect(fenetre, blanc, (850, 450, 380,75))
-            bt3 = pygame.draw.rect(fenetre, blanc, (1240, 450, 380,75))
-            fenetre.blit(affmot1, (460, 450))
-            fenetre.blit(affmot2, (850, 450))
-            fenetre.blit(affmot3, (1240, 450))
-            if bt1.collidepoint(px,py):
-                if pygame.mouse.get_pressed()[0] == 1:
+        bt1 = pygame.draw.rect(fenetre, gris, (460, 450, 380,75))
+        bt2 = pygame.draw.rect(fenetre, gris, (850, 450, 380,75))
+        bt3 = pygame.draw.rect(fenetre, gris, (1240, 450, 380,75))
+        fenetre.blit(affmot1, (460, 450))
+        fenetre.blit(affmot2, (850, 450))
+        fenetre.blit(affmot3, (1240, 450))
+        if bt1.collidepoint(px,py):
+            if pygame.mouse.get_pressed() == (1, 0, 0):
+                choixmot='C'
+                motdevin=mot1
+                pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+        if bt2.collidepoint(px,py):
+            if pygame.mouse.get_pressed() == (1, 0, 0):
+                    motdevin=mot2
                     choixmot='C'
-                    motdevin=mot1
                     pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-            if bt2.collidepoint(px,py):
-                if pygame.mouse.get_pressed()[0] == 1:
-                        motdevin=mot2
-                        choixmot='C'
-                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-            if bt3.collidepoint(px,py):
-                if pygame.mouse.get_pressed()[0] == 1:
-                        motdevin=mot3
-                        choixmot='C'
-                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+        if bt3.collidepoint(px,py):
+            if pygame.mouse.get_pressed() == (1, 0, 0):
+                    motdevin=mot3
+                    choixmot='C'
+                    pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
 
-        affmotdevin= police.render(motdevin, True, (0, 0, 0))
-        fenetre.blit(affmotdevin, (1400, 1000))
+    affmotdevin= police.render(motdevin, True, (0, 0, 0))
+    fenetre.blit(affmotdevin, (1400, 1000))
     
-
-
-
-
-
-
-
-
-
-    # Détection de la position de la souris
-    px, py = pygame.mouse.get_pos()
 
     # Détection du moment quand la souris passe sur les boutons
     if btbf.collidepoint(px, py):
