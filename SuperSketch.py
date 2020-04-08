@@ -164,14 +164,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
         return
     
     def effacfx():
-        global eff
         pygame.draw.rect(fenetre, noir, (1720, 10, 190, 5))
         pygame.draw.rect(fenetre, noir, (1720, 10, 5, 80))
         pygame.draw.rect(fenetre, noir, (1910, 10, 5, 80))
         pygame.draw.rect(fenetre, noir, (1720, 85, 190, 5))
         if pygame.mouse.get_pressed() == (1, 0, 0):  # Detection du clic
             pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-            eff=1
             tunnelParent.send("E".encode())
 
 
