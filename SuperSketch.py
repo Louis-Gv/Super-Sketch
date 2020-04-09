@@ -120,6 +120,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     joueurs = {}
     monID = 0
     roles = {}
+    trouves = 0
     etat = 0
 
     play = pygame.image.load("img/lobby/play.png")
@@ -204,6 +205,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     motcache = "mot pas choisi"
     mot1 = mot2 = mot3 = affmot1 = affmot2 = affmot3 = affmotcache = ""
     tempsFin = 0
+    temps = 80  # temps pour dessiner
     verif = False
     idFrame2 = 0
 
@@ -321,8 +323,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                     else:
                                         etat = 'L'
                                     for idTableauJoueur in joueurs:  # Envoi de tout les pseudos + Roles
-                                        tableauJoueur = tableauJoueur + "," + str(idTableauJoueur) + ";" + joueurs[
-                                            idTableauJoueur] + ";"
+                                        tableauJoueur = tableauJoueur + "," + str(idTableauJoueur) + ";" + joueurs[idTableauJoueur] + ";"
                                         if idTableauJoueur == idD:
                                             roles[idTableauJoueur] = 'D'
                                             tableauJoueur += 'D'
@@ -387,6 +388,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         listmsg.append(joueurs[int(data[1])] + " : " + data[2])  # On ajoute à la liste du chat le pseudo de l'envoyeur et son texte
                     elif data[0] == "O":
                         listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
+                        trouves += 1
 
                 # Lancement du dessin:
                 for event in pygame.event.get():
@@ -439,6 +441,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         affmot3 = police.render(mot3, True, (0, 0, 0))
                         selectionMot = False  # On ferme la boucle de la selection de mots
 
+                    pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
                     bt1 = pygame.draw.rect(fenetre, blanc, (460, 450, 380, 75))  # on affiche les trois mots et leurs boutons
                     bt2 = pygame.draw.rect(fenetre, blanc, (850, 450, 380, 75))
                     bt3 = pygame.draw.rect(fenetre, blanc, (1240, 450, 380, 75))
@@ -458,10 +461,26 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         if motChoisi:
                             tunnelParent.send(("M" + "," + motdevin).encode())  # On envoie le mot aux autres
                             pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))  # On efface les mots
-                            tempsFin = time() + 100
+                            tempsFin = time() + temps
                 else:
                     affChrono = police.render(str(int(tempsFin - time())), True, (0, 0, 0))
                     fenetre.blit(affChrono, (1810, 610))
+                    if trouves >= len(joueurs)-1 or int(tempsFin - time()) <= 0:
+                        idD = int(monID)
+                        while int(idD) == int(monID):
+                            idD = choice(list(joueurs.keys()))
+                        for j in joueurs:
+                            if j == idD:
+                                roles[j] = "D"
+                            else:
+                                roles[j] = "L"
+                        etat = "L"
+                        trouves = 0
+                        motdevin = "mot pas choisi"
+                        motcache = "mot pas choisi"
+                        verif = False
+                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+                        tunnelParent.send(("R,"+str(idD)).encode())
 
                 # Détection du moment quand la souris passe sur les boutons
                 if btbf.collidepoint(px, py):
@@ -513,7 +532,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fenetre.blit(logo2, poslogo)
 
                 # Détection clique gauche pour effectuer le dessin
-                if pygame.mouse.get_pressed()[0] == 1 and motChoisi and (px != ancienpx or py != ancienpy):  # Si on clique le dessin s'affiche
+                if pygame.mouse.get_pressed()[0] == 1 and motChoisi and (px != ancienpx or py != ancienpy) and tempsFin - time() < temps - 0.35:  # Si on clique le dessin s'affiche
                     pygame.draw.circle(fenetre, couleur, (px, py), rayon)
                     tunnelParent.send(('D,' + str(px) + "," + str(py) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + ",").encode())  # On envoie toutes les données au serveur
                     # "D,875,745,45;75;0,10,"
@@ -536,15 +555,30 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         del joueurs[int(data[1])]  # On supprime le joueur
                         del roles[int(data[1])]
                     elif data[0] == 't':
-                        print(data)
                         listmsg.append(joueurs[int(data[1])] + " : " + data[2])
                     elif data[0] == "E":  # Si on reçoit cette valeur c'est que le joueur a tout effacé
                         pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
                     elif data[0] == "M":  # On décode le mot à deviner
                         motdevin = data[1]
-                        tempsFin = time() + 100
+                        tempsFin = time() + temps
                     elif data[0] == "O":
                         listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
+                    elif data[0] == "R":
+                        listmsg.append("C'était " + motdevin)
+                        for j in joueurs:
+                            if j == int(data[1]):
+                                roles[j] = "D"
+                            else:
+                                roles[j] = "L"
+                        if int(data[1]) == int(monID):
+                            etat = "D"
+                        trouves = 0
+                        motChoisi = False
+                        selectionMot = True
+                        motdevin = "mot pas choisi"
+                        motcache = "mot pas choisi"
+                        verif = False
+                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
 
                 if not verif and motdevin != "mot pas choisi":  # Si le mot n'a pas été trouvé ou qu'il n'a pas été choisi
                     motcache = ['_'] * len(motdevin)
