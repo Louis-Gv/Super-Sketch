@@ -108,8 +108,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     paddingbtnJoinOmbre.fill((0, 0, 0))
     pospaddingbtnJoin = paddingbtnJoin.get_rect(center=(int(largeur / 2), 680))
 
-    textPseudo = police.render('Entrez votre pseudo : ', True,
-                               (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
+    textPseudo = police.render('Entrez votre pseudo : ', True, (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
     pseudo = ''
 
     procServeur = Process()  # on initialise les process pour pouvoir les fermer
@@ -134,7 +133,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     # Déclaration de la fonction de sélection de la couleur
     def selection(pbt, cbt):
         global couleur  # Définition de variable globale du programme
-        global idFrame2 # Animation de l'image
+        global idFrame2  # Animation de l'image
         idFrame2 = (idFrame2 + 1) % 40
         if idFrame2 < 30:
             fenetre.blit(pal1, pbt)
@@ -162,18 +161,16 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 rayon = rayon + 10
         pygame.time.wait(100)
         return
-    
+
+
     def effacfx():
-        global eff
         pygame.draw.rect(fenetre, noir, (1720, 10, 190, 5))
         pygame.draw.rect(fenetre, noir, (1720, 10, 5, 80))
         pygame.draw.rect(fenetre, noir, (1910, 10, 5, 80))
         pygame.draw.rect(fenetre, noir, (1720, 85, 190, 5))
         if pygame.mouse.get_pressed() == (1, 0, 0):  # Detection du clic
             pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-            eff=1
             tunnelParent.send("E".encode())
-
 
 
     fond = pygame.image.load("img/fond.png").convert()
@@ -191,21 +188,24 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     bleuc = (38, 188, 254)
     violet = (238, 130, 238)
     marron = (88, 41, 0)
-    gris= (192, 192, 192)
+    gris = (192, 192, 192)
     police2 = pygame.font.SysFont("roboto-bold", 35)
     motEcrit = ''
-    listmsg = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']     #Initialisation de la liste du chat vide
+    listmsg = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']  # Initialisation de la liste du chat vide
     couleur = noir
     rayon = 10
     ancienpx = 2500  # hors écran
     ancienpy = 2500
-    gomme1= pygame.image.load("img/gomme1.png").convert_alpha()
-    choixmot='Z'
-    cache = "R"
-    motdevin="mot pas choisi"
-    motcache="mot pas choisi"
-    verif='F'
-    idFrame2=0
+    gomme1 = pygame.image.load("img/gomme1.png").convert_alpha()
+    limots = [word.strip() for word in open("dico.txt", encoding="utf-8")]  # On créer une liste à partir d'un document texte
+    motChoisi = False
+    selectionMot = True
+    motdevin = "mot pas choisi"
+    motcache = "mot pas choisi"
+    mot1 = mot2 = mot3 = affmot1 = affmot2 = affmot3 = affmotcache = ""
+    tempsFin = 0
+    verif = False
+    idFrame2 = 0
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
@@ -258,8 +258,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     barre = '|'
                 else:
                     barre = ''
-                textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True,
-                                           (0, 0, 0))  # txt,antialiasing,coul
+                textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textPseudo, (400, 530))
 
             for event in pygame.event.get():
@@ -363,7 +362,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                     if infos[1] == pseudo:
                                         monID = infos[0]
                                         etat = infos[2]
-                                print(joueurs, roles, etat)
                                 break
                             elif data[0] == 'F':
                                 print("Déconnexion d'un joueur a fait planté")
@@ -373,11 +371,11 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                                 tunnelParent.send('F'.encode())
                                 fini = True
-                        pygame.display.flip()                   
+                        pygame.display.flip()
                 init = False
             if etat == 'D':  # Si on dessine
-                px, py = pygame.mouse.get_pos()                   # Détection de la position de la souris
-                   
+                px, py = pygame.mouse.get_pos()  # Détection de la position de la souris
+
                 # ---------------------------------------------------------------------------------------------------------------------------------------
                 if tunnelParent.poll():  # On get les nouveaux points
                     data = tunnelParent.recv().decode().split(",")
@@ -386,17 +384,20 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         del joueurs[int(data[1])]
                         del roles[int(data[1])]
                     elif data[0] == 't':
-                        listmsg.append(joueurs[int(data[1])] + " : " + data[2])            #On ajoute à la liste du chat le pseudo de l'envoyeur et son texte
-                
+                        listmsg.append(joueurs[int(data[1])] + " : " + data[2])  # On ajoute à la liste du chat le pseudo de l'envoyeur et son texte
+                    elif data[0] == "O":
+                        listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
+
                 # Lancement du dessin:
                 for event in pygame.event.get():
-                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):    #Si on appuie sur ECHAP
-                        tunnelParent.send(("F," + str(monID)).encode())                         #On envoie l'info que l'on quitte le serveur
-                        fini = True                 #On ferme la fenêtre
+                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):  # Si on appuie sur ECHAP
+                        tunnelParent.send(("F," + str(monID)).encode())  # On envoie l'info que l'on quitte le serveur
+                        fini = True  # On ferme la fenêtre
+
                 # Placement des boutons sur l'écran
                 fenetre.blit(fon, (1820, 500))
                 fenetre.blit(fon, (1720, 500))
-                fonpal = pygame.draw.rect(fenetre, blanc, (1720,100, 200 ,980))
+                fonpal = pygame.draw.rect(fenetre, blanc, (1720, 100, 200, 980))
                 btr = pygame.draw.rect(fenetre, rouge, (1820, 100, 100, 100))
                 btv = pygame.draw.rect(fenetre, vert, (1720, 100, 100, 100))
                 btbl = pygame.draw.rect(fenetre, blanc, (1820, 200, 100, 100))
@@ -420,50 +421,48 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 ligne9 = pygame.draw.rect(fenetre, noir, (1720, 100, 5, 500))
                 ligne10 = pygame.draw.rect(fenetre, noir, (1820, 100, 5, 500))
                 ligne11 = pygame.draw.rect(fenetre, noir, (1915, 100, 5, 500))
-                souligne = pygame.draw.rect(fenetre, noir,(10, 50, 340, 5))
+                souligne = pygame.draw.rect(fenetre, noir, (10, 50, 340, 5))
                 ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
-                entete = pygame.draw.rect(fenetre, gris, (400,0,1920,100))
-                fenetre.blit(gomme1, (1830,220))
-                effac = pygame.draw.rect(fenetre, blanc, (1720,10,190,80))     #Création du bouton pour tout effacer
+                entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
+                fenetre.blit(gomme1, (1830, 220))
+                effac = pygame.draw.rect(fenetre, blanc, (1720, 10, 190, 80))  # Création du bouton pour tout effacer
                 txteffac = police2.render("Tout effacer", True, (0, 0, 0))
-                fenetre.blit(txteffac,(1745, 40))
+                fenetre.blit(txteffac, (1745, 40))
 
-                if choixmot != 'C':         #Si le mot n'est pas chosi
-                    if cache != "K":        #Si trois mot n'ont pas été choisis au hasard
-                        limots = [word.strip() for word in open("dico.txt", encoding="utf-8")]   #On créer une liste à partir d'un document texte
-                        mot1= choice(limots)        #On choisi le premier mot
-                        mot2= choice(limots)        #On choisit le deuxième mot
-                        mot3= choice(limots)        #On chosit le troisième mot
-                        affmot1 = police.render(mot1, True, (0, 0, 0))    
+                if not motChoisi:  # Si le mot n'est pas chosi
+                    if selectionMot:  # Si trois mot n'ont pas été choisis au hasard
+                        mot1 = choice(limots)  # On choisi le premier mot
+                        mot2 = choice(limots)  # On choisit le deuxième mot
+                        mot3 = choice(limots)  # On chosit le troisième mot
+                        affmot1 = police.render(mot1, True, (0, 0, 0))
                         affmot2 = police.render(mot2, True, (0, 0, 0))
                         affmot3 = police.render(mot3, True, (0, 0, 0))
-                        cache = "K"                 #On ferme la boucle de la selection de mots
-                       
-                    bt1 = pygame.draw.rect(fenetre, blanc, (460, 450, 380,75))     #on affiche les trois mots et leurs boutons
-                    bt2 = pygame.draw.rect(fenetre, blanc, (850, 450, 380,75))
-                    bt3 = pygame.draw.rect(fenetre, blanc, (1240, 450, 380,75))
+                        selectionMot = False  # On ferme la boucle de la selection de mots
+
+                    bt1 = pygame.draw.rect(fenetre, blanc, (460, 450, 380, 75))  # on affiche les trois mots et leurs boutons
+                    bt2 = pygame.draw.rect(fenetre, blanc, (850, 450, 380, 75))
+                    bt3 = pygame.draw.rect(fenetre, blanc, (1240, 450, 380, 75))
                     fenetre.blit(affmot1, (460, 450))
                     fenetre.blit(affmot2, (850, 450))
                     fenetre.blit(affmot3, (1240, 450))
-                    if bt1.collidepoint(px,py):
-                        if pygame.mouse.get_pressed()[0] == 1:          #Si on clique sur le premier bouton
-                            choixmot='C'                                #On ferme la boucle pour choisir le mot
-                            motdevin=mot1                               #On initialise le mot à deviner
-                            tunnelParent.send(("M" + "," + mot1).encode())    #On envoie le mot au serv
-                            pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))      #Onefface les mots
-                    if bt2.collidepoint(px,py):
-                        if pygame.mouse.get_pressed()[0] == 1:                              #idem
-                            motdevin=mot2
-                            choixmot='C'
-                            tunnelParent.send(("M" + "," + mot2).encode())
-                            pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-                    if bt3.collidepoint(px,py):
-                        if pygame.mouse.get_pressed()[0] == 1:                              #idem
-                            motdevin=mot3 
-                            choixmot='C'
-                            tunnelParent.send(("M" + "," + mot3).encode())
-                            pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-                        
+                    if pygame.mouse.get_pressed()[0] == 1:
+                        if bt1.collidepoint(px, py):  # Si on clique sur le premier bouton
+                            motChoisi = True  # On ferme la boucle pour choisir le mot
+                            motdevin = mot1  # On initialise le mot à deviner
+                        elif bt2.collidepoint(px, py):
+                            motdevin = mot2
+                            motChoisi = True
+                        elif bt3.collidepoint(px, py):
+                            motdevin = mot3
+                            motChoisi = True
+                        if motChoisi:
+                            tunnelParent.send(("M" + "," + motdevin).encode())  # On envoie le mot aux autres
+                            pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))  # On efface les mots
+                            tempsFin = time() + 100
+                else:
+                    affChrono = police.render(str(int(tempsFin - time())), True, (0, 0, 0))
+                    fenetre.blit(affChrono, (1810, 610))
+
                 # Détection du moment quand la souris passe sur les boutons
                 if btbf.collidepoint(px, py):
                     selection(btbf, bleuf)
@@ -485,40 +484,42 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     selectioncercle1()
                 if btcp.collidepoint(px, py):
                     selectioncercle2()
-                if effac.collidepoint(px,py):
+                if effac.collidepoint(px, py):
                     effacfx()
 
-                affmotdevin= police.render(motdevin, True, (0, 0, 0))
-                fenetre.blit(affmotdevin, (1400, 1000))                      #on affiche le mot à faire deviner
-                
+                affmotdevin = police.render(motdevin, True, (0, 0, 0))
+                fenetre.blit(affmotdevin, (1400, 1000))  # on affiche le mot à faire deviner
+
                 i = 0
-                for i in range(10):                      #Affichage du chat
+                for i in range(10):  # Affichage du chat
                     listmsg = listmsg[-10:]
                     textchat = police2.render(listmsg[i], True, (0, 0, 0))
-                    fenetre.blit(textchat, (50,480+50*i))
+                    fenetre.blit(textchat, (50, 480 + 50 * i))
 
                 textJoueur = police.render('Joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textJoueur, (10, 0))
-  
-                idFrame = (idFrame + 0.1) % 40      #Animation du logo super-Sketch
-                if idFrame < 20:
-                   poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
-                   fenetre.blit(logo1, poslogo)
-                else:
-                   poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
-                   fenetre.blit(logo2, poslogo)
+                xJoueur = 0
+                for j in joueurs:
+                    nomJoueur = police.render(joueurs[j] + " : " + roles[j], True, (0, 0, 0))
+                    fenetre.blit(nomJoueur, (10, 60 + xJoueur * 50))
+                    xJoueur += 1
 
-               # Détection clique gauche pour effectuer le dessin
-                if pygame.mouse.get_pressed()[0] == 1 and (px != ancienpx or py != ancienpy):          #Si on clique le dessin s'affiche
+                idFrame = (idFrame + 0.1) % 40  # Animation du logo super-Sketch
+                if idFrame < 20:
+                    poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
+                    fenetre.blit(logo1, poslogo)
+                else:
+                    poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
+                    fenetre.blit(logo2, poslogo)
+
+                # Détection clique gauche pour effectuer le dessin
+                if pygame.mouse.get_pressed()[0] == 1 and motChoisi and (px != ancienpx or py != ancienpy):  # Si on clique le dessin s'affiche
                     pygame.draw.circle(fenetre, couleur, (px, py), rayon)
-                    tunnelParent.send(('D,' + str(px) + "," + str(py) + "," + str(couleur[0]) + ";" + str(
-                        couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + ",").encode())  #On envoie toutes les données au serveur
-                    # "D,875,745,45;75;0,10,0,"
+                    tunnelParent.send(('D,' + str(px) + "," + str(py) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + ",").encode())  # On envoie toutes les données au serveur
+                    # "D,875,745,45;75;0,10,"
                     ancienpx = px
                     ancienpy = py
-
-                   
-                pygame.display.flip()    #Rafraichissement de la fenêtre
+                pygame.display.flip()  # Rafraichissement de la fenêtre
                 clock.tick(200)
                 # --------------------------------------------------------------------------------------------------------------------------------------------
             elif etat == 'L':  # Si on regarde le dessin
@@ -529,93 +530,95 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         py = int(data[2])
                         couleur = data[3].split(";")
                         couleur = tuple(map(int, couleur))
-                        rayon = int(data[4])                  
+                        rayon = int(data[4])
                     elif data[0] == 'F':
                         print(joueurs[int(data[1])] + " est parti")
                         del joueurs[int(data[1])]  # On supprime le joueur
                         del roles[int(data[1])]
-
                     elif data[0] == 't':
                         print(data)
                         listmsg.append(joueurs[int(data[1])] + " : " + data[2])
-
-                    elif data[0] == "E":           #Si on reçoit cette valeur c'est que le joueur a tout effacé 
+                    elif data[0] == "E":  # Si on reçoit cette valeur c'est que le joueur a tout effacé
                         pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-                    elif data[0] == "M":           #On décode le mot à deviner
+                    elif data[0] == "M":  # On décode le mot à deviner
                         motdevin = data[1]
+                        tempsFin = time() + 100
+                    elif data[0] == "O":
+                        listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
 
-                if verif != 'V' and motdevin!="mot pas choisi":     #Si le mot n'a pas été trouvé ou qu'il n'a pas été choisi
-                    motcache=['_']*len(motdevin)
-                    motcache=str(' '.join(motcache))
+                if not verif and motdevin != "mot pas choisi":  # Si le mot n'a pas été trouvé ou qu'il n'a pas été choisi
+                    motcache = ['_'] * len(motdevin)
+                    motcache = str(' '.join(motcache))
                     affmotcache = police.render(motcache, True, (0, 0, 0))
                 elif motdevin == "mot pas choisi":
                     motcache = motdevin
                     affmotcache = police.render(motcache, True, (0, 0, 0))
 
-                
-                    
-
-
                 for event in pygame.event.get():
-                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):   #Si on appuie sur ECHAP
-                        tunnelParent.send(("F," + str(monID)).encode())                         # On envoie F pour signaler que le joueur est parti au serveur
-                        fini = True                             #On ferme la fenêtre
+                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):  # Si on appuie sur ECHAP
+                        tunnelParent.send(("F," + str(monID)).encode())  # On envoie F pour signaler que le joueur est parti au serveur
+                        fini = True  # On ferme la fenêtre
                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_RETURN:         #Si on appuie sur entrée
+                        if event.key == pygame.K_RETURN and motEcrit != '':  # Si on appuie sur entrée et que le mot n'est pas vide
                             if motEcrit == motdevin:
-                                tunnelParent.send(("t," + str(monID) + "," + "a trouvé le mot").encode())         #On envoie au chat le joueur a trouvé
-                                motcache = motdevin                                                         #On affiche le mot qui devait être deviné au joueur qui l'a trouvé
+                                motcache = motdevin  # On affiche le mot qui devait être deviné au joueur qui l'a trouvé
                                 affmotcache = police.render(motcache, True, (0, 0, 0))
-                                listmsg.append(joueurs[int(monID)] + " : " + motEcrit)    #On ajoute le mot à la liste du chat
-                                verif='V'                                
-                            if motEcrit != '' and motEcrit!= motdevin:                  #On vérifie que le mot n'est pas vide
-                                listmsg.append(joueurs[int(monID)] + " : " + motEcrit)    #On ajoute le mot à la liste du chat
-                                tunnelParent.send(("t," + str(monID) + "," + motEcrit).encode())     #On envoie le message avec le pseudo au serveur
-                            motEcrit = ''     #On réinitialise le mot
+                                listmsg.append("Vous avez trouvé le mot!")
+                                tunnelParent.send(("O," + str(monID)).encode())
+                                verif = True
+                            else:
+                                listmsg.append(joueurs[int(monID)] + " : " + motEcrit)  # On ajoute le mot à la liste du chat
+                                tunnelParent.send(("t," + str(monID) + "," + motEcrit).encode())  # On envoie le message avec le pseudo au serveur
+                            motEcrit = ''  # On réinitialise le mot
 
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
                             motEcrit = motEcrit[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
 
                         elif len(motEcrit) < 16:  # 16 caractères max
-                            motEcrit = motEcrit + event.unicode                
+                            motEcrit = motEcrit + event.unicode
 
+                pygame.draw.circle(fenetre, couleur, (px, py), rayon)  # affichage du dessin avec les infos reçus par le serveur
 
-
-                pygame.draw.circle(fenetre, couleur, (px, py), rayon)  #affichage du dessin avec les infos reçus par le serveur
-
-                    
-                fonpal = pygame.draw.rect(fenetre, blanc, (1720,100, 200 ,980))    #Fond de la palette de couleur
-                tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))           #Fond gris de le zone de chat
-                ligne = pygame.draw.rect(fenetre, noir, (390, 0, 10, 980))         #Dessin des lignes de la palette
-                ligne2 = pygame.draw.rect(fenetre, noir, (0, 970, 1920, 10))   
-                bas = pygame.draw.rect(fenetre, gris, (0, 980, 1920, 1920))        #Fond gris de le zone de texte
-                souligne = pygame.draw.rect(fenetre, noir,(10, 50, 340, 5))
+                fonpal = pygame.draw.rect(fenetre, blanc, (1720, 100, 200, 980))  # Fond de la palette de couleur
+                tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))  # Fond gris de le zone de chat
+                ligne = pygame.draw.rect(fenetre, noir, (390, 0, 10, 980))  # Dessin des lignes de la palette
+                ligne2 = pygame.draw.rect(fenetre, noir, (0, 970, 1920, 10))
+                bas = pygame.draw.rect(fenetre, gris, (0, 980, 1920, 1920))  # Fond gris de le zone de texte
+                souligne = pygame.draw.rect(fenetre, noir, (10, 50, 340, 5))
                 ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
-                entete = pygame.draw.rect(fenetre, gris, (400,0,1920,100))         #Fond gris de le zone de l'entête
-                effac = pygame.draw.rect(fenetre, gris, (1720,10,190,80))
+                entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))  # Fond gris de le zone de l'entête
+                effac = pygame.draw.rect(fenetre, gris, (1720, 10, 190, 80))
+                fenetre.blit(affmotcache, (1400, 1000))
+
+                if motdevin != "mot pas choisi":
+                    affChrono = police.render(str(int(tempsFin - time())), True, (0, 0, 0))
+                    fenetre.blit(affChrono, (1810, 610))
+
+                idFrame = (idFrame + 0.1) % 40  # Animation su logo Super-Sketch et de la barre de saisie
+                if idFrame < 20:
+                    poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
+                    fenetre.blit(logo1, poslogo)
+                    barre = '|'
+                else:
+                    poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
+                    fenetre.blit(logo2, poslogo)
+                    barre = ''
                 textMotEcrit = police.render('Ecrivez un mot : ' + motEcrit + barre, True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textMotEcrit, (50, 1000))
                 textJoueur = police.render('Joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textJoueur, (10, 0))
-                fenetre.blit(affmotcache, (1400,1000))
-  
-                idFrame = (idFrame + 0.1) % 40           #Animation su logo Super-Sketch et de ka barre de saisie
-                if idFrame < 20:
-                   poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
-                   fenetre.blit(logo1, poslogo)
-                   barre='|'                               
-                else:
-                   poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
-                   fenetre.blit(logo2, poslogo)
-                   barre=''
+                xJoueur = 0
+                for j in joueurs:
+                    nomJoueur = police.render(joueurs[j] + " : " + roles[j], True, (0, 0, 0))
+                    fenetre.blit(nomJoueur, (10, 60 + xJoueur*50))
+                    xJoueur += 1
 
-                i = 0
-                for i in range(10):                   #Affichage du texte dans le chat
-                    listmsg = listmsg[-10:]           #On garde uniquement les 10 derniers termes de la listes
+                for i in range(10):  # Affichage du texte dans le chat
+                    listmsg = listmsg[-10:]  # On garde uniquement les 10 derniers termes de la listes
                     textchat = police2.render(listmsg[i], True, (0, 0, 0))
-                    fenetre.blit(textchat, (50,480+50*i))        #On affiche la liste avec les coord saisie précédemment
-                
-                pygame.display.flip()       #raffraichissment de la fenêtre
+                    fenetre.blit(textchat, (50, 480 + 50 * i))  # On affiche la liste avec les coord saisie précédemment
+
+                pygame.display.flip()  # raffraichissment de la fenêtre
                 clock.tick(400)
     pygame.quit()
     procClient.join()
