@@ -155,11 +155,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
     def selectioncercle2():
         global rayon  # Définition de variable globale du programme
-
         if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de rayon lors d'un clic
-            rayon = rayon - 5
-            if rayon < 5:
-                rayon = rayon + 10
+            if rayon < 7:
+                rayon = rayon - 5
         pygame.time.wait(100)
         return
 
