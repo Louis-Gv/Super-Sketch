@@ -727,7 +727,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
                             motEcrit = motEcrit[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
 
-                        elif len(motEcrit) < 16:  # 16 caractères max
+                        elif len(motEcrit) < 16 and motdevin != "mot pas choisi":  # 16 caractères max
                             motEcrit = motEcrit + event.unicode
                             
                 entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))  # Fond gris de le zone de l'entête
