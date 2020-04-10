@@ -91,7 +91,6 @@ cache = "R"
 motdevin="mot pas choisi"
 easter=0
 xE = 400
-vxE = 3
 yE= 0
 
 
@@ -111,7 +110,6 @@ while continuer:
             continuer = 0
         if event.type == pygame.KEYDOWN: 
             if event.key == pygame.K_RETURN:
-                print(MotEcrit)
                 if MotEcrit == "406SW":
                     easter=1
                 if MotEcrit != '' and MotEcrit!="406SW":                        
@@ -139,7 +137,7 @@ while continuer:
             fenetre.blit(logo2, poslogo)
 
     else:
-        xE += vxE
+        xE += 3
         fenetre.blit(imgpeu, (int(xE), yE))
 
 
