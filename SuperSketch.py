@@ -208,7 +208,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     def selectioncercle2():
         global rayon  # Définition de variable globale du programme
         if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de rayon lors d'un clic
-            if rayon < 7:
+            if rayon > 7:
                 rayon = rayon - 5
         pygame.time.wait(100)
         return
@@ -400,12 +400,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             pseudo = pseudo[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
                         elif len(pseudo) < 16:  # 16 caractères max
                             pseudo += event.unicode
-                            
-                            
-                            
-                            
-                            
-
             clock.tick(80)  # limite 80fps
             pygame.display.flip()  # Rafraichissement écran acceuil avec toutes nos modifs
         else:  # pas dans l'acceuil
@@ -663,6 +657,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     xJoueur += 1
 
                 idFrame = (idFrame + 0.1) % 40  # Animation du logo super-Sketch
+                if idFrame < 20:
+                    poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
+                    fenetre.blit(logo1, poslogo)
+                else:
+                    poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
+                    fenetre.blit(logo2, poslogo)
 
                 # Détection clique gauche pour effectuer le dessin
                 if pygame.mouse.get_pressed()[0] == 1 and motChoisi and (px != ancienpx or py != ancienpy) and tempsFin - time() < temps - 0.35:  # Si on clique le dessin s'affiche
@@ -698,8 +698,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
                     elif data[0] == "R":
                         listmsg.append("C'était " + motdevin)
-                    elif data[0] == "V":
-                        easter = 1
                         for j in joueurs:
                             if j == int(data[1]):
                                 roles[j] = "D"
@@ -714,6 +712,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         motcache = "mot pas choisi"
                         verif = False
                         pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+                    elif data[0] == "V":
+                        easter = 1
 
                 if not verif and motdevin != "mot pas choisi":  # Si le mot n'a pas été trouvé ou qu'il n'a pas été choisi
                     motcache = ['_'] * len(motdevin)
@@ -780,6 +780,14 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fenetre.blit(affChrono, (1810, 610))
 
                 idFrame = (idFrame + 0.1) % 40  # Animation su logo Super-Sketch et de la barre de saisie
+                if idFrame < 20:
+                    poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
+                    fenetre.blit(logo1, poslogo)
+                    barre = '|'
+                else:
+                    poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
+                    fenetre.blit(logo2, poslogo)
+                    barre = ''
 
                 textMotEcrit = police.render('Ecrivez un mot : ' + motEcrit + barre, True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textMotEcrit, (50, 1000))
