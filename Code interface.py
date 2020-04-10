@@ -159,6 +159,7 @@ while continuer:
     btcg = pygame.draw.circle(fenetre, noir, (1870, 550), 35)  # bouton circulaire gros rayon
     btcp = pygame.draw.circle(fenetre, noir, (1770, 550), 15)  # bouton circulaire petit rayon
     tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))
+    droite = pygame.draw.rect(fenetre, gris, (1720, 600, 200,1000))
     ligne = pygame.draw.rect(fenetre, noir, (390, 0, 10, 980))
     ligne2 = pygame.draw.rect(fenetre, noir, (0, 970, 1920, 10))
     bas = pygame.draw.rect(fenetre, gris, (0, 980, 1920, 1920))
@@ -168,7 +169,7 @@ while continuer:
     ligne6 = pygame.draw.rect(fenetre, noir, (1720, 400, 1000, 5))
     ligne7 = pygame.draw.rect(fenetre, noir, (1720, 500, 1000, 5))
     ligne8 = pygame.draw.rect(fenetre, noir, (1720, 600, 1000, 5))
-    ligne9 = pygame.draw.rect(fenetre, noir, (1720, 100, 5, 500))
+    ligne9 = pygame.draw.rect(fenetre, noir, (1720, 100, 10, 1000))
     ligne10 = pygame.draw.rect(fenetre, noir, (1820, 100, 5, 500))
     ligne11 = pygame.draw.rect(fenetre, noir, (1915, 100, 5, 500))
     souligne = pygame.draw.rect(fenetre, noir,(10, 50, 340, 5))
