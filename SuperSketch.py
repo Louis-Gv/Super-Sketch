@@ -15,9 +15,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     acceuil = True
     host = False
     join = False
-    online= False
-    offline= False
-    accip= True
+    online = False
+    offline = False
+    accip = True
 
     # Style fenetre
     bgColor = (118, 188, 194)
@@ -96,7 +96,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
     pospaddingbtnOnline = paddingbtnOnline.get_rect(center=(int(largeur / 2), 410))
 
-    #---------------------------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
     
     # Bouton Offline
     btnOffline = police.render('Jouer en réseau local', True,  (0, 0, 0))
@@ -118,7 +118,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
     pospaddingbtnOffline = paddingbtnOffline.get_rect(center=(int(largeur / 2), 610))
 
-    #---------------------------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
 
     # Btn d'hébergement
     btnHost = police.render('Héberger Une Partie', True, (0, 0, 0))  # Rendu du texte avec (antialiasing, noir)
@@ -139,7 +139,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
     pospaddingbtnHost = paddingbtnHost.get_rect(center=(int(largeur / 2), 510))
 
-    #---------------------------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
 
     # Idem pour le btn rejoindre :
     btnJoin = police.render('Rejoindre Une Partie', True, (0, 0, 0))
@@ -157,7 +157,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     paddingbtnJoinOmbre.fill((0, 0, 0))
     pospaddingbtnJoin = paddingbtnJoin.get_rect(center=(int(largeur / 2), 680))
 
-    #---------------------------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
 
     textPseudo = police.render('Entrez votre pseudo : ', True, (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
     pseudo = ''
@@ -258,10 +258,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     temps = 80  # temps pour dessiner
     verif = False
     idFrame2 = 0
-    easter=0
+    easter = 0
     xE = 400
-    yE= 0
-
+    yE = 0
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
@@ -290,7 +289,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             else:
                 fenetre.blit(logo2, poslogo)
 
-            #-------------------------------------------------------------------------------------------------------------------------------
+            if idFrame < 24:  # barre qui clignotte du pseudo
+                barre = '|'
+            else:
+                barre = ''
+
+            # ----------------------------------------------------------------------------------------------------------
 
             if not host and not join:  # menu sans avoir cliquer
                 fenetre.blit(borderbtnHost, posborderbtnHost)  # Bordure
@@ -311,16 +315,11 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         fenetre.blit(paddingbtnJoinOmbre, pospaddingbtnJoin)
                 fenetre.blit(btnJoin, posbtnJoin)  # Affichage du texte
 
-            if host:
-                if idFrame < 24:  # barre qui clignotte du pseudo
-                    barre = '|'
-                else:
-                    barre = ''
+            if host:  # Si on héberge
                 textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textPseudo, (400, 530))
 
             if join and not online and not offline:
-                
                 fenetre.blit(borderbtnOnline, posborderbtnOnline)  # Bordure
                 fenetre.blit(paddingbtnOnline, pospaddingbtnOnline)  # Fond bleu
 
@@ -336,34 +335,22 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 if posborderbtnOffline.collidepoint(pos):  # si pos souris est sur le btn offline
                     if pygame.mouse.get_pressed()[0] == 1:  # Si clique sur le btn
                         offline = True
+                        ip = "0.0.0.0"
                     else:  # si il le survole => fond sombre
                         fenetre.blit(paddingbtnOfflineOmbre, pospaddingbtnOffline)
                 fenetre.blit(btnOffline, posbtnOffline)  # Affichage du texte
 
             if offline:
-                if idFrame < 24:  # barre qui clignotte du pseudo
-                    barre = '|'
-                else:
-                    barre = ''
                 textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textPseudo, (400, 530))
 
             if online:
                 if accip:
-                    if idFrame < 24:  # barre qui clignotte du pseudo
-                        barre = '|'
-                    else:
-                        barre = ''
                     textIP = police.render("Entrez l'addresse IP du serveur : " + ip + barre, True, (0, 0, 0))  # txt,antialiasing,coul
                     fenetre.blit(textIP, (400, 530))
                 else:
-                    if idFrame < 24:  # barre qui clignotte du pseudo
-                        barre = '|'
-                    else:
-                        barre = ''
                     textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
                     fenetre.blit(textPseudo, (400, 530))
-                               
 
             for event in pygame.event.get():
                 if event.type == QUIT or (event.type == MOUSEBUTTONDOWN and poscroix.collidepoint(pos)):
@@ -384,28 +371,19 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             pseudo = pseudo[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
                         elif len(pseudo) < 16:  # 16 caractères max
                             pseudo += event.unicode
-                    if join and online:
-                        if not accip:
-                            if event.key == pygame.K_RETURN and ip !='':
-                                accip = False
-                            elif event.key == pygame.K_BACKSPACE:
-                                ip = ip[:-1]
-                            elif len(ip) < 16:  # 16 caractères max
-                                ip += event.unicode  
-                            
-                    if not accip and join and online:
-                        if event.key == pygame.K_RETURN and pseudo != '':
-                             accueil = False
+                    elif online and accip:
+                        if event.key == pygame.K_RETURN and ip != '':
+                            accip = False
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
-                            pseudo = pseudo[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
+                            ip = pseudo[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
                         elif len(pseudo) < 16:  # 16 caractères max
-                            pseudo += event.unicode
+                            ip += event.unicode
             clock.tick(80)  # limite 80fps
             pygame.display.flip()  # Rafraichissement écran acceuil avec toutes nos modifs
         else:  # pas dans l'acceuil
             if init:
                 if host:
-                    procClient = Process(target=client.client, args=(0, tunnelEnfant, pseudo))
+                    procClient = Process(target=client.client, args=("127.0.0.1", tunnelEnfant, pseudo))
                     procClient.start()  # Lancement du client
                     idJoueur = 0
                     while not start and not fini:
@@ -464,7 +442,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         clock.tick(10)
                     fenetre.fill((255, 255, 255))
                 else:
-                    procClient = Process(target=client.client, args=(1, tunnelEnfant, pseudo))
+                    procClient = Process(target=client.client, args=(ip, tunnelEnfant, pseudo))
                     procClient.start()
                     data = '0'
                     while not fini:  # attente de l'état
@@ -740,7 +718,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 verif = True
                             elif motEcrit == "406SW":
                                 easter=1
-                                tunnelParent.send(("V").encode())
+                                tunnelParent.send("V".encode())
                             else:
                                 listmsg.append(joueurs[int(monID)] + " : " + motEcrit)  # On ajoute le mot à la liste du chat
                                 tunnelParent.send(("t," + str(monID) + "," + motEcrit).encode())  # On envoie le message avec le pseudo au serveur

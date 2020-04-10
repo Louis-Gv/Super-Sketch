@@ -10,7 +10,7 @@ from socket import *
 import threading
 
 
-def client(estDistant, tunel, pseudo):
+def client(ip, tunel, pseudo):
     def reception():
         while True:
             try:
@@ -28,7 +28,7 @@ def client(estDistant, tunel, pseudo):
             message_emis = tunel.recv()  # On attend les messages du Process principal / Blocant
             monSocket.send(message_emis)  # Puis on les send au serveur pour les redistribuer aux autres clients
 
-    if estDistant:  # récupérer l'ip sur le msg broadcasté par le serv
+    if ip == "0.0.0.0":  # récupérer l'ip sur le msg broadcasté par le serv si pas renseigné
         s = socket(AF_INET, SOCK_DGRAM)
         s.bind(('', 50000))
         while 1:
@@ -37,8 +37,7 @@ def client(estDistant, tunel, pseudo):
                 break
         ip = emmeteur[0]
         s.close()
-    else:
-        ip = '127.0.0.1'
+
     port = 5000
 
     # Programme principal - Établissement de la connexion :
