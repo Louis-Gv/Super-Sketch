@@ -54,16 +54,16 @@ true_res = (windll.user32.GetSystemMetrics(0), windll.user32.GetSystemMetrics(1)
 fenetre = pygame.display.set_mode(true_res, pygame.FULLSCREEN)
 pygame.display.set_caption("Super-sketch")
 clock = pygame.time.Clock()
-fond = pygame.image.load("img/fond.png").convert()
-fenetre.blit(fond, (0, 0))
+pygame.draw.rect(fenetre, (255, 255, 255), (0, 0, 1920, 1080))
 
 # Initialisation des variables de couleur et des animations
 largeur = ctypes.windll.user32.GetSystemMetrics(0)
 logo1 = pygame.image.load("img/lobby/logo1.png")
 logo2 = pygame.image.load("img/lobby/logo2.png")
-pal1 = pygame.pal1 = pygame.image.load("img/pal1.png").convert_alpha()
+pal1 = pygame.image.load("img/pal1.png").convert_alpha()
 pal2 = pygame.image.load("img/pal2.png").convert_alpha()
 fon = pygame.image.load("img/pal4.png").convert_alpha()
+imgpeu = pygame.image.load("img/406sw.png").convert_alpha()
 idFrame = 0
 gris = (192, 192, 192)
 rouge = (255, 0, 0)
@@ -89,7 +89,10 @@ py = 5000
 choixmot = 'Z'
 cache = "R"
 motdevin="mot pas choisi"
-
+easter=0
+xE = 400
+vxE = 3
+yE= 0
 
 
 
@@ -99,16 +102,22 @@ rayon = 10
 # Boucle infinie pour maintenir ou fermer la fenêtre
 continuer = 1
 while continuer:
+
+    
+
     for event in pygame.event.get():
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
             pygame.quit()
             continuer = 0
         if event.type == pygame.KEYDOWN: 
             if event.key == pygame.K_RETURN:
-                if MotEcrit != '':
+                print(MotEcrit)
+                if MotEcrit == "406SW":
+                    easter=1
+                if MotEcrit != '' and MotEcrit!="406SW":                        
                     listmot.append(MotEcrit)
-                MotEcrit=''
-        
+                MotEcrit=''                    
+                           
             elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
                 MotEcrit = MotEcrit[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
                 
@@ -119,7 +128,25 @@ while continuer:
     px, py = pygame.mouse.get_pos()
 
     # Placement des boutons sur l'écran
+    entete = pygame.draw.rect(fenetre, gris, (400,0,1920,100))
+    if easter != 1 or xE > 1520:
+        
+        if idFrame < 20:
+            poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
+            fenetre.blit(logo1, poslogo)
+        else:
+            poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
+            fenetre.blit(logo2, poslogo)
 
+    else:
+        xE += vxE
+        fenetre.blit(imgpeu, (int(xE), yE))
+
+
+
+
+
+    
     fenetre.blit(fon, (1820, 500))
     fenetre.blit(fon, (1720, 500))
     fonpal = pygame.draw.rect(fenetre, blanc, (1720,100, 200 ,980))
@@ -132,7 +159,7 @@ while continuer:
     btbf = pygame.draw.rect(fenetre, bleuf, (1820, 400, 100, 100))
     btbc = pygame.draw.rect(fenetre, bleuc, (1720, 400, 100, 100))
     btcg = pygame.draw.circle(fenetre, noir, (1870, 550), 35)  # bouton circulaire gros rayon
-    btcp = pygame.draw.circle(fenetre, noir, (1770, 550), 15)  # bouton circulaire petit rayon 
+    btcp = pygame.draw.circle(fenetre, noir, (1770, 550), 15)  # bouton circulaire petit rayon
     tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))
     ligne = pygame.draw.rect(fenetre, noir, (390, 0, 10, 980))
     ligne2 = pygame.draw.rect(fenetre, noir, (0, 970, 1920, 10))
@@ -147,8 +174,12 @@ while continuer:
     ligne10 = pygame.draw.rect(fenetre, noir, (1820, 100, 5, 500))
     ligne11 = pygame.draw.rect(fenetre, noir, (1915, 100, 5, 500))
     souligne = pygame.draw.rect(fenetre, noir,(10, 50, 340, 5))
+    
+    
     ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
-    entete = pygame.draw.rect(fenetre, gris, (400,0,1920,100))
+    
+
+    
     fenetre.blit(gomme1, (1830,220))
     effac = pygame.draw.rect(fenetre, blanc, (1720,10,190,80))
     txteffac = police2.render("Tout effacer", True, (0, 0, 0))
@@ -234,14 +265,8 @@ while continuer:
     textJoueur = police.render('joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
     fenetre.blit(textJoueur, (10, 0))
     idFrame = (idFrame + 0.1) % 40
-    if idFrame < 20:
-        poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
-        fenetre.blit(logo1, poslogo)
-    else:
-        poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
-        fenetre.blit(logo2, poslogo)
+        
     
-
     pygame.display.update()
     clock.tick(300)
     

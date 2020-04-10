@@ -17,6 +17,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     join = False
     online= False
     offline= False
+    accip= True
 
     # Style fenetre
     bgColor = (118, 188, 194)
@@ -160,6 +161,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
     textPseudo = police.render('Entrez votre pseudo : ', True, (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
     pseudo = ''
+    ip=''
     procServeur = Process()  # on initialise les process pour pouvoir les fermer
     procDiffu = Process()
     procClient = Process()
@@ -171,6 +173,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     roles = {}
     trouves = 0
     etat = 0
+    
 
     play = pygame.image.load("img/lobby/play.png")
     posplay = play.get_rect(topright=(largeur - 15, 15))
@@ -221,13 +224,13 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             tunnelParent.send("E".encode())
 
 
-    fond = pygame.image.load("img/fond.png").convert()
-    fenetre.blit(fond, (0, 0))
+    pygame.draw.rect(fenetre, (255,255,255),(0,0,1920,1080))
 
     # Initialisation des variables de couleur et des animations
     pal1 = pygame.pal1 = pygame.image.load("img/pal1.png").convert_alpha()
     pal2 = pygame.image.load("img/pal2.png").convert_alpha()
     fon = pygame.image.load("img/pal4.png").convert_alpha()
+    imgpeu = pygame.image.load("img/406sw.png").convert_alpha()
     rouge = (255, 0, 0)
     vert = (0, 255, 0)
     jaune = (255, 255, 0)
@@ -255,6 +258,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     temps = 80  # temps pour dessiner
     verif = False
     idFrame2 = 0
+    easter=0
+    xE = 400
+    yE= 0
+
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
@@ -342,12 +349,21 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 fenetre.blit(textPseudo, (400, 530))
 
             if online:
-                if idFrame < 24:  # barre qui clignotte du pseudo
-                    barre = '|'
+                if accip:
+                    if idFrame < 24:  # barre qui clignotte du pseudo
+                        barre = '|'
+                    else:
+                        barre = ''
+                    textIP = police.render("Entrez l'addresse IP du serveur : " + ip + barre, True, (0, 0, 0))  # txt,antialiasing,coul
+                    fenetre.blit(textIP, (400, 530))
                 else:
-                    barre = ''
-                textIP = police.render("Entrez l'addresse IP du serveur : " + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
-                fenetre.blit(textIP, (400, 530))                
+                    if idFrame < 24:  # barre qui clignotte du pseudo
+                        barre = '|'
+                    else:
+                        barre = ''
+                    textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
+                    fenetre.blit(textPseudo, (400, 530))
+                               
 
             for event in pygame.event.get():
                 if event.type == QUIT or (event.type == MOUSEBUTTONDOWN and poscroix.collidepoint(pos)):
@@ -355,7 +371,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fini = True
 
                 if event.type == pygame.KEYDOWN:
-                    if host or join:  # Si une touche est pressée
+                    if host or (join and offline):  # Si une touche est pressée
                         if event.key == pygame.K_RETURN:  # si entrer
                             if host:
                                 procDiffu = Process(target=serveur.diffuIpHote)
@@ -368,6 +384,27 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             pseudo = pseudo[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
                         elif len(pseudo) < 16:  # 16 caractères max
                             pseudo += event.unicode
+                    if join and online:
+                        if not accip:
+                            if event.key == pygame.K_RETURN and ip !='':
+                                accip = False
+                            elif event.key == pygame.K_BACKSPACE:
+                                ip = ip[:-1]
+                            elif len(ip) < 16:  # 16 caractères max
+                                ip += event.unicode  
+                            
+                    if not accip and join and online:
+                        if event.key == pygame.K_RETURN and pseudo != '':
+                             accueil = False
+                        elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
+                            pseudo = pseudo[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
+                        elif len(pseudo) < 16:  # 16 caractères max
+                            pseudo += event.unicode
+                            
+                            
+                            
+                            
+                            
 
             clock.tick(80)  # limite 80fps
             pygame.display.flip()  # Rafraichissement écran acceuil avec toutes nos modifs
@@ -475,12 +512,29 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     elif data[0] == "O":
                         listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
                         trouves += 1
+                    elif data[0] == "V":
+                        easter = 1
+                    
 
                 # Lancement du dessin:
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):  # Si on appuie sur ECHAP
                         tunnelParent.send(("F," + str(monID)).encode())  # On envoie l'info que l'on quitte le serveur
                         fini = True  # On ferme la fenêtre
+
+                entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
+
+                if easter != 1 or xE > 1520:
+        
+                    if idFrame < 20:
+                        poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
+                        fenetre.blit(logo1, poslogo)
+                    else:
+                        poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
+                        fenetre.blit(logo2, poslogo)
+                else:
+                    xE += 3
+                    fenetre.blit(imgpeu, (int(xE), yE))
 
                 # Placement des boutons sur l'écran
                 fenetre.blit(fon, (1820, 500))
@@ -511,7 +565,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 ligne11 = pygame.draw.rect(fenetre, noir, (1915, 100, 5, 500))
                 souligne = pygame.draw.rect(fenetre, noir, (10, 50, 340, 5))
                 ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
-                entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
                 fenetre.blit(gomme1, (1830, 220))
                 effac = pygame.draw.rect(fenetre, blanc, (1720, 10, 190, 80))  # Création du bouton pour tout effacer
                 txteffac = police2.render("Tout effacer", True, (0, 0, 0))
@@ -610,12 +663,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     xJoueur += 1
 
                 idFrame = (idFrame + 0.1) % 40  # Animation du logo super-Sketch
-                if idFrame < 20:
-                    poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
-                    fenetre.blit(logo1, poslogo)
-                else:
-                    poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
-                    fenetre.blit(logo2, poslogo)
 
                 # Détection clique gauche pour effectuer le dessin
                 if pygame.mouse.get_pressed()[0] == 1 and motChoisi and (px != ancienpx or py != ancienpy) and tempsFin - time() < temps - 0.35:  # Si on clique le dessin s'affiche
@@ -651,6 +698,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
                     elif data[0] == "R":
                         listmsg.append("C'était " + motdevin)
+                    elif data[0] == "V":
+                        easter = 1
                         for j in joueurs:
                             if j == int(data[1]):
                                 roles[j] = "D"
@@ -686,6 +735,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 listmsg.append("Vous avez trouvé le mot!")
                                 tunnelParent.send(("O," + str(monID)).encode())
                                 verif = True
+                            elif motEcrit == "406SW":
+                                easter=1
+                                tunnelParent.send(("V").encode())
                             else:
                                 listmsg.append(joueurs[int(monID)] + " : " + motEcrit)  # On ajoute le mot à la liste du chat
                                 tunnelParent.send(("t," + str(monID) + "," + motEcrit).encode())  # On envoie le message avec le pseudo au serveur
@@ -696,6 +748,20 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                         elif len(motEcrit) < 16:  # 16 caractères max
                             motEcrit = motEcrit + event.unicode
+                            
+                entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))  # Fond gris de le zone de l'entête
+                if easter != 1 or xE > 1520:
+        
+                    if idFrame < 20:
+                        poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
+                        fenetre.blit(logo1, poslogo)
+                    else:
+                        poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
+                        fenetre.blit(logo2, poslogo)
+
+                else:
+                    xE += 3
+                    fenetre.blit(imgpeu, (int(xE), yE))
 
                 pygame.draw.circle(fenetre, couleur, (px, py), rayon)  # affichage du dessin avec les infos reçus par le serveur
 
@@ -706,7 +772,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 bas = pygame.draw.rect(fenetre, gris, (0, 980, 1920, 1920))  # Fond gris de le zone de texte
                 souligne = pygame.draw.rect(fenetre, noir, (10, 50, 340, 5))
                 ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
-                entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))  # Fond gris de le zone de l'entête
                 effac = pygame.draw.rect(fenetre, gris, (1720, 10, 190, 80))
                 fenetre.blit(affmotcache, (1400, 1000))
 
@@ -715,14 +780,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fenetre.blit(affChrono, (1810, 610))
 
                 idFrame = (idFrame + 0.1) % 40  # Animation su logo Super-Sketch et de la barre de saisie
-                if idFrame < 20:
-                    poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
-                    fenetre.blit(logo1, poslogo)
-                    barre = '|'
-                else:
-                    poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
-                    fenetre.blit(logo2, poslogo)
-                    barre = ''
+
                 textMotEcrit = police.render('Ecrivez un mot : ' + motEcrit + barre, True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textMotEcrit, (50, 1000))
                 textJoueur = police.render('Joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
