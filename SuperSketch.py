@@ -544,6 +544,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                 if len(joueurs) <= 1:
                     fini = True  # On ferme la fenêtre
+                    break
 
                 if not motChoisi:  # Si le mot n'est pas chosi
                     if selectionMot:  # Si trois mot n'ont pas été choisis au hasard
@@ -769,6 +770,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
                     fenetre.blit(logo2, poslogo)
                     barre = ''
+
+                if len(joueurs) <= 1:
+                    fini = True  # On ferme la fenêtre
+                    break
 
                 textMotEcrit = police.render('Ecrivez un mot : ' + motEcrit + barre, True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textMotEcrit, (50, 1000))
