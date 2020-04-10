@@ -371,7 +371,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fini = True
 
                 if event.type == pygame.KEYDOWN:
-                    if host or (join and offline):  # Si une touche est pressée
+                    if host or (join and (offline or (online and not accip))):  # Si une touche est pressée
                         if event.key == pygame.K_RETURN:  # si entrer
                             if host:
                                 procDiffu = Process(target=serveur.diffuIpHote)
@@ -563,6 +563,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 effac = pygame.draw.rect(fenetre, blanc, (1720, 10, 190, 80))  # Création du bouton pour tout effacer
                 txteffac = police2.render("Tout effacer", True, (0, 0, 0))
                 fenetre.blit(txteffac, (1745, 40))
+
+                if len(joueurs) <= 1:
+                    fini = True  # On ferme la fenêtre
 
                 if not motChoisi:  # Si le mot n'est pas chosi
                     if selectionMot:  # Si trois mot n'ont pas été choisis au hasard
