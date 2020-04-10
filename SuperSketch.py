@@ -375,7 +375,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         if event.key == pygame.K_RETURN and ip != '':
                             accip = False
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
-                            ip = pseudo[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
+                            ip = ip[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
                         elif len(pseudo) < 16:  # 16 caractères max
                             ip += event.unicode
             clock.tick(80)  # limite 80fps
