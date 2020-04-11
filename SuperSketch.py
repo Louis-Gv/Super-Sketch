@@ -474,19 +474,19 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                 # ---------------------------------------------------------------------------------------------------------------------------------------
                 if tunnelParent.poll():  # On get les nouveaux points
-                    data = tunnelParent.recv().decode().split(",")
-                    if data[0] == 'F':
-                        print(joueurs[int(data[1])] + " est parti")
-                        del joueurs[int(data[1])]
-                        del roles[int(data[1])]
-                    elif data[0] == 't':
-                        listmsg.append(joueurs[int(data[1])] + " : " + data[2])  # On ajoute à la liste du chat le pseudo de l'envoyeur et son texte
-                    elif data[0] == "O":
-                        listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
-                        trouves += 1
-                    elif data[0] == "V":
-                        easter = 1
-                    
+                    for raw_data in tunnelParent.recv().decode().split("@"):
+                        data = raw_data.split(",")
+                        if data[0] == 'F':
+                            print(joueurs[int(data[1])] + " est parti")
+                            del joueurs[int(data[1])]
+                            del roles[int(data[1])]
+                        elif data[0] == 't':
+                            listmsg.append(joueurs[int(data[1])] + " : " + data[2])  # On ajoute à la liste du chat le pseudo de l'envoyeur et son texte
+                        elif data[0] == "O":
+                            listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
+                            trouves += 1
+                        elif data[0] == "V":
+                            easter = 1
 
                 # Lancement du dessin:
                 for event in pygame.event.get():
@@ -497,7 +497,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
 
                 if easter != 1 or xE > 1520:
-        
                     if idFrame < 20:
                         poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
                         fenetre.blit(logo1, poslogo)
@@ -650,8 +649,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 # Détection clique gauche pour effectuer le dessin
                 if pygame.mouse.get_pressed()[0] == 1 and motChoisi and (px != ancienpx or py != ancienpy) and tempsFin - time() < temps - 0.35:  # Si on clique le dessin s'affiche
                     pygame.draw.circle(fenetre, couleur, (px, py), rayon)
-                    tunnelParent.send(('D,' + str(px) + "," + str(py) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + ",").encode())  # On envoie toutes les données au serveur
-                    # "D,875,745,45;75;0,10,"
+                    tunnelParent.send(('D,' + str(px) + "," + str(py) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())  # On envoie toutes les données au serveur
+                    # "D,875,745,45;75;0,10"
                     ancienpx = px
                     ancienpy = py
                 pygame.display.flip()  # Rafraichissement de la fenêtre
@@ -659,44 +658,45 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 # --------------------------------------------------------------------------------------------------------------------------------------------
             elif etat == 'L':  # Si on regarde le dessin
                 if tunnelParent.poll():  # On get les nouveaux points
-                    data = tunnelParent.recv().decode().split(",")
-                    if data[0] == 'D':  # Si c'est un dessin, on décode les infos
-                        px = int(data[1])
-                        py = int(data[2])
-                        couleur = data[3].split(";")
-                        couleur = tuple(map(int, couleur))
-                        rayon = int(data[4])
-                    elif data[0] == 'F':
-                        print(joueurs[int(data[1])] + " est parti")
-                        del joueurs[int(data[1])]  # On supprime le joueur
-                        del roles[int(data[1])]
-                    elif data[0] == 't':
-                        listmsg.append(joueurs[int(data[1])] + " : " + data[2])
-                    elif data[0] == "E":  # Si on reçoit cette valeur c'est que le joueur a tout effacé
-                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-                    elif data[0] == "M":  # On décode le mot à deviner
-                        motdevin = data[1]
-                        tempsFin = time() + temps
-                    elif data[0] == "O":
-                        listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
-                    elif data[0] == "R":
-                        listmsg.append("C'était " + motdevin)
-                        for j in joueurs:
-                            if j == int(data[1]):
-                                roles[j] = "D"
-                            else:
-                                roles[j] = "L"
-                        if int(data[1]) == int(monID):
-                            etat = "D"
-                        trouves = 0
-                        motChoisi = False
-                        selectionMot = True
-                        motdevin = "mot pas choisi"
-                        motcache = "mot pas choisi"
-                        verif = False
-                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-                    elif data[0] == "V":
-                        easter = 1
+                    for raw_data in tunnelParent.recv().decode().split("@"):
+                        data = raw_data.split(",")
+                        if data[0] == 'D':  # Si c'est un dessin, on décode les infos
+                            px = int(data[1])
+                            py = int(data[2])
+                            couleur = data[3].split(";")
+                            couleur = tuple(map(int, couleur))
+                            rayon = int(data[4])
+                        elif data[0] == 'F':
+                            print(joueurs[int(data[1])] + " est parti")
+                            del joueurs[int(data[1])]  # On supprime le joueur
+                            del roles[int(data[1])]
+                        elif data[0] == 't':
+                            listmsg.append(joueurs[int(data[1])] + " : " + data[2])
+                        elif data[0] == "E":  # Si on reçoit cette valeur c'est que le joueur a tout effacé
+                            pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+                        elif data[0] == "M":  # On décode le mot à deviner
+                            motdevin = data[1]
+                            tempsFin = time() + temps
+                        elif data[0] == "O":
+                            listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
+                        elif data[0] == "R":
+                            listmsg.append("C'était " + motdevin)
+                            for j in joueurs:
+                                if j == int(data[1]):
+                                    roles[j] = "D"
+                                else:
+                                    roles[j] = "L"
+                            if int(data[1]) == int(monID):
+                                etat = "D"
+                            trouves = 0
+                            motChoisi = False
+                            selectionMot = True
+                            motdevin = "mot pas choisi"
+                            motcache = "mot pas choisi"
+                            verif = False
+                            pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+                        elif data[0] == "V":
+                            easter = 1
 
                 if not verif and motdevin != "mot pas choisi":  # Si le mot n'a pas été trouvé ou qu'il n'a pas été choisi
                     motcache = ['_'] * len(motdevin)
