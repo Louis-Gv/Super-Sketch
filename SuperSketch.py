@@ -76,51 +76,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     #
     # On pourras ensuite utiliser fenetre.blit(btnA, posbtnA) qui placera la Surface(btnA) aux coordonnés de Rect(posbtnA)
 
-    # Bouton Online
-    btnOnline = police.render('Jouer en ligne', True,  (0, 0, 0))
-    posbtnOnline = btnOnline.get_rect(center=(int(largeur/2), 410))
-
-    # Rectangle noir plus grand qui sert de bordure
-    borderbtnOnline = pygame.Surface((posbtnOnline[2] + 2 * padding, posbtnOnline[3] + 2 * padding))
-    borderbtnOnline.fill((0, 0, 0))
-    # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
-    posborderbtnOnline = borderbtnOnline.get_rect(center=(int(largeur / 2), 410))
-
-    # Rectangle bleu plus petit
-    paddingbtnOnline = pygame.Surface((posbtnOnline[2] + padding, posbtnOnline[3] + padding))
-    paddingbtnOnline.fill(bgColor)
-    paddingbtnOnlineOmbre = pygame.Surface((posbtnOnline[2] + padding, posbtnOnline[3] + padding))  # Pour le survol
-    paddingbtnOnlineOmbre.set_alpha(100)
-    paddingbtnOnlineOmbre.fill((0, 0, 0))
-
-    # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
-    pospaddingbtnOnline = paddingbtnOnline.get_rect(center=(int(largeur / 2), 410))
-
-    # ------------------------------------------------------------------------------------------------------------------
-    
-    # Bouton Offline
-    btnOffline = police.render('Jouer en réseau local', True,  (0, 0, 0))
-    posbtnOffline = btnOffline.get_rect(center=(int(largeur/2), 610))
-
-    # Rectangle noir plus grand qui sert de bordure
-    borderbtnOffline = pygame.Surface((posbtnOffline[2] + 2 * padding, posbtnOffline[3] + 2 * padding))
-    borderbtnOffline.fill((0, 0, 0))
-    # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
-    posborderbtnOffline = borderbtnOffline.get_rect(center=(int(largeur / 2), 610))
-
-    # Rectangle bleu plus petit
-    paddingbtnOffline = pygame.Surface((posbtnOffline[2] + padding, posbtnOffline[3] + padding))
-    paddingbtnOffline.fill(bgColor)
-    paddingbtnOfflineOmbre = pygame.Surface((posbtnOffline[2] + padding, posbtnOffline[3] + padding))  # Pour le survol
-    paddingbtnOfflineOmbre.set_alpha(100)
-    paddingbtnOfflineOmbre.fill((0, 0, 0))
-
-    # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
-    pospaddingbtnOffline = paddingbtnOffline.get_rect(center=(int(largeur / 2), 610))
-
-    # ------------------------------------------------------------------------------------------------------------------
-
-    # Btn d'hébergement
+    # --- Boutton héberger --- #
     btnHost = police.render('Héberger Une Partie', True, (0, 0, 0))  # Rendu du texte avec (antialiasing, noir)
     posbtnHost = btnHost.get_rect(center=(int(largeur / 2), 510))
 
@@ -139,9 +95,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
     pospaddingbtnHost = paddingbtnHost.get_rect(center=(int(largeur / 2), 510))
 
-    # ------------------------------------------------------------------------------------------------------------------
-
-    # Idem pour le btn rejoindre :
+    # --- Boutton rejoindre --- #
     btnJoin = police.render('Rejoindre Une Partie', True, (0, 0, 0))
     # Trouve le rectangle de la surface
     posbtnJoin = btnJoin.get_rect(center=(int(largeur / 2), 680))
@@ -157,11 +111,49 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     paddingbtnJoinOmbre.fill((0, 0, 0))
     pospaddingbtnJoin = paddingbtnJoin.get_rect(center=(int(largeur / 2), 680))
 
-    # ------------------------------------------------------------------------------------------------------------------
+    # --- Boutton IP manuelle --- #
+    btnOnline = police.render('Entrer une IP', True, (0, 0, 0))
+    posbtnOnline = btnOnline.get_rect(center=(int(largeur / 2), 510))
+
+    # Rectangle noir plus grand qui sert de bordure
+    borderbtnOnline = pygame.Surface((posbtnOnline[2] + 2 * padding, posbtnOnline[3] + 2 * padding))
+    borderbtnOnline.fill((0, 0, 0))
+    # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
+    posborderbtnOnline = borderbtnOnline.get_rect(center=(int(largeur / 2), 510))
+
+    # Rectangle bleu plus petit
+    paddingbtnOnline = pygame.Surface((posbtnOnline[2] + padding, posbtnOnline[3] + padding))
+    paddingbtnOnline.fill(bgColor)
+    paddingbtnOnlineOmbre = pygame.Surface((posbtnOnline[2] + padding, posbtnOnline[3] + padding))  # Pour le survol
+    paddingbtnOnlineOmbre.set_alpha(100)
+    paddingbtnOnlineOmbre.fill((0, 0, 0))
+
+    # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
+    pospaddingbtnOnline = paddingbtnOnline.get_rect(center=(int(largeur / 2), 510))
+
+    # --- Boutton LAN Automatique --- #
+    btnOffline = police.render('LAN Automatique', True, (0, 0, 0))
+    posbtnOffline = btnOffline.get_rect(center=(int(largeur / 2), 680))
+
+    # Rectangle noir plus grand qui sert de bordure
+    borderbtnOffline = pygame.Surface((posbtnOffline[2] + 2 * padding, posbtnOffline[3] + 2 * padding))
+    borderbtnOffline.fill((0, 0, 0))
+    # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
+    posborderbtnOffline = borderbtnOffline.get_rect(center=(int(largeur / 2), 680))
+
+    # Rectangle bleu plus petit
+    paddingbtnOffline = pygame.Surface((posbtnOffline[2] + padding, posbtnOffline[3] + padding))
+    paddingbtnOffline.fill(bgColor)
+    paddingbtnOfflineOmbre = pygame.Surface((posbtnOffline[2] + padding, posbtnOffline[3] + padding))  # Pour le survol
+    paddingbtnOfflineOmbre.set_alpha(100)
+    paddingbtnOfflineOmbre.fill((0, 0, 0))
+
+    # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
+    pospaddingbtnOffline = paddingbtnOffline.get_rect(center=(int(largeur / 2), 680))
 
     textPseudo = police.render('Entrez votre pseudo : ', True, (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
     pseudo = ''
-    ip=''
+    ip = ''
     procServeur = Process()  # on initialise les process pour pouvoir les fermer
     procDiffu = Process()
     procClient = Process()
@@ -173,7 +165,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     roles = {}
     trouves = 0
     etat = 0
-    
 
     play = pygame.image.load("img/lobby/play.png")
     posplay = play.get_rect(topright=(largeur - 15, 15))
@@ -182,7 +173,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     px = 5000
     py = 5000
 
-    # - Partie dessin
     # Déclaration de la fonction de sélection de la couleur
     def selection(pbt, cbt):
         global couleur  # Définition de variable globale du programme
@@ -197,7 +187,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
         return
 
 
-    def selectioncercle1():
+    def selectioncercle1():  # + rayon
         global rayon  # Définition de variable globale du programme
         if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de rayon lors d'un clic
             rayon = rayon + 5
@@ -205,7 +195,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
         return
 
 
-    def selectioncercle2():
+    def selectioncercle2():  # - rayon
         global rayon  # Définition de variable globale du programme
         if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de rayon lors d'un clic
             if rayon > 7:
@@ -224,7 +214,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             tunnelParent.send("E".encode())
 
 
-    pygame.draw.rect(fenetre, (255,255,255),(0,0,1920,1080))
+    pygame.draw.rect(fenetre, (255, 255, 255), (0, 0, 1920, 1080))
 
     # Initialisation des variables de couleur et des animations
     pal1 = pygame.pal1 = pygame.image.load("img/pal1.png").convert_alpha()
@@ -294,25 +284,17 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             else:
                 barre = ''
 
-            # ----------------------------------------------------------------------------------------------------------
-
             if not host and not join:  # menu sans avoir cliquer
                 fenetre.blit(borderbtnHost, posborderbtnHost)  # Bordure
                 fenetre.blit(paddingbtnHost, pospaddingbtnHost)  # Fond bleu
                 if posborderbtnHost.collidepoint(pos):
-                    if pygame.mouse.get_pressed()[0] == 1:  # Si clique sur le btn
-                        host = True
-                    else:  # si il le survole => fond sombre
-                        fenetre.blit(paddingbtnHostOmbre, pospaddingbtnHost)
+                    fenetre.blit(paddingbtnHostOmbre, pospaddingbtnHost)
                 fenetre.blit(btnHost, posbtnHost)  # Affichage du texte
 
                 fenetre.blit(borderbtnJoin, posborderbtnJoin)  # Bordure
                 fenetre.blit(paddingbtnJoin, pospaddingbtnJoin)  # Fond bleu
                 if posborderbtnJoin.collidepoint(pos):  # si pos souris est sur le btn rejoindre
-                    if pygame.mouse.get_pressed()[0] == 1:  # Si clique sur le btn
-                        join = True
-                    else:  # si il le survole => fond sombre
-                        fenetre.blit(paddingbtnJoinOmbre, pospaddingbtnJoin)
+                    fenetre.blit(paddingbtnJoinOmbre, pospaddingbtnJoin)
                 fenetre.blit(btnJoin, posbtnJoin)  # Affichage du texte
 
             if host:  # Si on héberge
@@ -324,20 +306,13 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 fenetre.blit(paddingbtnOnline, pospaddingbtnOnline)  # Fond bleu
 
                 if posborderbtnOnline.collidepoint(pos):
-                    if pygame.mouse.get_pressed()[0] == 1:  # Si clique sur le btn
-                        online = True
-                    else:  # si il le survole => fond sombre
-                        fenetre.blit(paddingbtnOnlineOmbre, pospaddingbtnOnline)
+                    fenetre.blit(paddingbtnOnlineOmbre, pospaddingbtnOnline)
                 fenetre.blit(btnOnline, posbtnOnline)  # Affichage du texte
 
                 fenetre.blit(borderbtnOffline, posborderbtnOffline)  # Bordure
                 fenetre.blit(paddingbtnOffline, pospaddingbtnOffline)  # Fond bleu
                 if posborderbtnOffline.collidepoint(pos):  # si pos souris est sur le btn offline
-                    if pygame.mouse.get_pressed()[0] == 1:  # Si clique sur le btn
-                        offline = True
-                        ip = "0.0.0.0"
-                    else:  # si il le survole => fond sombre
-                        fenetre.blit(paddingbtnOfflineOmbre, pospaddingbtnOffline)
+                    fenetre.blit(paddingbtnOfflineOmbre, pospaddingbtnOffline)
                 fenetre.blit(btnOffline, posbtnOffline)  # Affichage du texte
 
             if offline:
@@ -356,7 +331,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 if event.type == QUIT or (event.type == MOUSEBUTTONDOWN and poscroix.collidepoint(pos)):
                     acceuil = False
                     fini = True
-
                 if event.type == pygame.KEYDOWN:
                     if host or (join and (offline or (online and not accip))):  # Si une touche est pressée
                         if event.key == pygame.K_RETURN:  # si entrer
@@ -378,6 +352,18 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             ip = ip[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
                         elif len(pseudo) < 16:  # 16 caractères max
                             ip += event.unicode
+                if event.type == MOUSEBUTTONDOWN and event.button == 1:
+                    if not host and not join:  # menu sans avoir cliquer
+                        if posborderbtnHost.collidepoint(pos):
+                            host = True
+                        elif posborderbtnJoin.collidepoint(pos):  # si pos souris est sur le btn rejoindre
+                            join = True
+                    elif join and not online and not offline:
+                        if posborderbtnOnline.collidepoint(pos):
+                            online = True
+                        elif posborderbtnOffline.collidepoint(pos):  # si pos souris est sur le btn offline
+                            offline = True
+                            ip = "0.0.0.0"
             clock.tick(80)  # limite 80fps
             pygame.display.flip()  # Rafraichissement écran acceuil avec toutes nos modifs
         else:  # pas dans l'acceuil
@@ -470,9 +456,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         pygame.display.flip()
                 init = False
             if etat == 'D':  # Si on dessine
-                px, py = pygame.mouse.get_pos()  # Détection de la position de la souris
-
-                # ---------------------------------------------------------------------------------------------------------------------------------------
                 if tunnelParent.poll():  # On get les nouveaux points
                     for raw_data in tunnelParent.recv().decode().split("@"):
                         data = raw_data.split(",")
@@ -488,7 +471,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         elif data[0] == "V":
                             easter = 1
 
-                # Lancement du dessin:
+                px, py = pygame.mouse.get_pos()  # Détection de la position de la souris
+
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):  # Si on appuie sur ECHAP
                         tunnelParent.send(("F," + str(monID) + '@').encode())  # On envoie l'info que l'on quitte le serveur
@@ -525,7 +509,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 ligne = pygame.draw.rect(fenetre, noir, (390, 0, 10, 980))
                 ligne2 = pygame.draw.rect(fenetre, noir, (0, 970, 1920, 10))
                 bas = pygame.draw.rect(fenetre, gris, (0, 980, 1920, 1920))
-                droite = pygame.draw.rect(fenetre, gris, (1720, 600, 200,1000))
+                droite = pygame.draw.rect(fenetre, gris, (1720, 600, 200, 1000))
                 ligne3 = pygame.draw.rect(fenetre, noir, (1720, 100, 1000, 5))
                 ligne4 = pygame.draw.rect(fenetre, noir, (1720, 200, 1000, 5))
                 ligne5 = pygame.draw.rect(fenetre, noir, (1720, 300, 1000, 5))
@@ -720,7 +704,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 tunnelParent.send(("O," + str(monID) + '@').encode())
                                 verif = True
                             elif motEcrit == "406SW":
-                                easter=1
+                                easter = 1
                                 tunnelParent.send("V@".encode())
                             else:
                                 listmsg.append(joueurs[int(monID)] + " : " + motEcrit)  # On ajoute le mot à la liste du chat
@@ -793,7 +777,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 pygame.display.flip()  # raffraichissment de la fenêtre
                 clock.tick(400)
     pygame.quit()
-    procClient.join()
+    if procClient.is_alive():
+        procClient.join()
     if procServeur.is_alive():
         procServeur.terminate()  # ferme le serveur
         procServeur.join()
