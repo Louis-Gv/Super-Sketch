@@ -14,7 +14,7 @@ def client(ip, tunel, pseudo):
     def reception():
         while True:
             try:
-                message_recu = monSocket.recv(200)
+                message_recu = monSocket.recv(1024)
             except ConnectionResetError:
                 break
             if not message_recu:  # Si la connexion est close par le serv
