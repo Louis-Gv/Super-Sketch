@@ -491,7 +491,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 # Lancement du dessin:
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):  # Si on appuie sur ECHAP
-                        tunnelParent.send(("F," + str(monID)).encode())  # On envoie l'info que l'on quitte le serveur
+                        tunnelParent.send(("F," + str(monID) + '@').encode())  # On envoie l'info que l'on quitte le serveur
                         fini = True  # On ferme la fenêtre
 
                 entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
@@ -574,7 +574,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             motdevin = mot3
                             motChoisi = True
                         if motChoisi:
-                            tunnelParent.send(("M" + "," + motdevin).encode())  # On envoie le mot aux autres
+                            tunnelParent.send(("M" + "," + motdevin + '@').encode())  # On envoie le mot aux autres
                             pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))  # On efface les mots
                             tempsFin = time() + temps
                 else:
@@ -595,7 +595,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         motcache = "mot pas choisi"
                         verif = False
                         pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-                        tunnelParent.send(("R,"+str(idD)).encode())
+                        tunnelParent.send(("R," + str(idD) + '@').encode())
 
                 # Détection du moment quand la souris passe sur les boutons
                 if btj.collidepoint(px, py):
@@ -666,6 +666,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             couleur = data[3].split(";")
                             couleur = tuple(map(int, couleur))
                             rayon = int(data[4])
+                            pygame.draw.circle(fenetre, couleur, (px, py), rayon)  # affichage du dessin avec les infos reçus par le serveur
                         elif data[0] == 'F':
                             print(joueurs[int(data[1])] + " est parti")
                             del joueurs[int(data[1])]  # On supprime le joueur
@@ -708,7 +709,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                 for event in pygame.event.get():
                     if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):  # Si on appuie sur ECHAP
-                        tunnelParent.send(("F," + str(monID)).encode())  # On envoie F pour signaler que le joueur est parti au serveur
+                        tunnelParent.send(("F," + str(monID) + '@').encode())  # On envoie F pour signaler que le joueur est parti au serveur
                         fini = True  # On ferme la fenêtre
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN and motEcrit != '':  # Si on appuie sur entrée et que le mot n'est pas vide
@@ -716,14 +717,14 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 motcache = motdevin  # On affiche le mot qui devait être deviné au joueur qui l'a trouvé
                                 affmotcache = police.render(motcache, True, (0, 0, 0))
                                 listmsg.append("Vous avez trouvé le mot!")
-                                tunnelParent.send(("O," + str(monID)).encode())
+                                tunnelParent.send(("O," + str(monID) + '@').encode())
                                 verif = True
                             elif motEcrit == "406SW":
                                 easter=1
-                                tunnelParent.send("V".encode())
+                                tunnelParent.send("V@".encode())
                             else:
                                 listmsg.append(joueurs[int(monID)] + " : " + motEcrit)  # On ajoute le mot à la liste du chat
-                                tunnelParent.send(("t," + str(monID) + "," + motEcrit).encode())  # On envoie le message avec le pseudo au serveur
+                                tunnelParent.send(("t," + str(monID) + "," + motEcrit + '@').encode())  # On envoie le message avec le pseudo au serveur
                             motEcrit = ''  # On réinitialise le mot
 
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
@@ -745,8 +746,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 else:
                     xE += 3
                     fenetre.blit(imgpeu, (int(xE), yE))
-
-                pygame.draw.circle(fenetre, couleur, (px, py), rayon)  # affichage du dessin avec les infos reçus par le serveur
 
                 fonpal = pygame.draw.rect(fenetre, blanc, (1720, 100, 200, 980))  # Fond de la palette de couleur
                 tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))  # Fond gris de le zone de chat
