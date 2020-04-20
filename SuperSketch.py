@@ -537,7 +537,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         mot3 = choice(limots)  # On chosit le troisième mot
                         selectionMot = False  # On ferme la boucle de la selection de mots
 
-                    fenetre.blit(image, (0, 0))
+                    # fenetre.blit(image, (0, 0))
                     #----Bouton mot 1----#
                     btMot1 = police.render(mot1, True, (0, 0, 0))  # Rendu du texte avec (antialiasing, noir)
                     posbtMot1 = btMot1.get_rect(center=(int(largeur / 2), 410))
@@ -735,9 +735,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
                         elif data[0] == "V":
                             easter = 1
-                        elif data[0] == "P":
-                            ###Faut faire un truc pour les points
-                        
+                        #elif data[0] == "P":
+                            #Faut faire un truc pour les points
 
                 if not verif and motdevin != "mot pas choisi":  # Si le mot n'a pas été trouvé ou qu'il n'a pas été choisi
                     motcache = ['_'] * len(motdevin)
@@ -759,7 +758,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 point = tempsFin - time()
                                 listmsg.append("Vous avez trouvé le mot!")
                                 tunnelParent.send(("O," + str(monID) + '@').encode())
-                                tunnelParent.send(("P," + str(monID) + point + '@').encode())
+                                tunnelParent.send(("P," + str(monID) + str(point) + '@').encode())
                                 verif = True
                             elif motEcrit == "406SW":
                                 easter = 1
