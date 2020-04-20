@@ -92,8 +92,7 @@ motdevin="mot pas choisi"
 easter=0
 xE = 400
 yE= 0
-
-
+padding = 10
 
 press = False
 couleur = noir
@@ -191,34 +190,84 @@ while continuer:
             mot1= choice(limots)
             mot2= choice(limots)
             mot3= choice(limots)
-            affmot1 = police.render(mot1, True, (0, 0, 0))
-            affmot2 = police.render(mot2, True, (0, 0, 0))
-            affmot3 = police.render(mot3, True, (0, 0, 0))
             cache = "K"
                        
 
-            
-        bt1 = pygame.draw.rect(fenetre, gris, (460, 450, 380,75))
-        bt2 = pygame.draw.rect(fenetre, gris, (850, 450, 380,75))
-        bt3 = pygame.draw.rect(fenetre, gris, (1240, 450, 380,75))
-        fenetre.blit(affmot1, (460, 450))
-        fenetre.blit(affmot2, (850, 450))
-        fenetre.blit(affmot3, (1240, 450))
-        if bt1.collidepoint(px,py):
+        fenetre.blit(image, (0, 0))
+        #----Bouton mot 1----#
+        btMot1 = police.render(mot1, True, (0, 0, 0))  # Rendu du texte avec (antialiasing, noir)
+        posbtMot1 = btMot1.get_rect(center=(int(largeur / 2), 410))
+        borderbtMot1 = pygame.Surface((posbtMot1[2] + 2 * padding, posbtMot1[3] + 2 * padding))
+        borderbtMot1.fill((0, 0, 0))
+        posborderbtMot1 = borderbtMot1.get_rect(center=(int(largeur / 2), 410))
+        paddingbtMot1 = pygame.Surface((posbtMot1[2] + padding, posbtMot1[3] + padding))
+        paddingbtMot1.fill((255,255,255))
+        paddingbtMot1Ombre = pygame.Surface((posbtMot1[2] + padding, posbtMot1[3] + padding))  # Pour le survol
+        paddingbtMot1Ombre.set_alpha(100)
+        paddingbtMot1Ombre.fill((0, 0, 0))
+        pospaddingbtMot1 = paddingbtMot1.get_rect(center=(int(largeur / 2), 410))
+
+        #----Bouton mot 2----#
+        btMot2 = police.render(mot2, True, (0, 0, 0))  # Rendu du texte avec (antialiasing, noir)
+        posbtMot2 = btMot2.get_rect(center=(int(largeur / 2), 510))
+        borderbtMot2 = pygame.Surface((posbtMot2[2] + 2 * padding, posbtMot2[3] + 2 * padding))
+        borderbtMot2.fill((0, 0, 0))
+        posborderbtMot2 = borderbtMot2.get_rect(center=(int(largeur / 2), 510))
+        paddingbtMot2 = pygame.Surface((posbtMot2[2] + padding, posbtMot2[3] + padding))
+        paddingbtMot2.fill((255,255,255))
+        paddingbtMot2Ombre = pygame.Surface((posbtMot2[2] + padding, posbtMot2[3] + padding))  # Pour le survol
+        paddingbtMot2Ombre.set_alpha(100)
+        paddingbtMot2Ombre.fill((0, 0, 0))
+        pospaddingbtMot2 = paddingbtMot2.get_rect(center=(int(largeur / 2), 510))
+
+        #----Bouton mot 3----#
+        btMot3 = police.render(mot3, True, (0, 0, 0))  # Rendu du texte avec (antialiasing, noir)
+        posbtMot3 = btMot3.get_rect(center=(int(largeur / 2), 610))
+        borderbtMot3 = pygame.Surface((posbtMot3[2] + 2 * padding, posbtMot3[3] + 2 * padding))
+        borderbtMot3.fill((0, 0, 0))
+        posborderbtMot3 = borderbtMot3.get_rect(center=(int(largeur / 2), 610))
+        paddingbtMot3 = pygame.Surface((posbtMot3[2] + padding, posbtMot3[3] + padding))
+        paddingbtMot3.fill((255,255,255))
+        paddingbtMot3Ombre = pygame.Surface((posbtMot3[2] + padding, posbtMot3[3] + padding))  # Pour le survol
+        paddingbtMot3Ombre.set_alpha(100)
+        paddingbtMot3Ombre.fill((0, 0, 0))
+        pospaddingbtMot3 = paddingbtMot3.get_rect(center=(int(largeur / 2), 610))
+
+        #------------------------------------------------------------------------------------------------------------------
+        fenetre.blit(borderbtMot1, posborderbtMot1)
+        fenetre.blit(paddingbtMot1, pospaddingbtMot1)
+        fenetre.blit(btMot1, posbtMot1)
+        if posborderbtMot1.collidepoint(px,py):
+            fenetre.blit(paddingbtMot1Ombre, pospaddingbtMot1)
+            fenetre.blit(btMot1, posbtMot1)
             if pygame.mouse.get_pressed() == (1, 0, 0):
                 choixmot='C'
                 motdevin=mot1
                 pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-        if bt2.collidepoint(px,py):
+        
+        fenetre.blit(borderbtMot2, posborderbtMot2)
+        fenetre.blit(paddingbtMot2, pospaddingbtMot2)
+        fenetre.blit(btMot2, posbtMot2)
+        if posborderbtMot2.collidepoint(px,py):
+            fenetre.blit(paddingbtMot2Ombre, pospaddingbtMot2)
+            fenetre.blit(btMot2, posbtMot2)
             if pygame.mouse.get_pressed() == (1, 0, 0):
-                    motdevin=mot2
-                    choixmot='C'
-                    pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-        if bt3.collidepoint(px,py):
-            if pygame.mouse.get_pressed() == (1, 0, 0):
-                    motdevin=mot3
-                    choixmot='C'
-                    pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+                choixmot='C'
+                motdevin=mot2
+                pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+
+        fenetre.blit(borderbtMot3, posborderbtMot3)
+        fenetre.blit(paddingbtMot3, pospaddingbtMot3)
+        fenetre.blit(btMot3, posbtMot3)
+        if posborderbtMot3.collidepoint(px,py):
+            fenetre.blit(paddingbtMot3Ombre, pospaddingbtMot3)
+            fenetre.blit(btMot3, posbtMot3)
+        if pygame.mouse.get_pressed() == (1, 0, 0):
+                choixmot='C'
+                motdevin=mot3
+                pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+        
+
 
     affmotdevin= police.render(motdevin, True, (0, 0, 0))
     fenetre.blit(affmotdevin, (1400, 1000))
