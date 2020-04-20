@@ -577,7 +577,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     paddingbtMot3Ombre.fill((0, 0, 0))
                     pospaddingbtMot3 = paddingbtMot3.get_rect(center=(int(largeur / 2), 610))
 
-        #------------------------------------------------------------------------------------------------------------------
                     fenetre.blit(borderbtMot1, posborderbtMot1)
                     fenetre.blit(paddingbtMot1, pospaddingbtMot1)
                     fenetre.blit(btMot1, posbtMot1)
@@ -736,6 +735,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
                         elif data[0] == "V":
                             easter = 1
+                        elif data[0] == "P":
+                            ###Faut faire un truc pour les points
+                        
 
                 if not verif and motdevin != "mot pas choisi":  # Si le mot n'a pas été trouvé ou qu'il n'a pas été choisi
                     motcache = ['_'] * len(motdevin)
@@ -751,11 +753,13 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         fini = True  # On ferme la fenêtre
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN and motEcrit != '':  # Si on appuie sur entrée et que le mot n'est pas vide
-                            if motEcrit == motdevin:
+                            if motEcrit == motdevin and not verif:
                                 motcache = motdevin  # On affiche le mot qui devait être deviné au joueur qui l'a trouvé
                                 affmotcache = police.render(motcache, True, (0, 0, 0))
+                                point = tempsFin - time()
                                 listmsg.append("Vous avez trouvé le mot!")
                                 tunnelParent.send(("O," + str(monID) + '@').encode())
+                                tunnelParent.send(("P," + str(monID) + point + '@').encode())
                                 verif = True
                             elif motEcrit == "406SW":
                                 easter = 1
