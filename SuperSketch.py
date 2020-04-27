@@ -824,7 +824,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 fenetre.blit(textJoueur, (10, 0))
                 xJoueur = 0
                 for j in joueurs:
-                    nomJoueur = police.render(joueurs[j] + " : " + roles[j] + point + 'pts', True, (0, 0, 0))
+                    nomJoueur = police.render(joueurs[j] + " : " + roles[j], True, (0, 0, 0))
                     fenetre.blit(nomJoueur, (10, 60 + xJoueur*50))
                     xJoueur += 1
 
