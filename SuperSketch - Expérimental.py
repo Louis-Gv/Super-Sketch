@@ -503,7 +503,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
                             roundline(fenetre, couleur, e.pos, lastpos,  rayon)
                             tunnelParent.send(('D,' + str(e.pos) + "," + str(lastpos) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())
-                    lastpos = e.pos
+                        lastpos = e.pos
 
                 entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
 
