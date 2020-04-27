@@ -130,6 +130,7 @@ while continuer:
                 pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
                 roundline(fenetre, couleur, e.pos, last_pos,  rayon)
             last_pos = e.pos
+            print (e.pos)
         elif e.type == pygame.KEYDOWN: 
             if e.key == pygame.K_RETURN:
                 if MotEcrit == "406SW":

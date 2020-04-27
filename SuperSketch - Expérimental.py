@@ -725,13 +725,13 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     for raw_data in tunnelParent.recv().decode().split("@"):
                         data = raw_data.split(",")
                         if data[0] == 'D':  # Si c'est un dessin, on décode les infos
-                            pos = int(data[1])
-                            last = int(data[2])
+                            pos = data[1]
+                            last = data[2]
                             couleur = data[3].split(";")
                             couleur = tuple(map(int, couleur))
                             rayon = int(data[4])
-                            pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
-                            roundline(fenetre, couleur, e.pos, last_pos,  rayon)
+                            pygame.display.update(pygame.draw.circle(fenetre, couleur, pos, rayon))
+                            roundline(fenetre, couleur, pos, last,  rayon)
                             
                         elif data[0] == 'F':
                             print(joueurs[int(data[1])] + " est parti")
