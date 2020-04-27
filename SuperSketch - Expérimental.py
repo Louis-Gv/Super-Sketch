@@ -718,7 +718,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     ancienpx = px
                     ancienpy = py
                 pygame.display.flip()  # Rafraichissement de la fenêtre
-                clock.tick(200)
+                clock.tick(400)
                 # --------------------------------------------------------------------------------------------------------------------------------------------
             elif etat == 'L':  # Si on regarde le dessin
                 if tunnelParent.poll():  # On get les nouveaux points
@@ -861,7 +861,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fenetre.blit(textchat, (50, 480 + 50 * i))  # On affiche la liste avec les coord saisie précédemment
 
                 pygame.display.flip()  # raffraichissment de la fenêtre
-                clock.tick(600)
+                clock.tick(400)
     pygame.quit()
     if procClient.is_alive():
         procClient.join()
