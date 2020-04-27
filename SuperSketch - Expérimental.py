@@ -187,6 +187,16 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             couleur = cbt
         return
 
+    def roundline(srf, couleur, start, end, rayon):
+        dx = end[0]-start[0]
+        dy = end[1]-start[1]
+        distance = max(abs(dx), abs(dy))
+        for i in range(distance):
+            x = int( start[0]+float(i)/distance*dx)
+            y = int( start[1]+float(i)/distance*dy)
+            pygame.display.update(pygame.draw.circle(srf, couleur, (x, y), rayon))
+
+
 
     def selectioncercle1():  # + rayon
         global rayon  # Définition de variable globale du programme
