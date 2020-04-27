@@ -253,6 +253,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     easter = 0
     xE = 400
     yE = 0
+    draw_on = False
+    last_pos = (0, 0)
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
@@ -457,6 +459,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 fini = True
                         pygame.display.flip()
                 init = False
+                #----------------
             if etat == 'D':  # Si on dessine
                 if tunnelParent.poll():  # On get les nouveaux points
                     for raw_data in tunnelParent.recv().decode().split("@"):
@@ -473,12 +476,24 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         elif data[0] == "V":
                             easter = 1
 
-                px, py = pygame.mouse.get_pos()  # Détection de la position de la souris
+               
 
-                for event in pygame.event.get():
-                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):  # Si on appuie sur ECHAP
-                        tunnelParent.send(("F," + str(monID) + '@').encode())  # On envoie l'info que l'on quitte le serveur
-                        fini = True  # On ferme la fenêtre
+                event = pygame.event.wait()
+                if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):  # Si on appuie sur ECHAP
+                    tunnelParent.send(("F," + str(monID) + '@').encode())  # On envoie l'info que l'on quitte le serveur
+                    fini = True  # On ferme la fenêtre
+
+                if e.type == pygame.MOUSEBUTTONDOWN:
+                    pygame.draw.circle(fenetre, couleur, e.pos, rayon)
+                    draw_on = True
+                if e.type == pygame.MOUSEBUTTONUP:
+                    draw_on = False
+                if e.type == pygame.MOUSEMOTION:
+                    if draw_on:
+                        pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
+                        roundline(fenetre, couleur, e.pos, last_pos,  rayon)
+                        tunnelParent.send(('D,' + str(e.pos) + str(last_pos) "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())
+                last_pos = e.pos
 
                 entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
 
@@ -686,26 +701,27 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fenetre.blit(logo2, poslogo)
 
                 # Détection clique gauche pour effectuer le dessin
-                if pygame.mouse.get_pressed()[0] == 1 and motChoisi and (px != ancienpx or py != ancienpy) and tempsFin - time() < temps - 0.35:  # Si on clique le dessin s'affiche
-                    pygame.draw.circle(fenetre, couleur, (px, py), rayon)
-                    tunnelParent.send(('D,' + str(px) + "," + str(py) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())  # On envoie toutes les données au serveur
+                
+                      # On envoie toutes les données au serveur
                     # "D,875,745,45;75;0,10"
                     ancienpx = px
                     ancienpy = py
                 pygame.display.flip()  # Rafraichissement de la fenêtre
-                clock.tick(600)
+                clock.tick(200)
                 # --------------------------------------------------------------------------------------------------------------------------------------------
             elif etat == 'L':  # Si on regarde le dessin
                 if tunnelParent.poll():  # On get les nouveaux points
                     for raw_data in tunnelParent.recv().decode().split("@"):
                         data = raw_data.split(",")
                         if data[0] == 'D':  # Si c'est un dessin, on décode les infos
-                            px = int(data[1])
-                            py = int(data[2])
+                            pos = int(data[1])
+                            last = int(data[2])
                             couleur = data[3].split(";")
                             couleur = tuple(map(int, couleur))
                             rayon = int(data[4])
-                            pygame.draw.circle(fenetre, couleur, (px, py), rayon)  # affichage du dessin avec les infos reçus par le serveur
+                            pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
+                            roundline(fenetre, couleur, e.pos, last_pos,  rayon)
+                            
                         elif data[0] == 'F':
                             print(joueurs[int(data[1])] + " est parti")
                             del joueurs[int(data[1])]  # On supprime le joueur

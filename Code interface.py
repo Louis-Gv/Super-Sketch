@@ -21,6 +21,15 @@ def selection(pbt, cbt):
         couleur = cbt
     return
 
+def roundline(srf, couleur, start, end, rayon):
+    dx = end[0]-start[0]
+    dy = end[1]-start[1]
+    distance = max(abs(dx), abs(dy))
+    for i in range(distance):
+        x = int( start[0]+float(i)/distance*dx)
+        y = int( start[1]+float(i)/distance*dy)
+        pygame.display.update(pygame.draw.circle(srf, couleur, (x, y), rayon))
+
 
 def selectioncercle1():
     global rayon  # Définition de variable globale du programme
@@ -93,6 +102,8 @@ easter=0
 xE = 400
 yE= 0
 padding = 10
+draw_on = False
+last_pos = (0, 0)
 
 press = False
 couleur = noir
@@ -102,27 +113,37 @@ continuer = 1
 while continuer:
 
     
+    event = pygame.event.wait()
 
-    for event in pygame.event.get():
-        if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-            pygame.quit()
-            continuer = 0
-        if event.type == pygame.KEYDOWN: 
-            if event.key == pygame.K_RETURN:
-                if MotEcrit == "406SW":
-                    easter=1
-                if MotEcrit != '' and MotEcrit!="406SW":                        
-                    listmot.append(MotEcrit)
-                MotEcrit=''                    
+    if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
+        pygame.quit()
+        continuer = 0
+    if e.type == pygame.MOUSEBUTTONDOWN:
+        pygame.draw.circle(fenetre, couleur, e.pos, rayon)
+        draw_on = True
+    if e.type == pygame.MOUSEBUTTONUP:
+        draw_on = False
+    if e.type == pygame.MOUSEMOTION:
+        if draw_on:
+            pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
+            roundline(fenetre, couleur, e.pos, last_pos,  rayon)
+        last_pos = e.pos
+    if e.type == pygame.KEYDOWN: 
+        if e.key == pygame.K_RETURN:
+            if MotEcrit == "406SW":
+                easter=1
+            if MotEcrit != '' and MotEcrit!="406SW":                        
+                listmot.append(MotEcrit)
+            MotEcrit=''                    
                            
-            elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
-                MotEcrit = MotEcrit[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
+        elif e.key == pygame.K_BACKSPACE:  # On enlève un carartère
+            MotEcrit = MotEcrit[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
                 
-            elif len(MotEcrit) < 16:  # 16 caractères max
-                MotEcrit = MotEcrit+event.unicode
+        elif len(MotEcrit) < 16:  # 16 caractères max
+            MotEcrit = MotEcrit+e.unicode
 
     # Détection de la position de la souris
-    px, py = pygame.mouse.get_pos()
+
 
     # Placement des boutons sur l'écran
     entete = pygame.draw.rect(fenetre, gris, (400,0,1920,100))
@@ -298,8 +319,7 @@ while continuer:
         effacfx()
 
     # Détection clique gauche pour effectuer le dessin
-    if pygame.mouse.get_pressed() == (1, 0, 0):
-        pygame.draw.circle(fenetre, couleur, (px, py), rayon)
+
 
     i=0
     for i in range (10):
@@ -316,6 +336,6 @@ while continuer:
         
     
     pygame.display.update()
-    clock.tick(300)
+    clock.tick(30000)
     
 pygame.quit()
