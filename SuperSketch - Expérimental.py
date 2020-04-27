@@ -254,7 +254,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     xE = 400
     yE = 0
     draw_on = False
-    last_pos = (0, 0)
+    lastpos = (0, 0)
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
@@ -492,8 +492,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     if draw_on:
                         pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
                         roundline(fenetre, couleur, e.pos, last_pos,  rayon)
-                        tunnelParent.send(('D,' + str(e.pos) + str(last_pos) "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())
-                last_pos = e.pos
+                        tunnelParent.send(('D,' + str(e.pos) + "," + str(lastpos) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())
+                lastpos = e.pos
 
                 entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
 
