@@ -483,17 +483,17 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     tunnelParent.send(("F," + str(monID) + '@').encode())  # On envoie l'info que l'on quitte le serveur
                     fini = True  # On ferme la fenêtre
 
-                if e.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     pygame.draw.circle(fenetre, couleur, e.pos, rayon)
                     draw_on = True
-                if e.type == pygame.MOUSEBUTTONUP:
+                if event.type == pygame.MOUSEBUTTONUP:
                     draw_on = False
-                if e.type == pygame.MOUSEMOTION:
+                if event.type == pygame.MOUSEMOTION:
                     if draw_on:
-                        pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
-                        roundline(fenetre, couleur, e.pos, last_pos,  rayon)
-                        tunnelParent.send(('D,' + str(e.pos) + "," + str(lastpos) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())
-                lastpos = e.pos
+                        pygame.display.update(pygame.draw.circle(fenetre, couleur, event.pos, rayon))
+                        roundline(fenetre, couleur, event.pos, last_pos,  rayon)
+                        tunnelParent.send(('D,' + str(event.pos) + "," + str(lastpos) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())
+                lastpos = event.pos
 
                 entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
 
