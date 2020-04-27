@@ -488,22 +488,22 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                
 
-                event = pygame.event.wait()
-                if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):  # Si on appuie sur ECHAP
+                e = pygame.event.wait()
+                if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):  # Si on appuie sur ECHAP
                     tunnelParent.send(("F," + str(monID) + '@').encode())  # On envoie l'info que l'on quitte le serveur
                     fini = True  # On ferme la fenêtre
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    pygame.draw.circle(fenetre, couleur, event.pos, rayon)
+                if e.type == pygame.MOUSEBUTTONDOWN:
+                    pygame.draw.circle(fenetre, couleur, e.pos, rayon)
                     draw_on = True
-                if event.type == pygame.MOUSEBUTTONUP:
+                if e.type == pygame.MOUSEBUTTONUP:
                     draw_on = False
-                if event.type == pygame.MOUSEMOTION:
+                if e.type == pygame.MOUSEMOTION:
                     if draw_on:
-                        pygame.display.update(pygame.draw.circle(fenetre, couleur, event.pos, rayon))
-                        roundline(fenetre, couleur, event.pos, last_pos,  rayon)
-                        tunnelParent.send(('D,' + str(event.pos) + "," + str(lastpos) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())
-                lastpos = event.pos
+                        pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
+                        roundline(fenetre, couleur, e.pos, last_pos,  rayon)
+                        tunnelParent.send(('D,' + str(e.pos) + "," + str(lastpos) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())
+                lastpos = e.pos
 
                 entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
 
