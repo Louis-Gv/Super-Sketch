@@ -112,35 +112,37 @@ rayon = 10
 continuer = 1
 while continuer:
 
-    
-    event = pygame.event.wait()
+    px, py = pygame.mouse.get_pos()
 
-    if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
-        pygame.quit()
-        continuer = 0
-    if e.type == pygame.MOUSEBUTTONDOWN:
-        pygame.draw.circle(fenetre, couleur, e.pos, rayon)
-        draw_on = True
-    if e.type == pygame.MOUSEBUTTONUP:
-        draw_on = False
-    if e.type == pygame.MOUSEMOTION:
-        if draw_on:
-            pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
-            roundline(fenetre, couleur, e.pos, last_pos,  rayon)
-        last_pos = e.pos
-    if e.type == pygame.KEYDOWN: 
-        if e.key == pygame.K_RETURN:
-            if MotEcrit == "406SW":
-                easter=1
-            if MotEcrit != '' and MotEcrit!="406SW":                        
-                listmot.append(MotEcrit)
-            MotEcrit=''                    
+    
+    for e in pygame.event.get():
+
+        if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
+            pygame.quit()
+            continuer = 0
+        elif e.type == pygame.MOUSEBUTTONDOWN:
+            pygame.draw.circle(fenetre, couleur, e.pos, rayon)
+            draw_on = True
+        elif e.type == pygame.MOUSEBUTTONUP:
+            draw_on = False
+        elif e.type == pygame.MOUSEMOTION:
+            if draw_on:
+                pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
+                roundline(fenetre, couleur, e.pos, last_pos,  rayon)
+            last_pos = e.pos
+        elif e.type == pygame.KEYDOWN: 
+            if e.key == pygame.K_RETURN:
+                if MotEcrit == "406SW":
+                    easter=1
+                if MotEcrit != '' and MotEcrit!="406SW":                        
+                    listmot.append(MotEcrit)
+                MotEcrit=''                    
                            
-        elif e.key == pygame.K_BACKSPACE:  # On enlève un carartère
-            MotEcrit = MotEcrit[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
+            elif e.key == pygame.K_BACKSPACE:  # On enlève un carartère
+                MotEcrit = MotEcrit[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
                 
-        elif len(MotEcrit) < 16:  # 16 caractères max
-            MotEcrit = MotEcrit+e.unicode
+            elif len(MotEcrit) < 16:  # 16 caractères max
+                MotEcrit = MotEcrit+e.unicode
 
     # Détection de la position de la souris
 
