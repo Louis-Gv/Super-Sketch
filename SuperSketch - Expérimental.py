@@ -487,35 +487,35 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             easter = 1
 
                
-
+                px, py = pygame.mouse.get_pos()
                 for e in pygame.event.get():
                     if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):  # Si on appuie sur ECHAP
                         tunnelParent.send(("F," + str(monID) + '@').encode())  # On envoie l'info que l'on quitte le serveur
                         fini = True  # On ferme la fenêtre
 
-                    if e.type == pygame.MOUSEBUTTONDOWN:
+                    elif e.type == pygame.MOUSEBUTTONDOWN:
                         pygame.draw.circle(fenetre, couleur, e.pos, rayon)
                         draw_on = True
-                    if e.type == pygame.MOUSEBUTTONUP:
+                    elif e.type == pygame.MOUSEBUTTONUP:
                         draw_on = False
-                    if e.type == pygame.MOUSEMOTION:
+                    elif e.type == pygame.MOUSEMOTION:
                         if draw_on:
                             pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
                             roundline(fenetre, couleur, e.pos, lastpos,  rayon)
                             tunnelParent.send(('D,' + str(e.pos) + "," + str(lastpos) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())
                     lastpos = e.pos
 
-                    entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
+                entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
 
-                    if easter != 1 or xE > 1520:
-                        if idFrame < 20:
-                            poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
-                            fenetre.blit(logo1, poslogo)
-                        else:
-                            poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
-                            fenetre.blit(logo2, poslogo)
+                if easter != 1 or xE > 1520:
+                    if idFrame < 20:
+                        poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
+                        fenetre.blit(logo1, poslogo)
                     else:
-                        xE += 3
+                        poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
+                        fenetre.blit(logo2, poslogo)
+                else:
+                    xE += 3
                         
                 fenetre.blit(imgpeu, (int(xE), yE))
 
