@@ -45,7 +45,6 @@ def serveur():  # Process qui va rediffuser les messages à tout les autres clie
         print("Serveur> prêt, en attente de requêtes ...")
         serveurSocket.listen(5)
         
-
         # Attente et prise en charge des connexions demandées par les clients :
         conn_client = {}  # dictionnaire des connexions clients
         idConn = 1
