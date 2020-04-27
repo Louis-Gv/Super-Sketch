@@ -484,7 +484,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fini = True  # On ferme la fenêtre
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    pygame.draw.circle(fenetre, couleur, e.pos, rayon)
+                    pygame.draw.circle(fenetre, couleur, event.pos, rayon)
                     draw_on = True
                 if event.type == pygame.MOUSEBUTTONUP:
                     draw_on = False
