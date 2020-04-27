@@ -161,6 +161,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     init = True
     start = False
     joueurs = {}
+    point = 0
     monID = 0
     roles = {}
     trouves = 0
@@ -221,6 +222,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     pal2 = pygame.image.load("img/pal2.png").convert_alpha()
     fon = pygame.image.load("img/pal4.png").convert_alpha()
     imgpeu = pygame.image.load("img/406sw.png").convert_alpha()
+    image =pygame.image.load("img/ima.png").convert_alpha()
     rouge = (255, 0, 0)
     vert = (0, 255, 0)
     jaune = (255, 215, 0)
@@ -364,7 +366,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         elif posborderbtnOffline.collidepoint(pos):  # si pos souris est sur le btn offline
                             offline = True
                             ip = "0.0.0.0"
-            clock.tick(80)  # limite 80fps
+            clock.tick(200)  # limite 80fps
             pygame.display.flip()  # Rafraichissement écran acceuil avec toutes nos modifs
         else:  # pas dans l'acceuil
             if init:
@@ -537,7 +539,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         mot3 = choice(limots)  # On chosit le troisième mot
                         selectionMot = False  # On ferme la boucle de la selection de mots
 
-                    # fenetre.blit(image, (0, 0))
+                    fenetre.blit(image, (0, 0))
                     #----Bouton mot 1----#
                     btMot1 = police.render(mot1, True, (0, 0, 0))  # Rendu du texte avec (antialiasing, noir)
                     posbtMot1 = btMot1.get_rect(center=(int(largeur / 2), 410))
@@ -751,7 +753,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         tunnelParent.send(("F," + str(monID) + '@').encode())  # On envoie F pour signaler que le joueur est parti au serveur
                         fini = True  # On ferme la fenêtre
                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_RETURN and motEcrit != '':  # Si on appuie sur entrée et que le mot n'est pas vide
+                        if event.key == pygame.K_RETURN:  # Si on appuie sur entrée et que le mot n'est pas vide
                             if motEcrit == motdevin and not verif:
                                 motcache = motdevin  # On affiche le mot qui devait être deviné au joueur qui l'a trouvé
                                 affmotcache = police.render(motcache, True, (0, 0, 0))
@@ -822,7 +824,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 fenetre.blit(textJoueur, (10, 0))
                 xJoueur = 0
                 for j in joueurs:
-                    nomJoueur = police.render(joueurs[j] + " : " + roles[j], True, (0, 0, 0))
+                    nomJoueur = police.render(joueurs[j] + " : " + roles[j] + point + 'pts', True, (0, 0, 0))
                     fenetre.blit(nomJoueur, (10, 60 + xJoueur*50))
                     xJoueur += 1
 
