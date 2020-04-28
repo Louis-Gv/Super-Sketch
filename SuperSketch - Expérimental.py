@@ -870,7 +870,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 if tempsFin - time()<40 and len(motdevin)>6:
                     lettre=randint(len(motdevin))
                     motcache[lettre]=motdevin[lettre]
-                if motcache[lettre]=motdevin[lettre]<20 and len(motdevin)>8:
+                if tempsFin - time()<20 and len(motdevin)>8:
                     lettre=randint(len(motdevin))
                     motcache[lettre]=motdevin[lettre]
                     
