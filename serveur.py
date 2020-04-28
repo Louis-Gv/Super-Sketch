@@ -18,7 +18,7 @@ def serveur():  # Process qui va rediffuser les messages à tout les autres clie
     def gestionDuClient(conn, idConnThread):  # Thread de dialogue avec un client :
         # Ce thread a accès à la mémoire du process
         while 1:
-            msgClient = conn.recv(200)
+            msgClient = conn.recv(1024)
             if msgClient == b'':
                 break
             # Faire suivre le message à tous les autres clients :
