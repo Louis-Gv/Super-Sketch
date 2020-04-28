@@ -187,6 +187,19 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             couleur = cbt
         return
 
+    #---------Cette fonction permet un dessin beaucoup plus fluide que l'ancien algorithme, il calcule les positions intermiédiares entre deux positions détectée
+    #en rajoutant des cercles sur ces positions permettant un dessin fluide, de plus ce système est beaucoup plus efficace côté serveur
+   
+    def dessin(fen, couleur, pos, last, rayon):
+        dx = last[0]-pos[0]          #On calcule la distance entre les deux positions
+        dy = last[1]-pos[1]           
+        distance = max(abs(dx), abs(dy))      #On regarde quelle valeur est la plus grande entre dx et dy
+        for i in range(distance):          #Pour i jusqu'à distance
+            x = int( pos[0]+float(i)/distance*dx)     #On calcule x et y
+            y = int( pos[1]+float(i)/distance*dy)
+            pygame.display.update(pygame.draw.circle(fen, couleur, (x, y), rayon))   #On met à jour la fenetre avec un nouveau cercle
+
+
 
     def selectioncercle1():  # + rayon
         global rayon  # Définition de variable globale du programme
@@ -253,6 +266,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     easter = 0
     xE = 400
     yE = 0
+    draw_on = False
+    lastpos = (0, 0)
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
@@ -457,6 +472,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 fini = True
                         pygame.display.flip()
                 init = False
+                #----------------
             if etat == 'D':  # Si on dessine
                 if tunnelParent.poll():  # On get les nouveaux points
                     for raw_data in tunnelParent.recv().decode().split("@"):
@@ -473,12 +489,24 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         elif data[0] == "V":
                             easter = 1
 
-                px, py = pygame.mouse.get_pos()  # Détection de la position de la souris
-
-                for event in pygame.event.get():
-                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):  # Si on appuie sur ECHAP
+               
+                px, py = pygame.mouse.get_pos()
+                for e in pygame.event.get():
+                    if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):  # Si on appuie sur ECHAP
                         tunnelParent.send(("F," + str(monID) + '@').encode())  # On envoie l'info que l'on quitte le serveur
                         fini = True  # On ferme la fenêtre
+
+                    elif e.type == pygame.MOUSEBUTTONDOWN:
+                        pygame.draw.circle(fenetre, couleur, e.pos, rayon)      #Si on clique, on fait un cercle à la position du clic
+                        draw_on = True
+                    elif e.type == pygame.MOUSEBUTTONUP:           #Si on lache, on désactive la boucle suivante
+                        draw_on = False
+                    elif e.type == pygame.MOUSEMOTION:       #Si la souris bouge et que le clique est enfoncé
+                        if draw_on:
+                            pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))      #On met à jour la fenêtre avec un nouveau cercle juste à coté de l'ancien
+                            dessin(fenetre, couleur, e.pos, lastpos,  rayon)   #On active la fonction dessin
+                            tunnelParent.send(('D,' + str(e.pos[0]) + ";" + str(e.pos[1]) + "," + str(lastpos[0]) + ";" + str(lastpos[1]) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())    #envoie des infos au serv
+                        lastpos = e.pos  #On stocke l'ancienne position
 
                 entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
 
@@ -490,13 +518,13 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
                         fenetre.blit(logo2, poslogo)
                 else:
-                    xE += 3
                     fenetre.blit(imgpeu, (int(xE), yE))
+                    xE += 3
 
                 # Placement des boutons sur l'écran
                 fenetre.blit(fon, (1820, 500))
                 fenetre.blit(fon, (1720, 500))
-                fonpal = pygame.draw.rect(fenetre, blanc, (1720, 100, 200, 980))
+                fonpal = pygame.draw.rect(fenetre, blanc, (1720, 100, 200, 980))     #Affichage des boutons de couleurs
                 btr = pygame.draw.rect(fenetre, rouge, (1820, 100, 100, 100))
                 btv = pygame.draw.rect(fenetre, vert, (1720, 100, 100, 100))
                 btbl = pygame.draw.rect(fenetre, blanc, (1820, 200, 100, 100))
@@ -507,7 +535,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 btbc = pygame.draw.rect(fenetre, bleuc, (1720, 400, 100, 100))
                 btcg = pygame.draw.circle(fenetre, noir, (1870, 550), 35)  # bouton circulaire gros rayon
                 btcp = pygame.draw.circle(fenetre, noir, (1770, 550), 15)  # bouton circulaire petit rayon
-                tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))
+                tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))     #Affichage des élément de l'interface
                 ligne = pygame.draw.rect(fenetre, noir, (390, 0, 10, 980))
                 ligne2 = pygame.draw.rect(fenetre, noir, (0, 970, 1920, 10))
                 bas = pygame.draw.rect(fenetre, gris, (0, 980, 1920, 1920))
@@ -686,26 +714,29 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fenetre.blit(logo2, poslogo)
 
                 # Détection clique gauche pour effectuer le dessin
-                if pygame.mouse.get_pressed()[0] == 1 and motChoisi and (px != ancienpx or py != ancienpy) and tempsFin - time() < temps - 0.35:  # Si on clique le dessin s'affiche
-                    pygame.draw.circle(fenetre, couleur, (px, py), rayon)
-                    tunnelParent.send(('D,' + str(px) + "," + str(py) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())  # On envoie toutes les données au serveur
+                
+                      # On envoie toutes les données au serveur
                     # "D,875,745,45;75;0,10"
                     ancienpx = px
                     ancienpy = py
                 pygame.display.flip()  # Rafraichissement de la fenêtre
-                clock.tick(600)
+                clock.tick(40)
                 # --------------------------------------------------------------------------------------------------------------------------------------------
             elif etat == 'L':  # Si on regarde le dessin
                 if tunnelParent.poll():  # On get les nouveaux points
                     for raw_data in tunnelParent.recv().decode().split("@"):
                         data = raw_data.split(",")
                         if data[0] == 'D':  # Si c'est un dessin, on décode les infos
-                            px = int(data[1])
-                            py = int(data[2])
+                            pos = data[1].split(";")
+                            pos = tuple(map(int, pos))
+                            last = data[2].split(";")
+                            last = tuple(map(int, last))
                             couleur = data[3].split(";")
                             couleur = tuple(map(int, couleur))
                             rayon = int(data[4])
-                            pygame.draw.circle(fenetre, couleur, (px, py), rayon)  # affichage du dessin avec les infos reçus par le serveur
+                            pygame.display.update(pygame.draw.circle(fenetre, couleur, pos, rayon))
+                            dessin(fenetre, couleur, pos, last,  rayon)
+                            
                         elif data[0] == 'F':
                             print(joueurs[int(data[1])] + " est parti")
                             del joueurs[int(data[1])]  # On supprime le joueur
@@ -832,9 +863,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     listmsg = listmsg[-10:]  # On garde uniquement les 10 derniers termes de la listes
                     textchat = police2.render(listmsg[i], True, (0, 0, 0))
                     fenetre.blit(textchat, (50, 480 + 50 * i))  # On affiche la liste avec les coord saisie précédemment
+                    
 
                 pygame.display.flip()  # raffraichissment de la fenêtre
-                clock.tick(600)
+                clock.tick(200)
     pygame.quit()
     if procClient.is_alive():
         procClient.join()
