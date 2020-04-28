@@ -864,6 +864,18 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     textchat = police2.render(listmsg[i], True, (0, 0, 0))
                     fenetre.blit(textchat, (50, 480 + 50 * i))  # On affiche la liste avec les coord saisie précédemment
 
+                if tempsFin - time()<60:
+                    lettre=randint(len(motdevin))
+                    motcache[lettre]=motdevin[lettre]
+                if tempsFin - time()<40 and len(motdevin)>6:
+                    lettre=randint(len(motdevin))
+                    motcache[lettre]=motdevin[lettre]
+                if motcache[lettre]=motdevin[lettre]<20 and len(motdevin)>8:
+                    lettre=randint(len(motdevin))
+                    motcache[lettre]=motdevin[lettre]
+                    
+                    
+
                 pygame.display.flip()  # raffraichissment de la fenêtre
                 clock.tick(400)
     pygame.quit()
