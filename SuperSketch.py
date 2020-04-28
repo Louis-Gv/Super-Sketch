@@ -227,6 +227,13 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
             tunnelParent.send("E".encode())
 
+    def reini():
+        global couleur
+        global rayon
+        tunnelParent.send("E".encode())
+        couleur = noir
+        rayon = 10
+        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
 
     pygame.draw.rect(fenetre, (255, 255, 255), (0, 0, 1920, 1080))
 
@@ -616,7 +623,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         if pygame.mouse.get_pressed() == (1, 0, 0):
                             motChoisi=True
                             motdevin=mot1
-                            pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+                            reini()
         
                     fenetre.blit(borderbtMot2, posborderbtMot2)
                     fenetre.blit(paddingbtMot2, pospaddingbtMot2)
@@ -627,7 +634,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         if pygame.mouse.get_pressed() == (1, 0, 0):
                             motChoisi=True
                             motdevin=mot2
-                            pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+                            reini()
 
                     fenetre.blit(borderbtMot3, posborderbtMot3)
                     fenetre.blit(paddingbtMot3, pospaddingbtMot3)
@@ -638,11 +645,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         if pygame.mouse.get_pressed() == (1, 0, 0):
                             motChoisi=True
                             motdevin=mot3
-                            pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+                            reini()
 
                     if motChoisi:
                         tunnelParent.send(("M" + "," + motdevin + '@').encode())  # On envoie le mot aux autres
-                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))  # On efface les mots
                         tempsFin = time() + temps
                 else:
                     affChrono = police.render(str(int(tempsFin - time())), True, (0, 0, 0))
