@@ -504,7 +504,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         fini = True  # On ferme la fenêtre
 
                     elif e.type == pygame.MOUSEBUTTONDOWN and motChoisi:
-                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
                         pygame.draw.circle(fenetre, couleur, e.pos, rayon)      #Si on clique, on fait un cercle à la position du clic
                         draw_on = True
                     elif e.type == pygame.MOUSEBUTTONUP:           #Si on lache, on désactive la boucle suivante
