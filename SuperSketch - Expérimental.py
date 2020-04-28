@@ -865,13 +865,13 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fenetre.blit(textchat, (50, 480 + 50 * i))  # On affiche la liste avec les coord saisie précédemment
 
                 if tempsFin - time()<60:
-                    lettre=randint(len(motdevin))
+                    lettre=randint(0, len(motdevin))
                     motcache[lettre]=motdevin[lettre]
                 if tempsFin - time()<40 and len(motdevin)>6:
-                    lettre=randint(len(motdevin))
+                    lettre=randint(0, len(motdevin))
                     motcache[lettre]=motdevin[lettre]
                 if tempsFin - time()<20 and len(motdevin)>8:
-                    lettre=randint(len(motdevin))
+                    lettre=randint(0, len(motdevin))
                     motcache[lettre]=motdevin[lettre]
                     
                     
