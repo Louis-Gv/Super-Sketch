@@ -503,7 +503,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         tunnelParent.send(("F," + str(monID) + '@').encode())  # On envoie l'info que l'on quitte le serveur
                         fini = True  # On ferme la fenêtre
 
-                    elif e.type == pygame.MOUSEBUTTONDOWN:
+                    elif e.type == pygame.MOUSEBUTTONDOWN and motChoisi:
+                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
                         pygame.draw.circle(fenetre, couleur, e.pos, rayon)      #Si on clique, on fait un cercle à la position du clic
                         draw_on = True
                     elif e.type == pygame.MOUSEBUTTONUP:           #Si on lache, on désactive la boucle suivante
@@ -649,6 +650,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                     if motChoisi:
                         tunnelParent.send(("M" + "," + motdevin + '@').encode())  # On envoie le mot aux autres
+                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
                         tempsFin = time() + temps
                 else:
                     affChrono = police.render(str(int(tempsFin - time())), True, (0, 0, 0))
@@ -711,7 +713,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fenetre.blit(nomJoueur, (10, 60 + xJoueur * 50))
                     xJoueur += 1
 
-                idFrame = (idFrame + 0.1) % 40  # Animation du logo super-Sketch
+                idFrame = (idFrame + 2) % 40  # Animation du logo super-Sketch
                 if idFrame < 20:
                     poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
                     fenetre.blit(logo1, poslogo)
