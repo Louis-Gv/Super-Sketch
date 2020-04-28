@@ -1,7 +1,8 @@
 ![Super Sketch](logoconv.gif)
-
-Prochainement dans les bacs :kissing_heart:
-
-Leu maiyere praugeai deux tou lait tant
-
-![Notre Style](interface.jpg)
+## Un jeu de dessin
+(insérer image)
+## Un jeu en Réseau jusqu'à 4 joueurs
+### LAN
+Un joueur héberge la partie et les autres peuvent le rejoindre automatiquement.
+### À distance
+Un joueur héberge la partie, NAT le port 5000 et donne son IP aux autres joueurs.
