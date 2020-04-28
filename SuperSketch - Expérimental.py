@@ -735,7 +735,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             couleur = tuple(map(int, couleur))
                             rayon = int(data[4])
                             pygame.display.update(pygame.draw.circle(fenetre, couleur, pos, rayon))
-                            roundline(fenetre, couleur, pos, last,  rayon)
+                            dessin(fenetre, couleur, pos, last,  rayon)
                             
                         elif data[0] == 'F':
                             print(joueurs[int(data[1])] + " est parti")
