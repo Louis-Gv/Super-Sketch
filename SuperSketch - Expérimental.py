@@ -502,7 +502,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         if draw_on:
                             pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
                             roundline(fenetre, couleur, e.pos, lastpos,  rayon)
-                            tunnelParent.send(('D,' + str(e.pos) + "," + str(lastpos) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())
+                            tunnelParent.send(('D,' + str(e.pos[0]) + ";" + str(e.pos[1]) + "," + str(lastpos[0]) + ";" + str(lastpos[1]) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())
                         lastpos = e.pos
 
                 entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
@@ -725,8 +725,11 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     for raw_data in tunnelParent.recv().decode().split("@"):
                         data = raw_data.split(",")
                         if data[0] == 'D':  # Si c'est un dessin, on décode les infos
-                            pos = data[1]
-                            last = data[2]
+                            print(data)
+                            pos = data[1].split(";")
+                            pos = tuple(map(int, pos))
+                            last = data[2].split(";")
+                            last = tuple(map(int, last))
                             couleur = data[3].split(";")
                             couleur = tuple(map(int, couleur))
                             rayon = int(data[4])
