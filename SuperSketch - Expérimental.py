@@ -187,14 +187,17 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
             couleur = cbt
         return
 
-    def roundline(srf, couleur, start, end, rayon):
-        dx = end[0]-start[0]
-        dy = end[1]-start[1]
-        distance = max(abs(dx), abs(dy))
-        for i in range(distance):
-            x = int( start[0]+float(i)/distance*dx)
-            y = int( start[1]+float(i)/distance*dy)
-            pygame.display.update(pygame.draw.circle(srf, couleur, (x, y), rayon))
+    #---------Cette fonction permet un dessin beaucoup plus fluide que l'ancien algorithme, il calcule les positions intermiédiares entre deux positions détectée
+    #en rajoutant des cercles sur ces positions permettant un dessin fluide, de plus ce système est beaucoup plus efficace côté serveur
+   
+    def dessin(fen, couleur, pos, last, rayon):
+        dx = last[0]-pos[0]          #On calcule la distance entre les deux positions
+        dy = last[1]-pos[1]           
+        distance = max(abs(dx), abs(dy))      #On regarde quelle valeur est la plus grande entre dx et dy
+        for i in range(distance):          #Pour i jusqu'à distance
+            x = int( pos[0]+float(i)/distance*dx)     #On calcule x et y
+            y = int( pos[1]+float(i)/distance*dy)
+            pygame.display.update(pygame.draw.circle(fen, couleur, (x, y), rayon))   #On met à jour la fenetre avec un nouveau cercle
 
 
 
@@ -494,16 +497,16 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         fini = True  # On ferme la fenêtre
 
                     elif e.type == pygame.MOUSEBUTTONDOWN:
-                        pygame.draw.circle(fenetre, couleur, e.pos, rayon)
+                        pygame.draw.circle(fenetre, couleur, e.pos, rayon)      #Si on clique, on fait un cercle à la position du clic
                         draw_on = True
-                    elif e.type == pygame.MOUSEBUTTONUP:
+                    elif e.type == pygame.MOUSEBUTTONUP:           #Si on lache, on désactive la boucle suivante
                         draw_on = False
-                    elif e.type == pygame.MOUSEMOTION:
+                    elif e.type == pygame.MOUSEMOTION:       #Si la souris bouge et que le clique est enfoncé
                         if draw_on:
-                            pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
-                            roundline(fenetre, couleur, e.pos, lastpos,  rayon)
-                            tunnelParent.send(('D,' + str(e.pos[0]) + ";" + str(e.pos[1]) + "," + str(lastpos[0]) + ";" + str(lastpos[1]) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())
-                        lastpos = e.pos
+                            pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))      #On met à jour la fenêtre avec un nouveau cercle juste à coté de l'ancien
+                            dessin(fenetre, couleur, e.pos, lastpos,  rayon)   #On active la fonction dessin
+                            tunnelParent.send(('D,' + str(e.pos[0]) + ";" + str(e.pos[1]) + "," + str(lastpos[0]) + ";" + str(lastpos[1]) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())    #envoie des infos au serv
+                        lastpos = e.pos  #On stocke l'ancienne position
 
                 entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
 
@@ -515,14 +518,13 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
                         fenetre.blit(logo2, poslogo)
                 else:
+                    fenetre.blit(imgpeu, (int(xE), yE))
                     xE += 3
-                        
-                fenetre.blit(imgpeu, (int(xE), yE))
 
                 # Placement des boutons sur l'écran
                 fenetre.blit(fon, (1820, 500))
                 fenetre.blit(fon, (1720, 500))
-                fonpal = pygame.draw.rect(fenetre, blanc, (1720, 100, 200, 980))
+                fonpal = pygame.draw.rect(fenetre, blanc, (1720, 100, 200, 980))     #Affichage des boutons de couleurs
                 btr = pygame.draw.rect(fenetre, rouge, (1820, 100, 100, 100))
                 btv = pygame.draw.rect(fenetre, vert, (1720, 100, 100, 100))
                 btbl = pygame.draw.rect(fenetre, blanc, (1820, 200, 100, 100))
@@ -533,7 +535,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 btbc = pygame.draw.rect(fenetre, bleuc, (1720, 400, 100, 100))
                 btcg = pygame.draw.circle(fenetre, noir, (1870, 550), 35)  # bouton circulaire gros rayon
                 btcp = pygame.draw.circle(fenetre, noir, (1770, 550), 15)  # bouton circulaire petit rayon
-                tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))
+                tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))     #Affichage des élément de l'interface
                 ligne = pygame.draw.rect(fenetre, noir, (390, 0, 10, 980))
                 ligne2 = pygame.draw.rect(fenetre, noir, (0, 970, 1920, 10))
                 bas = pygame.draw.rect(fenetre, gris, (0, 980, 1920, 1920))
@@ -725,7 +727,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     for raw_data in tunnelParent.recv().decode().split("@"):
                         data = raw_data.split(",")
                         if data[0] == 'D':  # Si c'est un dessin, on décode les infos
-                            print(data)
                             pos = data[1].split(";")
                             pos = tuple(map(int, pos))
                             last = data[2].split(";")
