@@ -86,6 +86,16 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     offline = False
     accip = True
 
+    # Initialisation des variables de l'écran
+    ctypes.windll.user32.SetProcessDPIAware()
+    largeur = ctypes.windll.user32.GetSystemMetrics(0)
+    hauteur = ctypes.windll.user32.GetSystemMetrics(1)
+    fenetre = pygame.display.set_mode((largeur, hauteur), pygame.FULLSCREEN)
+    pygame.display.set_caption("Super-sketch")
+
+    # Initialisation cadence
+    clock = pygame.time.Clock()
+
     # Initialisation des images
                 # Interface
     pal1 = pygame.pal1 = pygame.image.load("img/pal1.png").convert_alpha()
@@ -189,31 +199,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     # Initialisation des variables de textes
     textPseudo = police.render('Entrez votre pseudo : ', True, (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
     txtAttente = police.render("En attente de l'hote", True, (0, 0, 0))
-    
-    # Initialisation des variables de l'écran
-    ctypes.windll.user32.SetProcessDPIAware()
-    largeur = ctypes.windll.user32.GetSystemMetrics(0)
-    hauteur = ctypes.windll.user32.GetSystemMetrics(1)
-    fenetre = pygame.display.set_mode((largeur, hauteur), pygame.FULLSCREEN)
-    pygame.display.set_caption("Super-sketch")
-
-    # Initialisation cadence
-    clock = pygame.time.Clock()
-
 
     #------------------------------------------------------------------INITIALISATION DE L'ACCUEIL------------------------------------------------------------------------------
-
-    # Chargement de la couleur de fond
-    fenetre.fill(bgColor)
-
-    # Chargement du logo au centre de l'écran
-    fenetre.blit(logo1, poslogo)
-    
-    # Chargement du soleil
-    fenetre.blit(soleil, (1645, 22))
-    
-    # Chargement de la croix
-    fenetre.blit(croix, poscroix)
 
     # Chargement des boutons
 
@@ -299,6 +286,18 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
+
+            # Chargement de la couleur de fond
+            fenetre.fill(bgColor)
+
+            # Chargement du logo au centre de l'écran
+            fenetre.blit(logo1, poslogo)
+    
+            # Chargement du soleil
+            fenetre.blit(soleil, (1645, 22))
+    
+            # Chargement de la croix
+            fenetre.blit(croix, poscroix)
 
             pos = pygame.mouse.get_pos()
 
@@ -591,6 +590,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         mot2 = choice(limots)  # On choisit le deuxième mot
                         mot3 = choice(limots)  # On chosit le troisième mot
                         selectionMot = False  # On ferme la boucle de la selection de mots
+                        reini()
 
                     fenetre.blit(image, (0, 0))
                     #----Bouton mot 1----#
@@ -641,7 +641,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         if pygame.mouse.get_pressed() == (1, 0, 0):
                             motChoisi=True
                             motdevin=mot1
-                            reini()
         
                     fenetre.blit(borderbtMot2, posborderbtMot2)
                     fenetre.blit(paddingbtMot2, pospaddingbtMot2)
@@ -652,7 +651,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         if pygame.mouse.get_pressed() == (1, 0, 0):
                             motChoisi=True
                             motdevin=mot2
-                            reini()
 
                     fenetre.blit(borderbtMot3, posborderbtMot3)
                     fenetre.blit(paddingbtMot3, pospaddingbtMot3)
@@ -663,7 +661,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         if pygame.mouse.get_pressed() == (1, 0, 0):
                             motChoisi=True
                             motdevin=mot3
-                            reini()
 
                     if motChoisi:
                         tunnelParent.send(("M" + "," + motdevin + '@').encode())  # On envoie le mot aux autres
