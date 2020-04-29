@@ -8,8 +8,75 @@ from time import *
 import serveur
 import client
 
+#---------------------------------------------FONCTIONS---------------------------------------------------------------------------------------------------------
+
+# Déclaration de la fonction de sélection de la couleur
+def selection(pbt, cbt, tbt):
+    global couleur  # Définition de variable globale du programme
+    global idFrame2  # Animation de l'image
+    global txtCouleur 
+    idFrame2 = (idFrame2 + 1) % 40
+    if idFrame2 < 30:
+        fenetre.blit(pal1, pbt)
+    else:
+        fenetre.blit(pal2, pbt)
+    if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de couleur lors d'un clic gauche
+        couleur = cbt
+        txtCouleur = tbt
+    return
+
+#---------Cette fonction permet un dessin beaucoup plus fluide que l'ancien algorithme, il calcule les positions intermiédiares entre deux positions détectée
+#en rajoutant des cercles sur ces positions permettant un dessin fluide, de plus ce système est beaucoup plus efficace côté serveur
+   
+def dessin(fen, couleur, pos, last, rayon):
+    dx = last[0]-pos[0]          #On calcule la distance entre les deux positions
+    dy = last[1]-pos[1]           
+    distance = max(abs(dx), abs(dy))      #On regarde quelle valeur est la plus grande entre dx et dy
+    for i in range(distance):          #Pour i jusqu'à distance
+        x = int( pos[0]+float(i)/distance*dx)     #On calcule x et y
+        y = int( pos[1]+float(i)/distance*dy)
+        pygame.display.update(pygame.draw.circle(fen, couleur, (x, y), rayon))   #On met à jour la fenetre avec un nouveau cercle
+
+def selectioncercle1():  # + rayon
+    global rayon  # Définition de variable globale du programme
+    if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de rayon lors d'un clic
+        rayon = rayon + 5
+    pygame.time.wait(100)
+    return
+
+def selectioncercle2():  # - rayon
+    global rayon  # Définition de variable globale du programme
+    if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de rayon lors d'un clic
+        if rayon > 7:
+            rayon = rayon - 5
+    pygame.time.wait(100)
+    return
+
+def effacfx():
+    pygame.draw.rect(fenetre, noir, (1720, 10, 190, 5))
+    pygame.draw.rect(fenetre, noir, (1720, 10, 5, 80))
+    pygame.draw.rect(fenetre, noir, (1910, 10, 5, 80))
+    pygame.draw.rect(fenetre, noir, (1720, 85, 190, 5))
+    if pygame.mouse.get_pressed() == (1, 0, 0):  # Detection du clic
+        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+        tunnelParent.send("E".encode())
+
+def reini():
+    global couleur
+    global rayon
+    tunnelParent.send("E".encode())
+    txtCouleur = 'noir'
+    couleur = noir
+    rayon = 10
+    pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
+
+#-----------------------------------------------------------------INITIALISATION DES VARIABLES-------------------------------------------------------------------------------
+
 # FAUT FERMER AVEC ECHAP ET PROPREMENT
 if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour multiprocessing
+
+    pygame.init()
+    
     # Etat du menu
     fini = False
     acceuil = True
@@ -19,52 +86,136 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     offline = False
     accip = True
 
-    # Style fenetre
+    # Initialisation des images
+                # Interface
+    pal1 = pygame.pal1 = pygame.image.load("img/pal1.png").convert_alpha()
+    pal2 = pygame.image.load("img/pal2.png").convert_alpha()
+    fon = pygame.image.load("img/pal4.png").convert_alpha()
+    imgpeu = pygame.image.load("img/406sw.png").convert_alpha()
+    image =pygame.image.load("img/ima.png").convert_alpha()
+    gomme1 = pygame.image.load("img/gomme1.png").convert_alpha()
+                # Accueil
+    logo1 = pygame.image.load("img/lobby/logo1.png")
+    logo2 = pygame.image.load("img/lobby/logo2.png")
+    nuage = pygame.image.load("img/lobby/nuage.png")
+    soleil = pygame.image.load("img/lobby/soleil.png")
+    croix = pygame.image.load("img/lobby/croix.png")
+    play = pygame.image.load("img/lobby/play.png")
+
+    # Initialisation des couleurs
+    rouge = (255, 0, 0)
+    vert = (0, 255, 0)
+    jaune = (255, 215, 0)
+    blanc = (255, 255, 255)
+    noir = (0, 0, 0)
+    bleuc = (38, 188, 254)
+    rose = (238, 130, 238)
+    marron = (88, 41, 0)
+    gris = (192, 192, 192)
     bgColor = (118, 188, 194)
 
-    pygame.init()
+    # Initialisation des boucles
+    motChoisi = False
+    selectionMot = True
+    draw_on = False
+    verif = False
 
-    # caractéristiques de l'écran
+    # Initialisation des polices
+    police2 = pygame.font.SysFont("roboto-bold", 35)
+    police = pygame.font.SysFont("roboto-bold", 65)
+
+    # Initialisation des message et mots    
+    motEcrit = ''
+    motdevin = "mot pas choisi"
+    motcache = "mot pas choisi"
+    listmsg = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']  # Initialisation de la liste du chat vide
+    mot1 = mot2 = mot3 = affmot1 = affmot2 = affmot3 = affmotcache = ""
+    limots = [word.strip() for word in open("dico.txt", encoding="utf-8")]  # On créer une liste à partir d'un document texte
+
+    # Initialisation des variables de dessin
+    rayon = 10
+    couleur = noir
+    txtCouleur = 'noir'
+    lastpos = (0, 0)
+    px = 5000
+    py = 5000
+
+    #Initialisation des variables de temps
+    tempsFin = 0
+    temps = 80  # temps pour dessiner
+
+    # Initialisation des variables d'animations et infos positions
+                # Nuage
+                    # info position nuage Gauche
+    xNuageG = randint(-600, 1500)
+    vxNuageG = random() / 3 + .15
+    yNuageG = randint(0, 250)
+                    # info nuage Droite
+    xNuageD = randint(400, 2000)
+    vxNuageD = -(random() / 3 + .15)
+    yNuageD = randint(0, 250)
+                # Easter egg
+    easter = 0
+    xE = 400
+    yE = 0
+                # Logo et couleur
+    idFrame = 0
+    idFrame2 = 0
+                # Boutons
+    padding = 10     # espace autour du texte des btn
+                # Croix
+    poscroix = croix.get_rect(topright=(largeur - 15, 15))
+                # Logo
+    poslogo = logo1.get_rect(center=(int(largeur / 2), 100))
+                # Play
+    posplay = play.get_rect(topright=(largeur - 15, 15))
+
+    # Initialisation des variables du serveur
+    pseudo = ''
+    ip = ''
+    procServeur = Process()  # on initialise les process pour pouvoir les fermer
+    procDiffu = Process()
+    procClient = Process()
+    tunnelParent, tunnelEnfant = Pipe()  # Tunnel de données entre le Process principal et le Process client
+    init = True
+    start = False
+    joueurs = {}
+    point = 0
+    monID = 0
+    roles = {}
+    trouves = 0
+    etat = 0
+
+    # Initialisation des variables de textes
+    textPseudo = police.render('Entrez votre pseudo : ', True, (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
+    txtAttente = police.render("En attente de l'hote", True, (0, 0, 0))
+    
+    # Initialisation des variables de l'écran
     ctypes.windll.user32.SetProcessDPIAware()
     largeur = ctypes.windll.user32.GetSystemMetrics(0)
     hauteur = ctypes.windll.user32.GetSystemMetrics(1)
     fenetre = pygame.display.set_mode((largeur, hauteur), pygame.FULLSCREEN)
-
     pygame.display.set_caption("Super-sketch")
+
+    # Initialisation cadence
+    clock = pygame.time.Clock()
+
+
+    #------------------------------------------------------------------INITIALISATION DE L'ACCUEIL------------------------------------------------------------------------------
+
+    # Chargement de la couleur de fond
     fenetre.fill(bgColor)
 
-    # initialisation cadence
-    clock = pygame.time.Clock()
-    idFrame = 0
-
-    # INITIALISATION :
-    # - Partie accueil
-
-    # chargement du logo au centre de l'écran
-    logo1 = pygame.image.load("img/lobby/logo1.png")
-    logo2 = pygame.image.load("img/lobby/logo2.png")
-    poslogo = logo1.get_rect(center=(int(largeur / 2), 100))
+    # Chargement du logo au centre de l'écran
     fenetre.blit(logo1, poslogo)
-
-    nuage = pygame.image.load("img/lobby/nuage.png")
-    # info position nuage Gauche
-    xNuageG = randint(-600, 1500)
-    vxNuageG = random() / 3 + .15
-    yNuageG = randint(0, 250)
-    # info nuage Droite
-    xNuageD = randint(400, 2000)
-    vxNuageD = -(random() / 3 + .15)
-    yNuageD = randint(0, 250)
-
-    soleil = pygame.image.load("img/lobby/soleil.png")
+    
+    # Chargement du soleil
     fenetre.blit(soleil, (1645, 22))
-
-    croix = pygame.image.load("img/lobby/croix.png")
-    poscroix = croix.get_rect(topright=(largeur - 15, 15))
+    
+    # Chargement de la croix
     fenetre.blit(croix, poscroix)
 
-    padding = 10  # espace autour du texte des btn
-    police = pygame.font.SysFont("roboto-bold", 65)
+    # Chargement des boutons
 
     # Pour positionner mes bouttons j'ai recupéré les rectangles de mes objets Surface(des objets qu'on peut blit contenant
     # les pixels a afficher)
@@ -76,7 +227,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     #
     # On pourras ensuite utiliser fenetre.blit(btnA, posbtnA) qui placera la Surface(btnA) aux coordonnés de Rect(posbtnA)
 
-    # --- Boutton héberger --- #
+    #-----------------------------------------------------Boutton héberger--------------------------------------------#
+    
     btnHost = police.render('Héberger Une Partie', True, (0, 0, 0))  # Rendu du texte avec (antialiasing, noir)
     posbtnHost = btnHost.get_rect(center=(int(largeur / 2), 510))
 
@@ -95,9 +247,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
     pospaddingbtnHost = paddingbtnHost.get_rect(center=(int(largeur / 2), 510))
 
-    # --- Boutton rejoindre --- #
+    #-----------------------------------------------------Boutton rejoindre-------------------------------------------#
+    
     btnJoin = police.render('Rejoindre Une Partie', True, (0, 0, 0))
-    # Trouve le rectangle de la surface
     posbtnJoin = btnJoin.get_rect(center=(int(largeur / 2), 680))
 
     borderbtnJoin = pygame.Surface((posbtnJoin[2] + 2 * padding, posbtnJoin[3] + 2 * padding))
@@ -111,180 +263,46 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     paddingbtnJoinOmbre.fill((0, 0, 0))
     pospaddingbtnJoin = paddingbtnJoin.get_rect(center=(int(largeur / 2), 680))
 
-    # --- Boutton IP manuelle --- #
+    #-----------------------------------------------------Boutton IP manuelle-----------------------------------------#
+    
     btnOnline = police.render('Entrer une IP', True, (0, 0, 0))
     posbtnOnline = btnOnline.get_rect(center=(int(largeur / 2), 510))
 
-    # Rectangle noir plus grand qui sert de bordure
     borderbtnOnline = pygame.Surface((posbtnOnline[2] + 2 * padding, posbtnOnline[3] + 2 * padding))
     borderbtnOnline.fill((0, 0, 0))
-    # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
     posborderbtnOnline = borderbtnOnline.get_rect(center=(int(largeur / 2), 510))
 
-    # Rectangle bleu plus petit
     paddingbtnOnline = pygame.Surface((posbtnOnline[2] + padding, posbtnOnline[3] + padding))
     paddingbtnOnline.fill(bgColor)
     paddingbtnOnlineOmbre = pygame.Surface((posbtnOnline[2] + padding, posbtnOnline[3] + padding))  # Pour le survol
     paddingbtnOnlineOmbre.set_alpha(100)
     paddingbtnOnlineOmbre.fill((0, 0, 0))
-
-    # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
     pospaddingbtnOnline = paddingbtnOnline.get_rect(center=(int(largeur / 2), 510))
 
-    # --- Boutton LAN Automatique --- #
+    #-----------------------------------------------------Boutton LAN Automatique-------------------------------------#
+    
     btnOffline = police.render('LAN Automatique', True, (0, 0, 0))
     posbtnOffline = btnOffline.get_rect(center=(int(largeur / 2), 680))
 
-    # Rectangle noir plus grand qui sert de bordure
     borderbtnOffline = pygame.Surface((posbtnOffline[2] + 2 * padding, posbtnOffline[3] + 2 * padding))
     borderbtnOffline.fill((0, 0, 0))
-    # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
     posborderbtnOffline = borderbtnOffline.get_rect(center=(int(largeur / 2), 680))
 
-    # Rectangle bleu plus petit
     paddingbtnOffline = pygame.Surface((posbtnOffline[2] + padding, posbtnOffline[3] + padding))
     paddingbtnOffline.fill(bgColor)
     paddingbtnOfflineOmbre = pygame.Surface((posbtnOffline[2] + padding, posbtnOffline[3] + padding))  # Pour le survol
     paddingbtnOfflineOmbre.set_alpha(100)
     paddingbtnOfflineOmbre.fill((0, 0, 0))
-
-    # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
     pospaddingbtnOffline = paddingbtnOffline.get_rect(center=(int(largeur / 2), 680))
 
-    textPseudo = police.render('Entrez votre pseudo : ', True, (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
-    pseudo = ''
-    ip = ''
-    procServeur = Process()  # on initialise les process pour pouvoir les fermer
-    procDiffu = Process()
-    procClient = Process()
-    tunnelParent, tunnelEnfant = Pipe()  # Tunnel de données entre le Process principal et le Process client
-    init = True
-    start = False
-    joueurs = {}
-    point = 0
-    monID = 0
-    roles = {}
-    trouves = 0
-    etat = 0
-
-    play = pygame.image.load("img/lobby/play.png")
-    posplay = play.get_rect(topright=(largeur - 15, 15))
-    txtAttente = police.render("En attente de l'hote", True, (0, 0, 0))
-
-    px = 5000
-    py = 5000
-
-    # Déclaration de la fonction de sélection de la couleur
-    def selection(pbt, cbt):
-        global couleur  # Définition de variable globale du programme
-        global idFrame2  # Animation de l'image
-        idFrame2 = (idFrame2 + 1) % 40
-        if idFrame2 < 30:
-            fenetre.blit(pal1, pbt)
-        else:
-            fenetre.blit(pal2, pbt)
-        if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de couleur lors d'un clic gauche
-            couleur = cbt
-        return
-
-    #---------Cette fonction permet un dessin beaucoup plus fluide que l'ancien algorithme, il calcule les positions intermiédiares entre deux positions détectée
-    #en rajoutant des cercles sur ces positions permettant un dessin fluide, de plus ce système est beaucoup plus efficace côté serveur
-   
-    def dessin(fen, couleur, pos, last, rayon):
-        dx = last[0]-pos[0]          #On calcule la distance entre les deux positions
-        dy = last[1]-pos[1]           
-        distance = max(abs(dx), abs(dy))      #On regarde quelle valeur est la plus grande entre dx et dy
-        for i in range(distance):          #Pour i jusqu'à distance
-            x = int( pos[0]+float(i)/distance*dx)     #On calcule x et y
-            y = int( pos[1]+float(i)/distance*dy)
-            pygame.display.update(pygame.draw.circle(fen, couleur, (x, y), rayon))   #On met à jour la fenetre avec un nouveau cercle
-
-
-
-    def selectioncercle1():  # + rayon
-        global rayon  # Définition de variable globale du programme
-        if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de rayon lors d'un clic
-            rayon = rayon + 5
-        pygame.time.wait(100)
-        return
-
-
-    def selectioncercle2():  # - rayon
-        global rayon  # Définition de variable globale du programme
-        if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de rayon lors d'un clic
-            if rayon > 7:
-                rayon = rayon - 5
-        pygame.time.wait(100)
-        return
-
-
-    def effacfx():
-        pygame.draw.rect(fenetre, noir, (1720, 10, 190, 5))
-        pygame.draw.rect(fenetre, noir, (1720, 10, 5, 80))
-        pygame.draw.rect(fenetre, noir, (1910, 10, 5, 80))
-        pygame.draw.rect(fenetre, noir, (1720, 85, 190, 5))
-        if pygame.mouse.get_pressed() == (1, 0, 0):  # Detection du clic
-            pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-            tunnelParent.send("E".encode())
-
-    def reini():
-        global couleur
-        global rayon
-        tunnelParent.send("E".encode())
-        couleur = noir
-        rayon = 10
-        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-
-    pygame.draw.rect(fenetre, (255, 255, 255), (0, 0, 1920, 1080))
-
-    # Initialisation des variables de couleur et des animations
-    pal1 = pygame.pal1 = pygame.image.load("img/pal1.png").convert_alpha()
-    pal2 = pygame.image.load("img/pal2.png").convert_alpha()
-    fon = pygame.image.load("img/pal4.png").convert_alpha()
-    imgpeu = pygame.image.load("img/406sw.png").convert_alpha()
-    image =pygame.image.load("img/ima.png").convert_alpha()
-    rouge = (255, 0, 0)
-    vert = (0, 255, 0)
-    jaune = (255, 215, 0)
-    blanc = (255, 255, 255)
-    noir = (0, 0, 0)
-    bleuc = (38, 188, 254)
-    violet = (238, 130, 238)
-    marron = (88, 41, 0)
-    gris = (192, 192, 192)
-    police2 = pygame.font.SysFont("roboto-bold", 35)
-    motEcrit = ''
-    listmsg = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']  # Initialisation de la liste du chat vide
-    couleur = noir
-    rayon = 10
-    ancienpx = 2500  # hors écran
-    ancienpy = 2500
-    gomme1 = pygame.image.load("img/gomme1.png").convert_alpha()
-    limots = [word.strip() for word in open("dico.txt", encoding="utf-8")]  # On créer une liste à partir d'un document texte
-    motChoisi = False
-    selectionMot = True
-    motdevin = "mot pas choisi"
-    motcache = "mot pas choisi"
-    mot1 = mot2 = mot3 = affmot1 = affmot2 = affmot3 = affmotcache = ""
-    tempsFin = 0
-    temps = 80  # temps pour dessiner
-    verif = False
-    idFrame2 = 0
-    easter = 0
-    xE = 400
-    yE = 0
-    draw_on = False
-    lastpos = (0, 0)
+#--------------------------------------------------------------------LANCEMENT DU PROGRAMME-----------------------------------------------------------------------
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
-                
-            fenetre.fill(bgColor)  # Retour à zéro
 
             pos = pygame.mouse.get_pos()
 
-            fenetre.blit(soleil, (1645, 22))
-
+            # Affichage des nuages
             xNuageG += vxNuageG  # On ajoute la vitesse a la pos du nuage
             if xNuageG > 1930:  # Si sort de l'écran
                 xNuageG = randint(-600, -300)  # Retourne au départ
@@ -295,8 +313,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 xNuageD = randint(1930, 2100)  # Retourne au départ
             fenetre.blit(nuage, (int(xNuageD), yNuageD))
 
-            fenetre.blit(croix, poscroix)
-
+            # Affichage du logo
             idFrame = (idFrame + 1) % 40  # logo qui bouge tout les 1/4s ou 20images car 80fps
             if idFrame < 20:
                 fenetre.blit(logo1, poslogo)
@@ -479,8 +496,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 fini = True
                         pygame.display.flip()
                 init = False
-                #----------------
-            if etat == 'D':  # Si on dessine
+                #----------------------------------------POUR CELUI QUI DESSINE------------------------------------------------------------------------------------------
+            if etat == 'D':
                 if tunnelParent.poll():  # On get les nouveaux points
                     for raw_data in tunnelParent.recv().decode().split("@"):
                         data = raw_data.split(",")
@@ -528,6 +545,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fenetre.blit(imgpeu, (int(xE), yE))
                     xE += 3
 
+
                 # Placement des boutons sur l'écran
                 fenetre.blit(fon, (1820, 500))
                 fenetre.blit(fon, (1720, 500))
@@ -537,7 +555,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 btbl = pygame.draw.rect(fenetre, blanc, (1820, 200, 100, 100))
                 btn = pygame.draw.rect(fenetre, noir, (1720, 200, 100, 100))
                 btm = pygame.draw.rect(fenetre, marron, (1820, 300, 100, 100))
-                btvi = pygame.draw.rect(fenetre, violet, (1720, 300, 100, 100))
+                btvi = pygame.draw.rect(fenetre, rose, (1720, 300, 100, 100))
                 btj = pygame.draw.rect(fenetre, jaune, (1820, 400, 100, 100))
                 btbc = pygame.draw.rect(fenetre, bleuc, (1720, 400, 100, 100))
                 btcg = pygame.draw.circle(fenetre, noir, (1870, 550), 35)  # bouton circulaire gros rayon
@@ -670,24 +688,29 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         verif = False
                         pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
                         tunnelParent.send(("R," + str(idD) + '@').encode())
+                        
+                affrayon = police.render('rayon : '+ str(rayon), True, (0, 0, 0))
+                fenetre.blit(affrayon, (600, 1000))
+                affCouleur = police.render(txtCouleur, True, couleur)
+                fenetre.blit(affCouleur, (900, 1000))
 
                 # Détection du moment quand la souris passe sur les boutons
                 if btj.collidepoint(px, py):
-                    selection(btj, jaune)
+                    selection(btj, jaune, 'jaune')
                 if btr.collidepoint(px, py):
-                    selection(btr, rouge)
+                    selection(btr, rouge, 'rouge')
                 if btv.collidepoint(px, py):
-                    selection(btv, vert)
+                    selection(btv, vert, 'vert')
                 if btbl.collidepoint(px, py):
-                    selection(btbl, blanc)
+                    selection(btbl, blanc, 'gomme')
                 if btn.collidepoint(px, py):
-                    selection(btn, noir)
+                    selection(btn, noir, 'noir')
                 if btm.collidepoint(px, py):
-                    selection(btm, marron)
+                    selection(btm, marron, 'marron')
                 if btvi.collidepoint(px, py):
-                    selection(btvi, violet)
+                    selection(btvi, rose, 'rose')
                 if btbc.collidepoint(px, py):
-                    selection(btbc, bleuc)
+                    selection(btbc, bleuc, 'bleu clair')
                 if btcg.collidepoint(px, py):
                     selectioncercle1()
                 if btcp.collidepoint(px, py):
@@ -720,12 +743,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
                     fenetre.blit(logo2, poslogo)
 
-                # Détection clique gauche pour effectuer le dessin
-                
-                      # On envoie toutes les données au serveur
-                    # "D,875,745,45;75;0,10"
-                    ancienpx = px
-                    ancienpy = py
                 pygame.display.flip()  # Rafraichissement de la fenêtre
                 clock.tick(40)
                 # --------------------------------------------------------------------------------------------------------------------------------------------
@@ -791,7 +808,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         tunnelParent.send(("F," + str(monID) + '@').encode())  # On envoie F pour signaler que le joueur est parti au serveur
                         fini = True  # On ferme la fenêtre
                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_RETURN:  # Si on appuie sur entrée et que le mot n'est pas vide
+                        if event.key == pygame.K_RETURN and motEcrit != '':  # Si on appuie sur entrée et que le mot n'est pas vide
                             if motEcrit == motdevin and not verif:
                                 motcache = motdevin  # On affiche le mot qui devait être deviné au joueur qui l'a trouvé
                                 affmotcache = police.render(motcache, True, (0, 0, 0))
