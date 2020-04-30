@@ -127,7 +127,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     # Initialisation des boucles
     motChoisi = False
     selectionMot = True
-    draw_on = False
+    dess = False
     verif = False
 
     # Initialisation des polices
