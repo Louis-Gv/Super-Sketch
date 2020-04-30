@@ -200,6 +200,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     textPseudo = police.render('Entrez votre pseudo : ', True, (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
     txtAttente = police.render("En attente de l'hote", True, (0, 0, 0))
 
+    # Initialisation des sons
+    pygame.mixer.music.load("musique/menu.wav")
+
     #------------------------------------------------------------------INITIALISATION DE L'ACCUEIL------------------------------------------------------------------------------
 
     # Chargement des boutons
@@ -323,8 +326,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 barre = '|'
             else:
                 barre = ''
-
-            if not host and not join:  # menu sans avoir cliquer
+                
+            # Menu sans avoir cliquer
+            if not host and not join:  
                 fenetre.blit(borderbtnHost, posborderbtnHost)  # Bordure
                 fenetre.blit(paddingbtnHost, pospaddingbtnHost)  # Fond bleu
                 if posborderbtnHost.collidepoint(pos):
@@ -337,10 +341,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fenetre.blit(paddingbtnJoinOmbre, pospaddingbtnJoin)
                 fenetre.blit(btnJoin, posbtnJoin)  # Affichage du texte
 
-            if host:  # Si on héberge
+            # Si on héberge
+            if host:  
                 textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textPseudo, (400, 530))
 
+            # Si on a cliqué sur rejoindre une partie
             if join and not online and not offline:
                 fenetre.blit(borderbtnOnline, posborderbtnOnline)  # Bordure
                 fenetre.blit(paddingbtnOnline, pospaddingbtnOnline)  # Fond bleu
@@ -355,25 +361,34 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fenetre.blit(paddingbtnOfflineOmbre, pospaddingbtnOffline)
                 fenetre.blit(btnOffline, posbtnOffline)  # Affichage du texte
 
+            # Si on a cliqué sur le mode LAN
             if offline:
                 textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textPseudo, (400, 530))
 
+            # Si on a cliqué sur le mode ONLINE
             if online:
+
+                # Si on a pas rentré l'IP
                 if accip:
                     textIP = police.render("Entrez l'addresse IP du serveur : " + ip + barre, True, (0, 0, 0))  # txt,antialiasing,coul
                     fenetre.blit(textIP, (400, 530))
                 else:
                     textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
                     fenetre.blit(textPseudo, (400, 530))
-
+                    
+            # On récupère les actions du joueurs
             for event in pygame.event.get():
+
+                # Si le joueur appuie sur ECHAP ou la croix
                 if event.type == QUIT or (event.type == MOUSEBUTTONDOWN and poscroix.collidepoint(pos)):
                     acceuil = False
                     fini = True
                 if event.type == pygame.KEYDOWN:
+
+                    # Si on héberge, que l'on rejoint en LAN, ou rejoint en ONLINE et que l'IP a été saisie
                     if host or (join and (offline or (online and not accip))):  # Si une touche est pressée
-                        if event.key == pygame.K_RETURN:  # si entrer
+                        if event.key == pygame.K_RETURN:  # Si entrer
                             if host:
                                 procDiffu = Process(target=serveur.diffuIpHote)
                                 procDiffu.daemon = True
@@ -381,17 +396,29 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 procServeur = Process(target=serveur.serveur)
                                 procServeur.start()  # lancement du serveur dans un processus parallèle
                             acceuil = False  # fin de l'acceuil
+
+                        # Si on appuie sur retour
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
                             pseudo = pseudo[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
+
+                        # Si on écrit son pseudo 
                         elif len(pseudo) < 16:  # 16 caractères max
                             pseudo += event.unicode
+
+                    # Si on est sur la page qui demande l'IP
                     elif online and accip:
                         if event.key == pygame.K_RETURN and ip != '':
                             accip = False
+
+                        # Si on appuie sur retour
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
                             ip = ip[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
-                        elif len(pseudo) < 16:  # 16 caractères max
+                            
+                        # Si on écrit l'IP
+                        elif len(ip) < 16:  # 16 caractères max
                             ip += event.unicode
+
+                # Réception des infos de clic sur les boutons de l'accueil
                 if event.type == MOUSEBUTTONDOWN and event.button == 1:
                     if not host and not join:  # menu sans avoir cliquer
                         if posborderbtnHost.collidepoint(pos):
@@ -404,9 +431,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         elif posborderbtnOffline.collidepoint(pos):  # si pos souris est sur le btn offline
                             offline = True
                             ip = "0.0.0.0"
+                            
             clock.tick(80)  # limite 80fps
             pygame.display.flip()  # Rafraichissement écran acceuil avec toutes nos modifs
-        else:  # pas dans l'acceuil
+
+        # Pas dans l'acceuil
+        else:  
             if init:
                 if host:
                     procClient = Process(target=client.client, args=("127.0.0.1", tunnelEnfant, pseudo))
@@ -425,10 +455,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 fini = True
                         pos = pygame.mouse.get_pos()
 
+                        # Affichage de l'interface d'attente
                         fenetre.fill((255, 255, 255))  # fond blanc
                         texteConn = police.render(str(len(joueurs)) + ' personnes connectés', True, (0, 0, 0))
                         fenetre.blit(texteConn, (0, 0))
-
                         fenetre.blit(play, posplay)
 
                         for event in pygame.event.get():
