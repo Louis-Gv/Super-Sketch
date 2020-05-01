@@ -553,6 +553,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             trouves += 1
 
                         elif data[0] == "P":
+                            score[int(data[1])]+= int(data[2])
                             print(data[1], "marque", data[2], "pts")
                             print(score)
                         # Si un joueur a activé l'easter egg
@@ -636,7 +637,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 ligne11 = pygame.draw.rect(fenetre, noir, (1915, 100, 5, 500))
                 souligne = pygame.draw.rect(fenetre, noir, (10, 50, 340, 5))
                 ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
-                
+
+
                 # Affichage du bouton tout effacer
                 effac = pygame.draw.rect(fenetre, blanc, (1720, 10, 190, 80))
                 txteffac = police2.render("Tout effacer", True, (0, 0, 0))
@@ -764,6 +766,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 roles[j] = "D"
                             else:
                                 roles[j] = "L"
+
 
                         # On réinitialise les variables        
                         etat = "L"
@@ -902,9 +905,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
 
                         elif data[0] == "P":
+                            score[int(data[1])]+= int(data[2])
                             print(data[1], "marque", data[2], "pts")
                             print(score)
-
+                            
+                            
+        
                         # Si un joueur a activé l'easter egg
                         elif data[0] == "V":
                             easter = 1
@@ -940,12 +946,14 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             if motEcrit == motdevin and not verif:
                                 motcache = motdevin  # On affiche le mot qui devait être deviné au joueur qui l'a trouvé
                                 affmotcache = police.render(motcache, True, (0, 0, 0))
-                                point = tempsFin - time()
+                                point = int(tempsFin - time())
+                                score[int(monID)] += point 
                                 listmsg.append("Vous avez trouvé le mot!")
                                 tunnelParent.send(("O," + str(monID) + '@').encode())  # On envoie au serveur son pseudo en disant qu'on a trouvé le mot
                                 tunnelParent.send(("P," + str(monID) + "," + str(point) + '@').encode())
                                 verif = True    # Le mot est trouvé
-
+                                print(score)
+                                
                             # Si on active l'easter egg   
                             elif motEcrit == "406SW":
                                 easter = 1
