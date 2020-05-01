@@ -203,6 +203,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
     # Initialisation des sons
     pygame.mixer.music.load("musique/menu.wav")
+    pygame.mixer.music.play(loops=-1)
+    pygame.mixer.music.set_volume(0.4)
 
     #------------------------------------------------------------------INITIALISATION DE L'ACCUEIL------------------------------------------------------------------------------
 
@@ -767,7 +769,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             else:
                                 roles[j] = "L"
 
-
                         # On réinitialise les variables        
                         etat = "L"
                         trouves = 0
@@ -823,7 +824,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 fenetre.blit(textJoueur, (10, 0))
                 xJoueur = 0
                 for j in joueurs:
-                    nomJoueur = police.render(joueurs[j] + " : " + roles[j], True, (0, 0, 0))
+                    nomJoueur = police.render(joueurs[j] + " : " + roles[j] + " : " + str(score[j]), True, (0, 0, 0))
                     fenetre.blit(nomJoueur, (10, 60 + xJoueur * 50))
                     xJoueur += 1
                     
@@ -905,19 +906,13 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
 
                         elif data[0] == "P":
-                            score[int(data[1])]+= int(data[2])
+                            score[int(data[1])] += int(data[2])
                             print(data[1], "marque", data[2], "pts")
                             print(score)
-                            
-                            
         
                         # Si un joueur a activé l'easter egg
                         elif data[0] == "V":
                             easter = 1
-
-                            
-                        #elif data[0] == "P":
-                            #Faut faire un truc pour les points
                             
                 # Si le mot n'a pas été trouvé ou qu'il a été choisi
                 if not verif and motdevin != "mot pas choisi":  
@@ -1026,7 +1021,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 # Affichage des joueurs et de leurs rôles
                 xJoueur = 0
                 for j in joueurs:
-                    nomJoueur = police.render(joueurs[j] + " : " + roles[j], True, (0, 0, 0))
+                    nomJoueur = police.render(joueurs[j] + " : " + roles[j] + ":" + str(score[j]), True, (0, 0, 0))
                     fenetre.blit(nomJoueur, (10, 60 + xJoueur*50))
                     xJoueur += 1
                     
