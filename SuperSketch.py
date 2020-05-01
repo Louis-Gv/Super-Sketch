@@ -208,7 +208,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     pygame.mixer.music.play(loops=-1)
     pygame.mixer.music.set_volume(0.1)
     minuteur_song = pygame.mixer.Sound(file="musique/minuteur.ogg")
-
+    playerguessed_song = pygame.mixer.Sound(file="musique/playerGuessed.ogg")
+    roundstart_song = pygame.mixer.Sound(file="musique/roundstart.ogg")
+    autrequitrouve_song = pygame.mixer.Sound(file="musique/autrequitrouve.ogg")
+    erreur_song = pygame.mixer.Sound(file="musique/erreur.ogg")
     #------------------------------------------------------------------INITIALISATION DE L'ACCUEIL------------------------------------------------------------------------------
 
     # Chargement des boutons
@@ -556,6 +559,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         elif data[0] == "O":
                             listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
                             trouves += 1
+                            autrequitrouve_song.play(0 ,0 ,0)
 
                         elif data[0] == "P":
                             score[int(data[1])]+= int(data[2])
@@ -761,7 +765,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                     # Lorsque le temps arrive à 10
                     if int(tempsFin - time()) <= 10:
-                        minuteur_song.play(0 ,10000 ,82000)
+                        minuteur_song.play(0 ,10000 ,2000)
 
 
 
@@ -889,11 +893,14 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         elif data[0] == "M":
                             motdevin = data[1]
                             tempsFin = time() + temps   # On lance le timer
+                            debutround_song.play(0 ,0 ,0)
 
+                        #2éme son
                         # Si un joueur a trouvé le mot
                         elif data[0] == "O":
                             listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
-
+                            autrequitrouve_song.play(0 ,0 ,0)  
+                            
                         # Si une personne n'a pas trouvé le mot à la fin du timer
                         elif data[0] == "R":
                             listmsg.append("C'était " + motdevin)
@@ -959,16 +966,18 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 tunnelParent.send(("P," + str(monID) + "," + str(point) + '@').encode())
                                 verif = True    # Le mot est trouvé
                                 print(score)
-                                
+                                playerguessed_song.play(0 ,0 ,0)
+
                             # Si on active l'easter egg   
                             elif motEcrit == "406SW":
                                 easter = 1
                                 tunnelParent.send("V@".encode())
 
-                            # Sinon on envoie un message au serveur
+                            # Quand le mot et faux
                             else:
                                 listmsg.append(joueurs[int(monID)] + " : " + motEcrit)  # On ajoute le mot à la liste du chat
                                 tunnelParent.send(("t," + str(monID) + "," + motEcrit + '@').encode())  # On envoie le message avec le pseudo au serveur
+                                erreur_song.play(0 ,0 ,0)
                             motEcrit = ''  # On réinitialise le mot
 
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
