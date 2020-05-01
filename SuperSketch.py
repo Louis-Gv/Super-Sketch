@@ -207,6 +207,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     pygame.mixer.music.play(loops=-1)
     pygame.mixer.music.set_volume(0.1)
     minuteur_song = pygame.mixer.Sound(file="musique/minuteur.ogg")
+    playerguessed_song = pygame.mixer.Sound(file="musique/playerGuessed.ogg")
 
     #------------------------------------------------------------------INITIALISATION DE L'ACCUEIL------------------------------------------------------------------------------
 
@@ -890,7 +891,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         # Si un joueur a trouvé le mot
                         elif data[0] == "O":
                             listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
-
+                            playerGuessed_song.play(0 ,0 ,0)  
+                            
                         # Si une personne n'a pas trouvé le mot à la fin du timer
                         elif data[0] == "R":
                             listmsg.append("C'était " + motdevin)
