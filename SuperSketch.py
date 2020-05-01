@@ -194,7 +194,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     monID = 0
     roles = {}
     score = {}
-    pinceau = pygame.image.load("img/pinceau.png")
     trouves = 0
     
     etat = 0
@@ -207,7 +206,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     pygame.mixer.music.load("musique/menu.wav")
     pygame.mixer.music.play(loops=-1)
     pygame.mixer.music.set_volume(0.1)
-    minuteur_song = pygame.mixer.Sound(file="musique/minuteur.mp3")
+    minuteur_song = pygame.mixer.Sound(file="musique/minuteur.ogg")
 
     #------------------------------------------------------------------INITIALISATION DE L'ACCUEIL------------------------------------------------------------------------------
 
@@ -833,10 +832,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 fenetre.blit(textJoueur, (10, 0))
                 xJoueur = 0
                 for j in joueurs:
-                    nomJoueur = police.render(joueurs[j] + " : " + str(score[j]), True, (0, 0, 0))
+                    nomJoueur = police.render(joueurs[j] + " : " + roles[j] + " : " + str(score[j]), True, (0, 0, 0))
                     fenetre.blit(nomJoueur, (10, 60 + xJoueur * 50))
-                    if roles[j] == "D":
-                        fenetre.blit(pinceau, (340, 60 + xJoueur * 50))
                     xJoueur += 1
                     
                 # Animation du logo super-Sketch
@@ -1032,10 +1029,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 # Affichage des joueurs et de leurs rôles
                 xJoueur = 0
                 for j in joueurs:
-                    nomJoueur = police.render(joueurs[j] + " : " + str(score[j]), True, (0, 0, 0))
-                    fenetre.blit(nomJoueur, (10, 60 + xJoueur * 50))
-                    if roles[j] == "D":
-                        fenetre.blit(pinceau, (340, 60 + xJoueur * 50))
+                    nomJoueur = police.render(joueurs[j] + " : " + roles[j] + ":" + str(score[j]), True, (0, 0, 0))
+                    fenetre.blit(nomJoueur, (10, 60 + xJoueur*50))
                     xJoueur += 1
                     
                 # Affichage du texte dans le chat
