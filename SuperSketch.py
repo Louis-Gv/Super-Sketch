@@ -195,6 +195,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     roles = {}
     score = {}
     trouves = 0
+    
     etat = 0
 
     # Initialisation des variables de textes
@@ -205,6 +206,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     pygame.mixer.music.load("musique/menu.wav")
     pygame.mixer.music.play(loops=-1)
     pygame.mixer.music.set_volume(0.1)
+    minuteur_song = pygame.mixer.Sound(file="musique/minuteur.mp3")
 
     #------------------------------------------------------------------INITIALISATION DE L'ACCUEIL------------------------------------------------------------------------------
 
@@ -755,6 +757,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     # Affichage du timer 
                     affChrono = police.render(str(int(tempsFin - time())), True, (0, 0, 0))
                     fenetre.blit(affChrono, (1810, 610))
+
+                    # Lorsque le temps arrive à 10
+                    if int(tempsFin - time()) <= 10:
+                        minuteur_song.play(0 ,10000 ,82000)
+
+
 
                     # Lorsque le temps arrive à 0 
                     if trouves >= len(joueurs)-1 or int(tempsFin - time()) <= 0:
