@@ -25,7 +25,7 @@ def selection(pbt, cbt, tbt):
         txtCouleur = tbt
     return
 
-#---------Cette fonction permet un dessin beaucoup plus fluide que l'ancien algorithme, il calcule les positions intermiédiares entre deux positions détectée
+#---------Cette fonction permet un dessin beaucoup plus fluide que l'ancien algorithme, il calcule les positions intermiédiares entre deux positions détectées
 #en rajoutant des cercles sur ces positions permettant un dessin fluide, de plus ce système est beaucoup plus efficace côté serveur
    
 def dessin(fen, couleur, pos, last, rayon):
@@ -193,6 +193,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     point = 0
     monID = 0
     roles = {}
+    score = {}
     trouves = 0
     etat = 0
 
@@ -474,6 +475,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                     else:
                                         etat = 'L'
                                     for idTableauJoueur in joueurs:  # Envoi de tout les pseudos + Roles
+                                        score[idTableauJoueur] = 0
                                         tableauJoueur = tableauJoueur + "," + str(idTableauJoueur) + ";" + joueurs[idTableauJoueur] + ";"
                                         if idTableauJoueur == idD:
                                             roles[idTableauJoueur] = 'D'
@@ -511,6 +513,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                     infos = joueur.split(";")  # 0;Marcel;L
                                     joueurs[int(infos[0])] = infos[1]
                                     roles[int(infos[0])] = infos[2]
+                                    score[int(infos[0])] = 0
                                     if infos[1] == pseudo:
                                         monID = infos[0]
                                         etat = infos[2]
@@ -548,6 +551,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         elif data[0] == "O":
                             listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
                             trouves += 1
+
+                        elif data[0] == "P":
+                            print(data[1], "marque", data[2], "pts")
+                            print(score)
                         # Si un joueur a activé l'easter egg
                         elif data[0] == "V":
                             easter = 1
@@ -894,6 +901,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             verif = False
                             pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
 
+                        elif data[0] == "P":
+                            print(data[1], "marque", data[2], "pts")
+                            print(score)
+
                         # Si un joueur a activé l'easter egg
                         elif data[0] == "V":
                             easter = 1
@@ -929,10 +940,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             if motEcrit == motdevin and not verif:
                                 motcache = motdevin  # On affiche le mot qui devait être deviné au joueur qui l'a trouvé
                                 affmotcache = police.render(motcache, True, (0, 0, 0))
-                                ##point = tempsFin - time()
+                                point = tempsFin - time()
                                 listmsg.append("Vous avez trouvé le mot!")
                                 tunnelParent.send(("O," + str(monID) + '@').encode())  # On envoie au serveur son pseudo en disant qu'on a trouvé le mot
-                                ##tunnelParent.send(("P," + str(monID) + str(point) + '@').encode())
+                                tunnelParent.send(("P," + str(monID) + "," + str(point) + '@').encode())
                                 verif = True    # Le mot est trouvé
 
                             # Si on active l'easter egg   
