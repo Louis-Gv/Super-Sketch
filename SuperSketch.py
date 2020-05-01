@@ -205,7 +205,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     # Initialisation des sons
     pygame.mixer.music.load("musique/menu.wav")
     pygame.mixer.music.play(loops=-1)
-    pygame.mixer.music.set_volume(0.4)
+    pygame.mixer.music.set_volume(0.1)
 
     #------------------------------------------------------------------INITIALISATION DE L'ACCUEIL------------------------------------------------------------------------------
 
