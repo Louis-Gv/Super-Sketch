@@ -893,9 +893,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         elif data[0] == "M":
                             motdevin = data[1]
                             tempsFin = time() + temps   # On lance le timer
-                            debutround_song.play(0 ,0 ,0)
+                            roundstart_song.play(0, 0, 0)
 
-                        #2éme son
                         # Si un joueur a trouvé le mot
                         elif data[0] == "O":
                             listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
