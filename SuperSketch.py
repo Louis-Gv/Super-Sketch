@@ -103,6 +103,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     imgpeu = pygame.image.load("img/406sw.png").convert_alpha()
     image =pygame.image.load("img/ima.png").convert_alpha()
     gomme1 = pygame.image.load("img/gomme1.png").convert_alpha()
+    pinceau = pygame.image.load("img/pinceau.png").convert()
+    xp = pygame.image.load("img/xp.png").convert()
                 # Accueil
     logo1 = pygame.image.load("img/lobby/logo1.png")
     logo2 = pygame.image.load("img/lobby/logo2.png")
@@ -167,6 +169,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     easter = 0
     xE = 400
     yE = 0
+    alpha = 0
                 # Logo et couleur
     idFrame = 0
     idFrame2 = 0
@@ -193,7 +196,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     monID = 0
     roles = {}
     score = {}
-    pinceau = pygame.image.load("img/pinceau.png")
     trouves = 0
     
     etat = 0
@@ -568,6 +570,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         elif data[0] == "V":
                             easter = 1
 
+                        #elif data[0] == "X":
+                            #easter2 = 1
+
                 #Récupération de la position de la souris
                 px, py = pygame.mouse.get_pos()
 
@@ -612,6 +617,11 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fenetre.blit(imgpeu, (int(xE), yE))
                     xE += 3
 
+                #if easter2 == 1:
+                   #fenetre.blit(xp,(420, 0))
+                    #xp_song.play(0 ,0 ,0)
+                    
+                    
 
                 # Affichage de la pallete de couleur et de la sélection du rayon
                 pygame.draw.rect(fenetre, blanc, (1820, 500, 100, 100))
