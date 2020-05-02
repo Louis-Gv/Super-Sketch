@@ -100,7 +100,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 # Interface
     pal1 = pygame.pal1 = pygame.image.load("img/pal1.png").convert_alpha()
     pal2 = pygame.image.load("img/pal2.png").convert_alpha()
-    fon = pygame.image.load("img/pal4.png").convert_alpha()
     imgpeu = pygame.image.load("img/406sw.png").convert_alpha()
     image =pygame.image.load("img/ima.png").convert_alpha()
     gomme1 = pygame.image.load("img/gomme1.png").convert_alpha()
@@ -862,9 +861,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     # On trie les données
                     for raw_data in tunnelParent.recv().decode().split("@"):
                         data = raw_data.split(",")
-
                         # Si c'est un dessin, on décode les infos
-                        if data[0] == 'D':
+                        if data[0] == 'D' and motChoisi:
                             pos = data[1].split(";")
                             pos = tuple(map(int, pos))
                             last = data[2].split(";")
@@ -893,6 +891,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         elif data[0] == "M":
                             motdevin = data[1]
                             tempsFin = time() + temps   # On lance le timer
+                            motChoisi = True
                             roundstart_song.play(0, 0, 0)
 
                         # Si un joueur a trouvé le mot
