@@ -8,13 +8,14 @@ from time import *
 import serveur
 import client
 
-#---------------------------------------------FONCTIONS---------------------------------------------------------------------------------------------------------
+
+# ---FONCTIONS---
 
 # Déclaration de la fonction de sélection de la couleur
 def selection(pbt, cbt, tbt):
     global couleur  # Définition de variable globale du programme
     global idFrame2  # Animation de l'image
-    global txtCouleur 
+    global txtCouleur
     idFrame2 = (idFrame2 + 1) % 40
     if idFrame2 < 30:
         fenetre.blit(pal1, pbt)
@@ -25,17 +26,20 @@ def selection(pbt, cbt, tbt):
         txtCouleur = tbt
     return
 
-#---------Cette fonction permet un dessin beaucoup plus fluide que l'ancien algorithme, il calcule les positions intermiédiares entre deux positions détectées
-#en rajoutant des cercles sur ces positions permettant un dessin fluide, de plus ce système est beaucoup plus efficace côté serveur
-   
+
+# Cette fonction permet un dessin beaucoup plus fluide que l'ancien algorithme, il calcule les positions intermiédiares
+# entre deux positions détectées en rajoutant des cercles sur ces positions permettant un dessin fluide, de plus, ce
+# système est beaucoup plus efficace côté serveur
 def dessin(fen, couleur, pos, last, rayon):
-    dx = last[0]-pos[0]          #On calcule la distance entre les deux positions
-    dy = last[1]-pos[1]           
-    distance = max(abs(dx), abs(dy))      #On regarde quelle valeur est la plus grande entre dx et dy
-    for i in range(distance):          #Pour i jusqu'à distance
-        x = int( pos[0]+float(i)/distance*dx)     #On calcule x et y
-        y = int( pos[1]+float(i)/distance*dy)
-        pygame.display.update(pygame.draw.circle(fen, couleur, (x, y), rayon))   #On met à jour la fenetre avec un nouveau cercle
+    dx = last[0] - pos[0]  # On calcule la distance entre les deux positions
+    dy = last[1] - pos[1]
+    distance = max(abs(dx), abs(dy))  # On regarde quelle valeur est la plus grande entre dx et dy
+    for i in range(distance):  # Pour i jusqu'à distance
+        x = int(pos[0] + float(i) / distance * dx)  # On calcule x et y
+        y = int(pos[1] + float(i) / distance * dy)
+        # On met à jour la fenetre avec un nouveau cercle
+        pygame.display.update(pygame.draw.circle(fen, couleur, (x, y), rayon))
+
 
 def selectioncercle1():  # + rayon
     global rayon  # Définition de variable globale du programme
@@ -44,6 +48,7 @@ def selectioncercle1():  # + rayon
     pygame.time.wait(100)
     return
 
+
 def selectioncercle2():  # - rayon
     global rayon  # Définition de variable globale du programme
     if pygame.mouse.get_pressed() == (1, 0, 0):  # Changement de rayon lors d'un clic
@@ -51,6 +56,7 @@ def selectioncercle2():  # - rayon
             rayon = rayon - 5
     pygame.time.wait(100)
     return
+
 
 def effacfx():
     pygame.draw.rect(fenetre, noir, (1720, 10, 190, 5))
@@ -61,22 +67,23 @@ def effacfx():
         pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
         tunnelParent.send("E".encode())
 
+
 def reini():
     global couleur
     global rayon
     tunnelParent.send("E".encode())
-    txtCouleur = 'noir'
     couleur = noir
     rayon = 10
     pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
 
-#-----------------------------------------------------------------INITIALISATION DES VARIABLES-------------------------------------------------------------------------------
+
+# ---INITIALISATION DES VARIABLES---
 
 # FAUT FERMER AVEC ECHAP ET PROPREMENT
 if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour multiprocessing
 
     pygame.init()
-    
+
     # Etat du menu
     fini = False
     acceuil = True
@@ -97,15 +104,15 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     clock = pygame.time.Clock()
 
     # Initialisation des images
-                # Interface
+    # Interface
     pal1 = pygame.pal1 = pygame.image.load("img/pal1.png").convert_alpha()
     pal2 = pygame.image.load("img/pal2.png").convert_alpha()
     imgpeu = pygame.image.load("img/406sw.png").convert_alpha()
-    image =pygame.image.load("img/ima.png").convert_alpha()
+    image = pygame.image.load("img/ima.png").convert_alpha()
     gomme1 = pygame.image.load("img/gomme1.png").convert_alpha()
     pinceau = pygame.image.load("img/pinceau.png").convert()
     xp = pygame.image.load("img/xp.png").convert()
-                # Accueil
+    # Accueil
     logo1 = pygame.image.load("img/lobby/logo1.png")
     logo2 = pygame.image.load("img/lobby/logo2.png")
     nuage = pygame.image.load("img/lobby/nuage.png")
@@ -141,7 +148,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     motcache = "mot pas choisi"
     listmsg = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']  # Initialisation de la liste du chat vide
     mot1 = mot2 = mot3 = affmot1 = affmot2 = affmot3 = affmotcache = ""
-    limots = [word.strip() for word in open("dico.txt", encoding="utf-8")]  # On créer une liste à partir d'un document texte
+    # On créer une liste à partir d'un document texte
+    limots = [word.strip() for word in open("dico.txt", encoding="utf-8")]
 
     # Initialisation des variables de dessin
     rayon = 10
@@ -151,35 +159,35 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     px = 5000
     py = 5000
 
-    #Initialisation des variables de temps
+    # Initialisation des variables de temps
     tempsFin = 0
     temps = 80  # temps pour dessiner
 
     # Initialisation des variables d'animations et infos positions
-                # Nuage
-                    # info position nuage Gauche
+    # Nuage
+    # info position nuage Gauche
     xNuageG = randint(-600, 1500)
     vxNuageG = random() / 3 + .15
     yNuageG = randint(0, 250)
-                    # info nuage Droite
+    # info nuage Droite
     xNuageD = randint(400, 2000)
     vxNuageD = -(random() / 3 + .15)
     yNuageD = randint(0, 250)
-                # Easter egg
+    # Easter egg
     easter = 0
     xE = 400
     yE = 0
     alpha = 0
-                # Logo et couleur
+    # Logo et couleur
     idFrame = 0
     idFrame2 = 0
-                # Boutons
-    padding = 10     # espace autour du texte des btn
-                # Croix
+    # Boutons
+    padding = 10  # espace autour du texte des btn
+    # Croix
     poscroix = croix.get_rect(topright=(largeur - 15, 15))
-                # Logo
+    # Logo
     poslogo = logo1.get_rect(center=(int(largeur / 2), 100))
-                # Play
+    # Play
     posplay = play.get_rect(topright=(largeur - 15, 15))
 
     # Initialisation des variables du serveur
@@ -197,11 +205,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     roles = {}
     score = {}
     trouves = 0
-    
+
     etat = 0
 
     # Initialisation des variables de textes
-    textPseudo = police.render('Entrez votre pseudo : ', True, (0, 0, 0))  # Rendu du texte avec (texte, antialiasing, noir)
+    # Rendu du texte avec (texte, antialiasing, noir)
+    textPseudo = police.render('Entrez votre pseudo : ', True, (0, 0, 0))
     txtAttente = police.render("En attente de l'hote", True, (0, 0, 0))
 
     # Initialisation des sons
@@ -213,7 +222,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     roundstart_song = pygame.mixer.Sound(file="musique/roundstart.ogg")
     autrequitrouve_song = pygame.mixer.Sound(file="musique/autrequitrouve.ogg")
     erreur_song = pygame.mixer.Sound(file="musique/erreur.ogg")
-    #------------------------------------------------------------------INITIALISATION DE L'ACCUEIL------------------------------------------------------------------------------
+
+    # ---INITIALISATION DE L'ACCUEIL---
 
     # Chargement des boutons
 
@@ -227,8 +237,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     #
     # On pourras ensuite utiliser fenetre.blit(btnA, posbtnA) qui placera la Surface(btnA) aux coordonnés de Rect(posbtnA)
 
-    #-----------------------------------------------------Boutton héberger--------------------------------------------#
-    
+    # Boutton héberger #
     btnHost = police.render('Héberger Une Partie', True, (0, 0, 0))  # Rendu du texte avec (antialiasing, noir)
     posbtnHost = btnHost.get_rect(center=(int(largeur / 2), 510))
 
@@ -247,8 +256,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     # Trouve le rectangle de la surface (x=0, y=0, largeur, hauteur) pour le plaçage au centre
     pospaddingbtnHost = paddingbtnHost.get_rect(center=(int(largeur / 2), 510))
 
-    #-----------------------------------------------------Boutton rejoindre-------------------------------------------#
-    
+    # Boutton rejoindre #
     btnJoin = police.render('Rejoindre Une Partie', True, (0, 0, 0))
     posbtnJoin = btnJoin.get_rect(center=(int(largeur / 2), 680))
 
@@ -263,8 +271,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     paddingbtnJoinOmbre.fill((0, 0, 0))
     pospaddingbtnJoin = paddingbtnJoin.get_rect(center=(int(largeur / 2), 680))
 
-    #-----------------------------------------------------Boutton IP manuelle-----------------------------------------#
-    
+    # Boutton IP manuelle #
     btnOnline = police.render('Entrer une IP', True, (0, 0, 0))
     posbtnOnline = btnOnline.get_rect(center=(int(largeur / 2), 510))
 
@@ -279,8 +286,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     paddingbtnOnlineOmbre.fill((0, 0, 0))
     pospaddingbtnOnline = paddingbtnOnline.get_rect(center=(int(largeur / 2), 510))
 
-    #-----------------------------------------------------Boutton LAN Automatique-------------------------------------#
-    
+    # Boutton LAN Automatique #
     btnOffline = police.render('LAN Automatique', True, (0, 0, 0))
     posbtnOffline = btnOffline.get_rect(center=(int(largeur / 2), 680))
 
@@ -295,7 +301,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     paddingbtnOfflineOmbre.fill((0, 0, 0))
     pospaddingbtnOffline = paddingbtnOffline.get_rect(center=(int(largeur / 2), 680))
 
-#--------------------------------------------------------------------LANCEMENT DU PROGRAMME-----------------------------------------------------------------------
+    # ---LANCEMENT DU PROGRAMME--- #
 
     while not fini:  # Boucle tant que le joueur reste dans le menu
         if acceuil:
@@ -305,10 +311,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
             # Chargement du logo au centre de l'écran
             fenetre.blit(logo1, poslogo)
-    
+
             # Chargement du soleil
             fenetre.blit(soleil, (1645, 22))
-    
+
             # Chargement de la croix
             fenetre.blit(croix, poscroix)
 
@@ -336,9 +342,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 barre = '|'
             else:
                 barre = ''
-                
+
             # Menu sans avoir cliquer
-            if not host and not join:  
+            if not host and not join:
                 fenetre.blit(borderbtnHost, posborderbtnHost)  # Bordure
                 fenetre.blit(paddingbtnHost, pospaddingbtnHost)  # Fond bleu
                 if posborderbtnHost.collidepoint(pos):
@@ -352,8 +358,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 fenetre.blit(btnJoin, posbtnJoin)  # Affichage du texte
 
             # Si on héberge
-            if host:  
-                textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
+            if host:
+                # txt,antialiasing,coul
+                textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))
                 fenetre.blit(textPseudo, (400, 530))
 
             # Si on a cliqué sur rejoindre une partie
@@ -373,7 +380,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
             # Si on a cliqué sur le mode LAN
             if offline:
-                textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
+                textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))
                 fenetre.blit(textPseudo, (400, 530))
 
             # Si on a cliqué sur le mode ONLINE
@@ -381,12 +388,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                 # Si on a pas rentré l'IP
                 if accip:
-                    textIP = police.render("Entrez l'addresse IP du serveur : " + ip + barre, True, (0, 0, 0))  # txt,antialiasing,coul
+                    textIP = police.render("Entrez l'addresse IP du serveur : " + ip + barre, True, (0, 0, 0))
                     fenetre.blit(textIP, (400, 530))
                 else:
-                    textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))  # txt,antialiasing,coul
+                    textPseudo = police.render('Entrez votre pseudo : ' + pseudo + barre, True, (0, 0, 0))
                     fenetre.blit(textPseudo, (400, 530))
-                    
+
             # On récupère les actions du joueurs
             for event in pygame.event.get():
 
@@ -423,7 +430,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         # Si on appuie sur retour
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
                             ip = ip[:-1]  # du 1er caractère inclus jusqu'au dernier exclu
-                            
+
                         # Si on écrit l'IP
                         elif len(ip) < 16:  # 16 caractères max
                             ip += event.unicode
@@ -441,12 +448,12 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         elif posborderbtnOffline.collidepoint(pos):  # si pos souris est sur le btn offline
                             offline = True
                             ip = "0.0.0.0"
-                            
+
             clock.tick(80)  # limite 80fps
             pygame.display.flip()  # Rafraichissement écran acceuil avec toutes nos modifs
 
         # Pas dans l'acceuil
-        else:  
+        else:
             if init:
                 if host:
                     procClient = Process(target=client.client, args=("127.0.0.1", tunnelEnfant, pseudo))
@@ -485,7 +492,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                         etat = 'L'
                                     for idTableauJoueur in joueurs:  # Envoi de tout les pseudos + Roles
                                         score[idTableauJoueur] = 0
-                                        tableauJoueur = tableauJoueur + "," + str(idTableauJoueur) + ";" + joueurs[idTableauJoueur] + ";"
+                                        tableauJoueur = tableauJoueur + "," + str(idTableauJoueur) + ";" + joueurs[
+                                            idTableauJoueur] + ";"
                                         if idTableauJoueur == idD:
                                             roles[idTableauJoueur] = 'D'
                                             tableauJoueur += 'D'
@@ -537,11 +545,11 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 fini = True
                         pygame.display.flip()
                 init = False
-                #----------------------------------------POUR CELUI QUI DESSINE------------------------------------------------------------------------------------------
+            # --- POUR CELUI QUI DESSINE --- #
             if etat == 'D':
                 # Réception des données
                 if tunnelParent.poll():
-                    
+
                     # Séparation des données               
                     for raw_data in tunnelParent.recv().decode().split("@"):
                         data = raw_data.split(",")
@@ -554,55 +562,61 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                         # Si un joueur a envoyé un message
                         elif data[0] == 't':
-                            listmsg.append(joueurs[int(data[1])] + " : " + data[2])  # On ajoute à la liste du chat le pseudo de l'envoyeur et son texte
+                            # On ajoute à la liste du chat le pseudo de l'envoyeur et son texte
+                            listmsg.append(joueurs[int(data[1])] + " : " + data[2])
 
                         # Si un joueur à trouvé le mot
                         elif data[0] == "O":
                             listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
                             trouves += 1
-                            autrequitrouve_song.play(0 ,0 ,0)
+                            autrequitrouve_song.play(0, 0, 0)
 
                         elif data[0] == "P":
-                            score[int(data[1])]+= int(data[2])
+                            score[int(data[1])] += int(data[2])
                             print(data[1], "marque", data[2], "pts")
                             print(score)
                         # Si un joueur a activé l'easter egg
                         elif data[0] == "V":
                             easter = 1
 
-                        #elif data[0] == "X":
-                            #easter2 = 1
+                        # elif data[0] == "X":
+                        # easter2 = 1
 
-                #Récupération de la position de la souris
+                # Récupération de la position de la souris
                 px, py = pygame.mouse.get_pos()
 
                 # Détection des évenements
                 for e in pygame.event.get():
                     # Si on appuie sur ECHAP
-                    if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):  
-                        tunnelParent.send(("F," + str(monID) + '@').encode())  # On envoie l'info que l'on quitte le serveur
+                    if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
+                        # On envoie l'info que l'on quitte le serveur
+                        tunnelParent.send(("F," + str(monID) + '@').encode())
                         fini = True  # On ferme la fenêtre
 
                     # Si on fait un clique souris et que le mot a été choisi
                     elif e.type == pygame.MOUSEBUTTONDOWN and motChoisi:
-                        pygame.draw.circle(fenetre, couleur, e.pos, rayon)      # On fait un cercle à la position du clic
+                        pygame.draw.circle(fenetre, couleur, e.pos, rayon)  # On fait un cercle à la position du clic
                         dess = True
 
                     # Si on lache le bouton souris
-                    elif e.type == pygame.MOUSEBUTTONUP:           
+                    elif e.type == pygame.MOUSEBUTTONUP:
                         dess = False
 
-                    #Si la souris bouge et que le clique est enfoncé
-                    elif e.type == pygame.MOUSEMOTION:       
+                    # Si la souris bouge et que le clique est enfoncé
+                    elif e.type == pygame.MOUSEMOTION:
                         if dess:
-                            pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))      #On met à jour la fenêtre avec un nouveau cercle juste à coté de l'ancien
-                            dessin(fenetre, couleur, e.pos, lastpos,  rayon)   #On active la fonction dessin
-                            tunnelParent.send(('D,' + str(e.pos[0]) + ";" + str(e.pos[1]) + "," + str(lastpos[0]) + ";" + str(lastpos[1]) + "," + str(couleur[0]) + ";" + str(couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())    #envoie des infos au serv
-                        lastpos = e.pos  #On stocke l'ancienne position
-                        
+                            # On met à jour la fenêtre avec un nouveau cercle juste à coté de l'ancien
+                            pygame.display.update(pygame.draw.circle(fenetre, couleur, e.pos, rayon))
+                            dessin(fenetre, couleur, e.pos, lastpos, rayon)  # On active la fonction dessin
+                            # envoie des infos au serv
+                            tunnelParent.send(('D,' + str(e.pos[0]) + ";" + str(e.pos[1]) + "," + str(
+                                lastpos[0]) + ";" + str(lastpos[1]) + "," + str(couleur[0]) + ";" + str(
+                                couleur[1]) + ";" + str(couleur[2]) + "," + str(rayon) + '@').encode())
+                        lastpos = e.pos  # On stocke l'ancienne position
+
                 # Afficahge de l'entête
                 entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))
-                
+
                 # Si l'easter egg n'est pas activé et ne l'a jamais été
                 if easter != 1 or xE > 1520:
                     if idFrame < 20:
@@ -611,17 +625,15 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     else:
                         poslogo = logo2.get_rect(center=(int(largeur / 2), 50))
                         fenetre.blit(logo2, poslogo)
-                        
+
                 # Si l'easter egg est activé        
                 else:
                     fenetre.blit(imgpeu, (int(xE), yE))
                     xE += 3
 
-                #if easter2 == 1:
-                   #fenetre.blit(xp,(420, 0))
-                    #xp_song.play(0 ,0 ,0)
-                    
-                    
+                # if easter2 == 1:
+                # fenetre.blit(xp,(420, 0))
+                # xp_song.play(0 ,0 ,0)
 
                 # Affichage de la pallete de couleur et de la sélection du rayon
                 pygame.draw.rect(fenetre, blanc, (1820, 500, 100, 100))
@@ -656,22 +668,21 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 souligne = pygame.draw.rect(fenetre, noir, (10, 50, 340, 5))
                 ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
 
-
                 # Affichage du bouton tout effacer
                 effac = pygame.draw.rect(fenetre, blanc, (1720, 10, 190, 80))
                 txteffac = police2.render("Tout effacer", True, (0, 0, 0))
                 fenetre.blit(txteffac, (1745, 40))
-                
+
                 # Si il ne reste qu'un joueur sur le serveur
                 if len(joueurs) <= 1:
                     fini = True  # On ferme la fenêtre
                     break
-                
+
                 # Si le mot n'a pas été choisi
                 if not motChoisi:
 
                     # Si trois mot n'ont pas été choisis au hasard
-                    if selectionMot:  
+                    if selectionMot:
                         mot1 = choice(limots)  # On choisi le premier mot
                         mot2 = choice(limots)  # On choisit le deuxième mot
                         mot3 = choice(limots)  # On chosit le troisième mot
@@ -682,42 +693,45 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fenetre.blit(image, (0, 0))
 
                     # Initialisation des boutons
-                    
-                    #------------------------------------------------------Bouton mot 1-----------------------------------------------------#
+
+                    # ------------------------------------------------------Bouton mot 1-----------------------------------------------------#
                     btMot1 = police.render(mot1, True, (0, 0, 0))  # Rendu du texte avec (antialiasing, noir)
                     posbtMot1 = btMot1.get_rect(center=(int(largeur / 2), 410))
                     borderbtMot1 = pygame.Surface((posbtMot1[2] + 2 * padding, posbtMot1[3] + 2 * padding))
                     borderbtMot1.fill((0, 0, 0))
                     posborderbtMot1 = borderbtMot1.get_rect(center=(int(largeur / 2), 410))
                     paddingbtMot1 = pygame.Surface((posbtMot1[2] + padding, posbtMot1[3] + padding))
-                    paddingbtMot1.fill((255,255,255))
-                    paddingbtMot1Ombre = pygame.Surface((posbtMot1[2] + padding, posbtMot1[3] + padding))  # Pour le survol
+                    paddingbtMot1.fill((255, 255, 255))
+                    # Pour le survol
+                    paddingbtMot1Ombre = pygame.Surface((posbtMot1[2] + padding, posbtMot1[3] + padding))
                     paddingbtMot1Ombre.set_alpha(100)
                     paddingbtMot1Ombre.fill((0, 0, 0))
                     pospaddingbtMot1 = paddingbtMot1.get_rect(center=(int(largeur / 2), 410))
 
-                    #------------------------------------------------------Bouton mot 2-----------------------------------------------------#
+                    # ------------------------------------------------------Bouton mot 2-----------------------------------------------------#
                     btMot2 = police.render(mot2, True, (0, 0, 0))  # Rendu du texte avec (antialiasing, noir)
                     posbtMot2 = btMot2.get_rect(center=(int(largeur / 2), 510))
                     borderbtMot2 = pygame.Surface((posbtMot2[2] + 2 * padding, posbtMot2[3] + 2 * padding))
                     borderbtMot2.fill((0, 0, 0))
                     posborderbtMot2 = borderbtMot2.get_rect(center=(int(largeur / 2), 510))
                     paddingbtMot2 = pygame.Surface((posbtMot2[2] + padding, posbtMot2[3] + padding))
-                    paddingbtMot2.fill((255,255,255))
-                    paddingbtMot2Ombre = pygame.Surface((posbtMot2[2] + padding, posbtMot2[3] + padding))  # Pour le survol
+                    paddingbtMot2.fill((255, 255, 255))
+                    # Pour le survol
+                    paddingbtMot2Ombre = pygame.Surface((posbtMot2[2] + padding, posbtMot2[3] + padding))
                     paddingbtMot2Ombre.set_alpha(100)
                     paddingbtMot2Ombre.fill((0, 0, 0))
                     pospaddingbtMot2 = paddingbtMot2.get_rect(center=(int(largeur / 2), 510))
 
-                    #------------------------------------------------------Bouton mot 3-----------------------------------------------------#
+                    # ------------------------------------------------------Bouton mot 3-----------------------------------------------------#
                     btMot3 = police.render(mot3, True, (0, 0, 0))  # Rendu du texte avec (antialiasing, noir)
                     posbtMot3 = btMot3.get_rect(center=(int(largeur / 2), 610))
                     borderbtMot3 = pygame.Surface((posbtMot3[2] + 2 * padding, posbtMot3[3] + 2 * padding))
                     borderbtMot3.fill((0, 0, 0))
                     posborderbtMot3 = borderbtMot3.get_rect(center=(int(largeur / 2), 610))
                     paddingbtMot3 = pygame.Surface((posbtMot3[2] + padding, posbtMot3[3] + padding))
-                    paddingbtMot3.fill((255,255,255))
-                    paddingbtMot3Ombre = pygame.Surface((posbtMot3[2] + padding, posbtMot3[3] + padding))  # Pour le survol
+                    paddingbtMot3.fill((255, 255, 255))
+                    # Pour le survol
+                    paddingbtMot3Ombre = pygame.Surface((posbtMot3[2] + padding, posbtMot3[3] + padding))
                     paddingbtMot3Ombre.set_alpha(100)
                     paddingbtMot3Ombre.fill((0, 0, 0))
                     pospaddingbtMot3 = paddingbtMot3.get_rect(center=(int(largeur / 2), 610))
@@ -728,45 +742,45 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     fenetre.blit(btMot1, posbtMot1)
 
                     # Lorsqu'on clique sur le mot, le mot est choisi et on active la boucle motChoisi
-                    if posborderbtMot1.collidepoint(px,py):
+                    if posborderbtMot1.collidepoint(px, py):
                         fenetre.blit(paddingbtMot1Ombre, pospaddingbtMot1)
                         fenetre.blit(btMot1, posbtMot1)
                         if pygame.mouse.get_pressed() == (1, 0, 0):
-                            motChoisi=True
-                            motdevin=mot1
-                            
+                            motChoisi = True
+                            motdevin = mot1
+
                     # Affichage du bouton mot 2
                     fenetre.blit(borderbtMot2, posborderbtMot2)
                     fenetre.blit(paddingbtMot2, pospaddingbtMot2)
                     fenetre.blit(btMot2, posbtMot2)
 
                     # Lorsqu'on clique sur le mot, le mot est choisi et on active la boucle motChoisi
-                    if posborderbtMot2.collidepoint(px,py):
+                    if posborderbtMot2.collidepoint(px, py):
                         fenetre.blit(paddingbtMot2Ombre, pospaddingbtMot2)
                         fenetre.blit(btMot2, posbtMot2)
                         if pygame.mouse.get_pressed() == (1, 0, 0):
-                            motChoisi=True
-                            motdevin=mot2
-                            
+                            motChoisi = True
+                            motdevin = mot2
+
                     # Affichage su bouton mot 3
                     fenetre.blit(borderbtMot3, posborderbtMot3)
                     fenetre.blit(paddingbtMot3, pospaddingbtMot3)
                     fenetre.blit(btMot3, posbtMot3)
 
                     # Lorsqu'on clique sur le mot, le mot est choisi et on active la boucle motChoisi
-                    if posborderbtMot3.collidepoint(px,py):
+                    if posborderbtMot3.collidepoint(px, py):
                         fenetre.blit(paddingbtMot3Ombre, pospaddingbtMot3)
                         fenetre.blit(btMot3, posbtMot3)
                         if pygame.mouse.get_pressed() == (1, 0, 0):
-                            motChoisi=True
-                            motdevin=mot3
-                            
+                            motChoisi = True
+                            motdevin = mot3
+
                     # Lorsque le mot a été choisi
                     if motChoisi:
                         tunnelParent.send(("M" + "," + motdevin + '@').encode())  # On envoie le mot aux autres joueurs
-                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))   # On efface la fenêtre
-                        tempsFin = time() + temps   # On lance le timer
-                        
+                        pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))  # On efface la fenêtre
+                        tempsFin = time() + temps  # On lance le timer
+
                 else:
                     # Affichage du timer 
                     affChrono = police.render(str(int(tempsFin - time())), True, (0, 0, 0))
@@ -774,12 +788,10 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                     # Lorsque le temps arrive à 10
                     if int(tempsFin - time()) <= 10:
-                        minuteur_song.play(0 ,10000 ,2000)
+                        minuteur_song.play(0, 10000, 2000)
 
-
-
-                    # Lorsque le temps arrive à 0 
-                    if trouves >= len(joueurs)-1 or int(tempsFin - time()) <= 0:
+                    # Lorsque le temps arrive à 0
+                    if trouves >= len(joueurs) - 1 or int(tempsFin - time()) <= 0:
                         idD = int(monID)
                         while int(idD) == int(monID):
                             idD = choice(list(joueurs.keys()))
@@ -798,10 +810,11 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         motcache = "mot pas choisi"
                         verif = False
                         pygame.draw.rect(fenetre, blanc, (400, 105, 1320, 865))
-                        tunnelParent.send(("R," + str(idD) + '@').encode())  #On envoie le mot qui devait être deviné aux autres joueurs
+                        # On envoie le mot qui devait être deviné aux autres joueurs
+                        tunnelParent.send(("R," + str(idD) + '@').encode())
 
                 # On affiche le rayon et la couleur sélectionée à celui qui dessine                        
-                affrayon = police.render('rayon : '+ str(rayon), True, (0, 0, 0))
+                affrayon = police.render('rayon : ' + str(rayon), True, (0, 0, 0))
                 fenetre.blit(affrayon, (600, 1000))
                 affCouleur = police.render(txtCouleur, True, couleur)
                 fenetre.blit(affCouleur, (900, 1000))
@@ -829,7 +842,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     selectioncercle2()
                 if effac.collidepoint(px, py):
                     effacfx()
-                    
+
                 # On affiche le mot qu'il faut faire deviner
                 affmotdevin = police.render(motdevin, True, (0, 0, 0))
                 fenetre.blit(affmotdevin, (1400, 1000))
@@ -840,7 +853,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     listmsg = listmsg[-10:]
                     textchat = police2.render(listmsg[i], True, (0, 0, 0))
                     fenetre.blit(textchat, (50, 480 + 50 * i))
-                    
+
                 # Affichage des joueurs en ligne et leurs rôles
                 textJoueur = police.render('Joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textJoueur, (10, 0))
@@ -851,9 +864,9 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     if roles[j] == "D":
                         fenetre.blit(pinceau, (340, 60 + xJoueur * 50))
                     xJoueur += 1
-                    
+
                 # Animation du logo super-Sketch
-                idFrame = (idFrame + 2) % 40  
+                idFrame = (idFrame + 2) % 40
                 if idFrame < 20:
                     poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
                     fenetre.blit(logo1, poslogo)
@@ -881,7 +894,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             couleur = tuple(map(int, couleur))
                             rayon = int(data[4])
                             pygame.display.update(pygame.draw.circle(fenetre, couleur, pos, rayon))
-                            dessin(fenetre, couleur, pos, last,  rayon)
+                            dessin(fenetre, couleur, pos, last, rayon)
 
                         # Si un joueur est parti    
                         elif data[0] == 'F':
@@ -900,19 +913,19 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                         # Si on reçoit le mot qu'il faut faire deviner
                         elif data[0] == "M":
                             motdevin = data[1]
-                            tempsFin = time() + temps   # On lance le timer
+                            tempsFin = time() + temps  # On lance le timer
                             motChoisi = True
                             roundstart_song.play(0, 0, 0)
 
                         # Si un joueur a trouvé le mot
                         elif data[0] == "O":
                             listmsg.append(joueurs[int(data[1])] + " a trouvé le mot")
-                            autrequitrouve_song.play(0 ,0 ,0)  
-                            
-                        # Si une personne n'a pas trouvé le mot à la fin du timer
+                            autrequitrouve_song.play(0, 0, 0)
+
+                            # Si une personne n'a pas trouvé le mot à la fin du timer
                         elif data[0] == "R":
                             listmsg.append("C'était " + motdevin)
-                            
+
                             # On change les rôles
                             for j in joueurs:
                                 if j == int(data[1]):
@@ -935,13 +948,13 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             score[int(data[1])] += int(data[2])
                             print(data[1], "marque", data[2], "pts")
                             print(score)
-        
+
                         # Si un joueur a activé l'easter egg
                         elif data[0] == "V":
                             easter = 1
-                            
+
                 # Si le mot n'a pas été trouvé ou qu'il a été choisi
-                if not verif and motdevin != "mot pas choisi":  
+                if not verif and motdevin != "mot pas choisi":
                     motcache = ['_'] * len(motdevin)
                     motcache = str(' '.join(motcache))
                     affmotcache = police.render(motcache, True, (0, 0, 0))
@@ -950,15 +963,16 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 elif motdevin == "mot pas choisi":
                     motcache = motdevin
                     affmotcache = police.render(motcache, True, (0, 0, 0))
-                    
+
                 # On détecte les actions
                 for event in pygame.event.get():
-                    
+
                     # Si on appuie sur ECHAP
-                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):  
-                        tunnelParent.send(("F," + str(monID) + '@').encode())  # On envoie F pour signaler que le joueur est parti au serveur
+                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                        # On envoie F pour signaler que le joueur est parti au serveur
+                        tunnelParent.send(("F," + str(monID) + '@').encode())
                         fini = True  # On ferme la fenêtre
-                        
+
                     if event.type == pygame.KEYDOWN:
                         # Si on appuie sur entrée et que le mot n'est pas vide
                         if event.key == pygame.K_RETURN and motEcrit != '':
@@ -968,13 +982,14 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                                 motcache = motdevin  # On affiche le mot qui devait être deviné au joueur qui l'a trouvé
                                 affmotcache = police.render(motcache, True, (0, 0, 0))
                                 point = int(tempsFin - time())
-                                score[int(monID)] += point 
+                                score[int(monID)] += point
                                 listmsg.append("Vous avez trouvé le mot!")
-                                tunnelParent.send(("O," + str(monID) + '@').encode())  # On envoie au serveur son pseudo en disant qu'on a trouvé le mot
+                                # On envoie au serveur son pseudo en disant qu'on a trouvé le mot
+                                tunnelParent.send(("O," + str(monID) + '@').encode())
                                 tunnelParent.send(("P," + str(monID) + "," + str(point) + '@').encode())
-                                verif = True    # Le mot est trouvé
+                                verif = True  # Le mot est trouvé
                                 print(score)
-                                playerguessed_song.play(0 ,0 ,0)
+                                playerguessed_song.play(0, 0, 0)
 
                             # Si on active l'easter egg   
                             elif motEcrit == "406SW":
@@ -983,9 +998,11 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                             # Quand le mot et faux
                             else:
-                                listmsg.append(joueurs[int(monID)] + " : " + motEcrit)  # On ajoute le mot à la liste du chat
-                                tunnelParent.send(("t," + str(monID) + "," + motEcrit + '@').encode())  # On envoie le message avec le pseudo au serveur
-                                erreur_song.play(0 ,0 ,0)
+                                # On ajoute le mot à la liste du chat
+                                listmsg.append(joueurs[int(monID)] + " : " + motEcrit)
+                                # On envoie le message avec le pseudo au serveur
+                                tunnelParent.send(("t," + str(monID) + "," + motEcrit + '@').encode())
+                                erreur_song.play(0, 0, 0)
                             motEcrit = ''  # On réinitialise le mot
 
                         elif event.key == pygame.K_BACKSPACE:  # On enlève un carartère
@@ -993,13 +1010,13 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                         elif len(motEcrit) < 16 and motdevin != "mot pas choisi":  # 16 caractères max
                             motEcrit = motEcrit + event.unicode
-                            
+
                 # Affichage de l'entête
                 entete = pygame.draw.rect(fenetre, gris, (400, 0, 1920, 100))  # Fond gris de le zone de l'entête
 
                 # Si l'easter egg n'est pas activé et ne l'a jamais été on affiche le logo
                 if easter != 1 or xE > 1520:
-        
+
                     if idFrame < 20:
                         poslogo = logo1.get_rect(center=(int(largeur / 2), 50))
                         fenetre.blit(logo1, poslogo)
@@ -1011,7 +1028,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 else:
                     xE += 3
                     fenetre.blit(imgpeu, (int(xE), yE))
-                    
+
                 # Affichage des éléments de l'interface
                 fonpal = pygame.draw.rect(fenetre, blanc, (1720, 100, 200, 980))  # Fond de la palette de couleur
                 tab = pygame.draw.rect(fenetre, gris, (0, 0, 390, 1920))  # Fond gris de le zone de chat
@@ -1022,14 +1039,14 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 ligne12 = pygame.draw.rect(fenetre, noir, (390, 100, 1920, 5))
                 effac = pygame.draw.rect(fenetre, gris, (1720, 10, 190, 80))
                 fenetre.blit(affmotcache, (1400, 1000))
-                
+
                 # Si le mot a été choisi
                 if motdevin != "mot pas choisi":
                     affChrono = police.render(str(int(tempsFin - time())), True, (0, 0, 0))
                     fenetre.blit(affChrono, (1810, 610))
 
                 # Animation de la barre de saisie
-                idFrame = (idFrame + 0.1) % 40  
+                idFrame = (idFrame + 0.1) % 40
                 if idFrame < 20:
                     barre = '|'
                 else:
@@ -1041,7 +1058,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                     break
 
                 # Affichage de mot écrit
-                textMotEcrit = police.render('Ecrivez un mot : ' + motEcrit + barre, True, (0, 0, 0))  # txt,antialiasing,coul
+                textMotEcrit = police.render('Ecrivez un mot : ' + motEcrit + barre, True,(0, 0, 0))
                 fenetre.blit(textMotEcrit, (50, 1000))
                 textJoueur = police.render('Joueurs en ligne : ', True, (0, 0, 0))  # txt,antialiasing,coul
                 fenetre.blit(textJoueur, (10, 0))
@@ -1050,19 +1067,19 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 xJoueur = 0
                 for j in joueurs:
                     nomJoueur = police.render(joueurs[j] + " : " + str(score[j]), True, (0, 0, 0))
-                    fenetre.blit(nomJoueur, (10, 60 + xJoueur*50))
+                    fenetre.blit(nomJoueur, (10, 60 + xJoueur * 50))
                     if roles[j] == "D":
                         fenetre.blit(pinceau, (340, 60 + xJoueur * 50))
                     xJoueur += 1
-                    
+
                 # Affichage du texte dans le chat
-                for i in range(10):  
+                for i in range(10):
                     listmsg = listmsg[-10:]  # On garde uniquement les 10 derniers termes de la listes
                     textchat = police2.render(listmsg[i], True, (0, 0, 0))
                     fenetre.blit(textchat, (50, 480 + 50 * i))  # On affiche la liste avec les coord saisie précédemment
-                    
+
                 # Raffraichissment de la fenêtre
-                pygame.display.flip()  
+                pygame.display.flip()
                 clock.tick(200)
     pygame.quit()
     if procClient.is_alive():

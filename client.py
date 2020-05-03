@@ -1,13 +1,7 @@
-# Code réseau. 1er char :
-# 'D' = dessin
-# 't' = test / proposition
-# 'P' = Pseudo
-# 'T' = tableau de joueur
-# 'F' = Fin / Déconnexion
-# 'R' = Rôle, Joueur, Dessine
-
 from socket import *
 import threading
+
+# 2 Threads parallèles qui transmettent les infos entre le serveur et le programme principal
 
 
 def client(ip, tunel, pseudo):

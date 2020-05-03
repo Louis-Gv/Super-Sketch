@@ -14,7 +14,9 @@ def diffuIpHote():  # Diffusion d'un msg sur tout le reseau local pour pouvoir r
         time.sleep(1)
 
 
-def serveur():  # Process qui va rediffuser les messages à tout les autres clients
+# C'est un processus qui va redistribuer les messages reçus à tout les autres clients
+# Un thread est ouvert pour chaques client; toutes les requètes peuvent être traitées parallèlement.
+def serveur():
     def gestionDuClient(conn, idConnThread):  # Thread de dialogue avec un client :
         # Ce thread a accès à la mémoire du process
         while 1:
