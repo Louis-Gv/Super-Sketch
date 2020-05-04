@@ -225,7 +225,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     autrequitrouve_song = pygame.mixer.Sound(file="musique/autrequitrouve.ogg")
     erreur_song = pygame.mixer.Sound(file="musique/erreur.ogg")
     xp_song = pygame.mixer.Sound(file="musique/xp.wav")
-    mario_song = pygame.moxer.Sound(file="musique/mario.wav")
+    mario_song = pygame.mixer.Sound(file="musique/mario.wav")
 
     # ---INITIALISATION DE L'ACCUEIL---
 
