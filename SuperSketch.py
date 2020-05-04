@@ -225,6 +225,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     autrequitrouve_song = pygame.mixer.Sound(file="musique/autrequitrouve.ogg")
     erreur_song = pygame.mixer.Sound(file="musique/erreur.ogg")
     xp_song = pygame.mixer.Sound(file="musique/xp.wav")
+    mario_song = pygame.moxer.Sound(file="musique/mario.wav")
 
     # ---INITIALISATION DE L'ACCUEIL---
 
@@ -914,11 +915,13 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             motdevin = data[1]
                             tempsFin = time() + temps  # On lance le timer
                             motChoisi = True
-                            if ea1 >= 5:                  
-                                roundstart_song.play(0, 0, 0)
-                            else:
+                            if ea1 <= 5:                  
+                                mario_song.play(0, 0, 0)
+                            elif ea1 >=95:
                                 xp_song.play(0 ,0 ,0)
                                 fenetre.blit(xp,(420, 0))
+                            else:
+                                roundstart_song.play(0, 0, 0)
 
                         # Si un joueur a trouvé le mot
                         elif data[0] == "O":
