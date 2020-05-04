@@ -178,6 +178,8 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     xE = 400
     yE = 0
     alpha = 0
+    ea1 = randint(0, 100)
+    ea2= randint(0, 100)
     # Logo et couleur
     idFrame = 0
     idFrame2 = 0
@@ -222,6 +224,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     roundstart_song = pygame.mixer.Sound(file="musique/roundstart.ogg")
     autrequitrouve_song = pygame.mixer.Sound(file="musique/autrequitrouve.ogg")
     erreur_song = pygame.mixer.Sound(file="musique/erreur.ogg")
+    xp_song = pygame.mixer.Sound(file="musique/xp.wav")
 
     # ---INITIALISATION DE L'ACCUEIL---
 
@@ -630,11 +633,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                 else:
                     fenetre.blit(imgpeu, (int(xE), yE))
                     xE += 3
-
-                # if easter2 == 1:
-                # fenetre.blit(xp,(420, 0))
-                # xp_song.play(0 ,0 ,0)
-
+                                
                 # Affichage de la pallete de couleur et de la sélection du rayon
                 pygame.draw.rect(fenetre, blanc, (1820, 500, 100, 100))
                 pygame.draw.rect(fenetre, blanc, (1720, 500, 100, 100))
@@ -915,7 +914,11 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
                             motdevin = data[1]
                             tempsFin = time() + temps  # On lance le timer
                             motChoisi = True
-                            roundstart_song.play(0, 0, 0)
+                            if ea1 >= 5:                  
+                                roundstart_song.play(0, 0, 0)
+                            else:
+                                xp_song.play(0 ,0 ,0)
+                                fenetre.blit(xp,(420, 0))
 
                         # Si un joueur a trouvé le mot
                         elif data[0] == "O":
