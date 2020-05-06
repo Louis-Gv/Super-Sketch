@@ -178,8 +178,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
     xE = 400
     yE = 0
     alpha = 0
-    ea1 = randint(0, 100)
-    ea2= randint(0, 100)
     # Logo et couleur
     idFrame = 0
     idFrame2 = 0
@@ -912,6 +910,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                         # Si on reçoit le mot qu'il faut faire deviner
                         elif data[0] == "M":
+                            ea1 = randint(0, 100)
                             motdevin = data[1]
                             tempsFin = time() + temps  # On lance le timer
                             motChoisi = True
