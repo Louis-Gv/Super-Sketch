@@ -575,8 +575,6 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                         elif data[0] == "P":
                             score[int(data[1])] += int(data[2])
-                            print(data[1], "marque", data[2], "pts")
-                            print(score)
                         # Si un joueur a activé l'easter egg
                         elif data[0] == "V":
                             easter = 1
