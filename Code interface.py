@@ -71,7 +71,6 @@ logo1 = pygame.image.load("img/lobby/logo1.png")
 logo2 = pygame.image.load("img/lobby/logo2.png")
 pal1 = pygame.image.load("img/pal1.png").convert_alpha()
 pal2 = pygame.image.load("img/pal2.png").convert_alpha()
-fon = pygame.image.load("img/pal4.png").convert_alpha()
 imgpeu = pygame.image.load("img/406sw.png").convert_alpha()
 idFrame = 0
 gris = (192, 192, 192)
@@ -169,8 +168,8 @@ while continuer:
 
 
     
-    fenetre.blit(fon, (1820, 500))
-    fenetre.blit(fon, (1720, 500))
+    pygame.draw.rect(fenetre, blanc, (1820, 500, 100, 100))
+    pygame.draw.rect(fenetre, blanc, (1720, 500, 100, 100))
     fonpal = pygame.draw.rect(fenetre, blanc, (1720,100, 200 ,980))
     btr = pygame.draw.rect(fenetre, rouge, (1820, 100, 100, 100))
     btbl = pygame.draw.rect(fenetre, blanc , (1820, 200, 100 ,100))
