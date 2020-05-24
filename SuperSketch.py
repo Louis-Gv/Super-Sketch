@@ -676,6 +676,7 @@ if __name__ == '__main__':  # Si c'est le programme pricipal / obligatoire pour 
 
                 # Si le mot n'a pas été choisi
                 if not motChoisi:
+                    dess = False
 
                     # Si trois mot n'ont pas été choisis au hasard
                     if selectionMot:
