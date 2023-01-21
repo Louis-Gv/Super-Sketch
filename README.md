@@ -8,3 +8,4 @@ Il suffit d'inviter vos amis, de télécharger [la dernière version du jeu](htt
 Un joueur héberge la partie et les autres peuvent le rejoindre automatiquement.
 ### À distance
 Un joueur héberge la partie, NAT le port 5000 et donne son IP aux autres joueurs.
+Lien trailer : https://youtu.be/VXh9ncD7x9Q
